@@ -16,8 +16,8 @@ import {
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  templateUrl: './adminDashboard.component.html',
+  styleUrls: ['./adminDashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
 
