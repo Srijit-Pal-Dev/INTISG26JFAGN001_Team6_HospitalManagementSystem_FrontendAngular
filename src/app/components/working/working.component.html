@@ -17,19 +17,19 @@
                     and simplifying mediclaim processes.
                 </p>
 
-                <div class="flex justify-center items-cente pr-8">
-                    <img src="illustration.png" alt="How it works" class="h-[300px] w-[300px] mx-auto -mt-8" />
+                <div class="flex justify-center items-center pr-8">
+                    <img src="illustration.png" alt="How it works" class="h-[300px] w-[300px] mx-auto -mt-8"
+                        draggable="false" />
                 </div>
             </div>
 
-            <div class="space-y-3 mt-14">
+            <div class="space-y-3 mt-10">
                 @for (step of steps(); track step.number) {
-                <div class="rounded-3xl border transition-all duration-300 overflow-hidden cursor-pointer" [class]="isActive(step.number) 
-              ? 'bg-[#1a7fd4] border-[#1a7fd4]' 
-              : 'bg-white border-gray-200 hover:border-[#1a7fd4]/40'" (click)="toggleStep(step.number)">
+                <div class="rounded-3xl border transition-colors duration-300 cursor-pointer overflow-hidden" [class]="isActive(step.number) 
+                  ? 'bg-[#1a7fd4] border-[#1a7fd4]' 
+                  : 'bg-white border-gray-200 hover:border-[#1a7fd4]/40'" (click)="toggleStep(step.number)">
 
                     <div class="flex items-center gap-4 px-5 py-4">
-
                         <span class="text-xl font-medium flex-shrink-0 w-8"
                             [class]="isActive(step.number) ? 'text-white' : 'text-gray-500'">
                             {{ step.number < 10 ? '0' + step.number : step.number }} </span>
@@ -40,10 +40,10 @@
                                 </h3>
 
                                 <button
-                                    class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all"
+                                    class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-colors"
                                     [class]="isActive(step.number) 
-                  ? 'border-[1px] border-white text-white' 
-                  : 'border-[1px] border-[#1a7fd4] text-[#1a7fd4]'">
+                         ? 'border-[1px] border-white text-white' 
+                         : 'border-[1px] border-[#1a7fd4] text-[#1a7fd4]'">
                                     @if (isActive(step.number)) {
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
                                         viewBox="0 0 24 24">
@@ -58,13 +58,16 @@
                                 </button>
                     </div>
 
-                    @if (isActive(step.number)) {
-                    <div class="px-5 pb-4 pl-[68px]">
-                        <p class="text-white/90 text-sm leading-relaxed">
-                            {{ step.description }}
-                        </p>
+                    <div class="step-content" [class.active]="isActive(step.number)">
+                        <div>
+                            <div class="px-5 pb-4 pl-[68px]">
+                                <p class="text-white/90 text-sm leading-relaxed">
+                                    {{ step.description }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    }
+
                 </div>
                 }
             </div>

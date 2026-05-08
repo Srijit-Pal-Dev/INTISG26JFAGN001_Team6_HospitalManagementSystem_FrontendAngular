@@ -17,11 +17,11 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @for (review of reviews(); track review.name) {
-            <div class="bg-[#eaf4fc] rounded-xl px-6 py-4  hover:shadow-md transition-shadow">
+            <div class="bg-[#eaf4fc] rounded-xl px-6 py-4 group hover:shadow-md transition-shadow">
 
                 <div class="flex items-center gap-3 mb-4">
-                    <img [src]="review.avatar" [alt]="review.name"
-                        class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm" />
+                    <img [src]="review.avatar" [alt]="review.name" draggable="false"
+                        class="w-12 h-12 rounded-full object-cover border-2 border-[#83c5ff] group-hover:border-[#0276C9] transition-all duration-200 shadow-sm" />
                     <h3 class="font-semibold text-gray-900 text-base">{{ review.name }}</h3>
                 </div>
 

@@ -61,3 +61,20 @@ body {
     transform: translateY(-7px);
   }
 }
+
+.step-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms ease-in-out, opacity 300ms ease-in-out;
+  opacity: 0;
+}
+
+.step-content.active {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.step-content>div {
+  overflow: hidden;
+  min-height: 0;
+}
