@@ -1,19 +1,14 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet],
-  template: `<router-outlet />`,
-  styles: [`
-    :host {
-      display: block;
-      height: 100vh;
-      overflow: hidden;
-    }
-  `]
+  templateUrl: './app.html',
+  styleUrl: './app.css'
 })
 export class AppComponent {
-    protected readonly title = signal('PulsePoint');
+  protected readonly title = signal('PulsePoint');
 }

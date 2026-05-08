@@ -1,0 +1,43 @@
+<section class="py-16 lg:py-20 bg-white font-poppins">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
+
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
+            <div>
+                <div class="inline-block border border-[#0276C9] px-3 py-1 rounded-full mb-5">
+                    <p class="text-xs text-[#0276C9] font-medium">Reviews</p>
+                </div>
+                <h2 class="text-3xl font-medium text-gray-900 leading-tight">
+                    Stories of Care and Trust
+                </h2>
+            </div>
+            <p class="text-gray-500 text-sm leading-relaxed max-w-xs lg:text-left">
+                Discover how our solutions make a difference in everyday healthcare.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            @for (review of reviews(); track review.name) {
+            <div class="bg-[#eaf4fc] rounded-xl px-6 py-4  hover:shadow-md transition-shadow">
+
+                <div class="flex items-center gap-3 mb-4">
+                    <img [src]="review.avatar" [alt]="review.name"
+                        class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm" />
+                    <h3 class="font-semibold text-gray-900 text-base">{{ review.name }}</h3>
+                </div>
+
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    {{ review.review }}
+                </p>
+            </div>
+            }
+        </div>
+
+        <div class="flex justify-center mt-10">
+            <button
+                class="bg-[#023C6E] hover:bg-[#02508f] text-white text-sm font-semibold px-8 py-3 rounded-full transition-colors shadow-md">
+                View More
+            </button>
+        </div>
+
+    </div>
+</section>

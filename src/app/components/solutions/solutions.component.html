@@ -1,0 +1,36 @@
+<section class="py-16 bg-white lg:py-20 font-poppins">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
+
+        <div class="flex flex-col items-center text-center mb-12">
+            <div class="inline-block border border-[#0276C9] px-3 py-1 rounded-full mb-5">
+                <p class="text-xs text-[#0276C9] font-medium">Our Services</p>
+            </div>
+            <h2 class="text-3xl font-medium text-gray-900 leading-tight mb-3">
+                Solutions That Put Well-Being First
+            </h2>
+            <p class="text-gray-500 text-sm">
+                Comprehensive healthcare solutions for your well-being
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 mx-8 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            @for (card of solutions(); track card.title) {
+            <div class="group bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all cursor-pointer">
+
+                <div class="mb-5">
+                    <img [src]="card.icon" [alt]="card.title" class="w-8 h-8 object-contain" />
+                </div>
+
+                <h3 class="text-base font-medium text-gray-900 mb-3 group-hover:text-[#1a7fd4] transition-colors">
+                    {{ card.title }}
+                </h3>
+
+                <p class="text-xs text-gray-500 leading-relaxed">
+                    {{ card.description }}
+                </p>
+            </div>
+            }
+        </div>
+
+    </div>
+</section>

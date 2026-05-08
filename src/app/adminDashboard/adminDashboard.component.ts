@@ -11,7 +11,7 @@ import {
   NotificationResponse,
   RoleName
 } from '../core/models/index';
-import { SidebarComponent } from '../shared/sidebar/sidebar';
+import { SidebarComponent } from '../components/sidebar/sidebar';
 
 @Component({
   selector: 'app-dashboard',

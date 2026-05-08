@@ -5,8 +5,8 @@ import { roleGuard } from './core/guards/role.guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
-    pathMatch: 'full'
+    loadComponent: () =>
+      import('./pages/home/home.component').then(m => m.HomeComponent)
   },
   {
     path: 'login',
@@ -20,17 +20,21 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { roles: ['ADMIN'] }
   },
-  // Doctor dashboard — only DOCTOR allowed
+  // Future:
+  // {
+  //   path: 'patient',
+  //   loadComponent: () =>
+  //     import('./pages/patient/patient.component').then(m => m.PatientComponent)
+  // },
   // {
   //   path: 'doctor-dashboard',
   //   loadComponent: () =>
-  //     import('./doctor/doctor.component')
-  //       .then(m => m.DoctorComponent),
+  //     import('./doctor/doctor.component').then(m => m.DoctorComponent),
   //   canActivate: [authGuard, roleGuard],
   //   data: { roles: ['DOCTOR'] }
   // },
   {
     path: '**',
-    redirectTo: 'login'
+    redirectTo: ''
   }
 ];

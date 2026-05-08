@@ -19,7 +19,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router
-  ) {}
+  ) { }
 
   login(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(
@@ -71,25 +71,25 @@ export class AuthService {
     }
   }
 
-  
+
   getRole(): string | null {
-  const token = localStorage.getItem('accessToken');
-  if (!token) return null;
+    const token = localStorage.getItem('accessToken');
+    if (!token) return null;
 
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const roles: string[] = payload.roles ?? [];
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const roles: string[] = payload.roles ?? [];
 
-    const ignoredRoles = ['FACTOR_PASSWORD', 'DEFAULT'];
+      const ignoredRoles = ['FACTOR_PASSWORD', 'DEFAULT'];
 
-    const realRole = roles
-      .map(r => r.replace('ROLE_', ''))
-      .find(r => !ignoredRoles.includes(r));
+      const realRole = roles
+        .map(r => r.replace('ROLE_', ''))
+        .find(r => !ignoredRoles.includes(r));
 
-    return realRole ?? null;
-  } catch {
-    return null;
-   }
+      return realRole ?? null;
+    } catch {
+      return null;
+    }
   }
 
   getUserId(): number | null {

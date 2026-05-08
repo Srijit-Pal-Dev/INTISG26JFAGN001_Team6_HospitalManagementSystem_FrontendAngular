@@ -35,11 +35,11 @@ export class AuthComponent {
   successMessage = '';
 
   private readonly ROLE_REDIRECT_MAP: Record<string, string> = {
-    'ADMIN':          '/dashboard',
-    'DOCTOR':         '/doctor-dashboard',
-    'PHARMACIST':     '/pharmacy-dashboard',
+    'ADMIN': '/dashboard',
+    'DOCTOR': '/doctor-dashboard',
+    'PHARMACIST': '/pharmacy-dashboard',
     'LAB_TECHNICIAN': '/lab-dashboard',
-    'USER':           '/patient-dashboard'
+    'USER': '/patient-dashboard'
   };
 
   constructor(
@@ -95,7 +95,7 @@ export class AuthComponent {
     this.successMessage = '';
 
     if (!this.signupForm.username || !this.signupForm.password ||
-        !this.signupForm.fullName || !this.signupForm.confirmPassword) {
+      !this.signupForm.fullName || !this.signupForm.confirmPassword) {
       this.errorMessage = 'Please fill in all fields.';
       return;
     }
@@ -143,7 +143,7 @@ export class AuthComponent {
     const route = this.ROLE_REDIRECT_MAP[role];
 
     if (route) {
-      this.router.navigate([route]);
+      this.router.navigate([route]).then(() => window.location.reload());
     } else {
       this.errorMessage = `No dashboard available for role: ${role}`;
       this.authService.clearSession();
