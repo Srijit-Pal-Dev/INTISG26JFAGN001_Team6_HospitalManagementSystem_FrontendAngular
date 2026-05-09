@@ -3,3 +3,10 @@ export * from './notification-type.enum';
 export * from './user.model';
 export * from './notification.model';
 export * from './auth.model';
+
+export * from './api-response.model';
+export * from './patient.model';
+export * from './appointment.model';
+export * from './doctor.model';
+export * from './medicine.model';
+export * from './lab-result.model';
