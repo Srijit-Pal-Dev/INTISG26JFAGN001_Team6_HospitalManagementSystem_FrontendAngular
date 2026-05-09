@@ -16,7 +16,7 @@ type FilterMode = 'all' | 'abnormal' | 'normal';
 @Component({
     selector: 'app-lab-reports',
     standalone: true,
-    imports: [CommonModule, LucideAngularModule, LabResultDetailModalComponent],
+    imports: [CommonModule, LucideAngularModule, LabResultDetailModalComponent, FormsModule],
     templateUrl: './lab-reports.component.html'
 })
 export class LabReportsComponent implements OnInit {

@@ -25,7 +25,7 @@ interface AppointmentWithMedicines {
 @Component({
     selector: 'app-medicines',
     standalone: true,
-    imports: [CommonModule, LucideAngularModule],
+    imports: [CommonModule, LucideAngularModule, FormsModule],
     templateUrl: './medicines.component.html'
 })
 export class MedicinesComponent implements OnInit {
