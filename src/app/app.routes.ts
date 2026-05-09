@@ -20,19 +20,46 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { roles: ['ADMIN'] }
   },
-  // Future:
-  // {
-  //   path: 'patient',
-  //   loadComponent: () =>
-  //     import('./pages/patient/patient.component').then(m => m.PatientComponent)
-  // },
-  // {
-  //   path: 'doctor-dashboard',
-  //   loadComponent: () =>
-  //     import('./doctor/doctor.component').then(m => m.DoctorComponent),
-  //   canActivate: [authGuard, roleGuard],
-  //   data: { roles: ['DOCTOR'] }
-  // },
+  {
+    path: 'patient-dashboard',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['USER'] },
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/patient-dashboard/patients-list/patients-list.component').then(m => m.PatientsListComponent)
+      },
+      {
+        path: ':patientId',
+        loadComponent: () =>
+          import('./pages/patient-dashboard/patient-detail/patient-detail.component').then(m => m.PatientDetailComponent),
+        children: [
+          { path: '', redirectTo: 'book', pathMatch: 'full' },
+          {
+            path: 'book',
+            loadComponent: () =>
+              import('./pages/patient-dashboard/patient-detail/tabs/book-appointment/book-appointment.component').then(m => m.BookAppointmentComponent)
+          },
+          {
+            path: 'appointments',
+            loadComponent: () =>
+              import('./pages/patient-dashboard/patient-detail/tabs/my-appointments/my-appointments.component').then(m => m.MyAppointmentsComponent)
+          },
+          {
+            path: 'medicines',
+            loadComponent: () =>
+              import('./pages/patient-dashboard/patient-detail/tabs/medicines/medicines.component').then(m => m.MedicinesComponent)
+          },
+          {
+            path: 'lab-reports',
+            loadComponent: () =>
+              import('./pages/patient-dashboard/patient-detail/tabs/lab-reports/lab-reports.component').then(m => m.LabReportsComponent)
+          }
+        ]
+      }
+    ]
+  },
   {
     path: '**',
     redirectTo: ''
