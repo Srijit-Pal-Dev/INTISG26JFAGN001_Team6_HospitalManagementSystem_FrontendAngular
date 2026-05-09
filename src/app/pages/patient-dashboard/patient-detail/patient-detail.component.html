@@ -1,0 +1,77 @@
+<app-navbar />
+
+<div class="bg-light text-white py-2">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20 text-center">
+        <p class="text-xs font-semibold">Book Appointments Online in Seconds</p>
+    </div>
+</div>
+
+<main class="min-h-screen bg-white font-poppins pb-16">
+
+    @if (isLoading()) {
+    <div class="flex flex-col items-center justify-center py-32">
+        <div class="w-8 h-8 border-4 border-gray-200 border-t-[#1a7fd4] rounded-full animate-spin mb-3"></div>
+        <p class="text-sm text-gray-500">Loading patient...</p>
+    </div>
+    } @else if (errorMessage()) {
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-20 pt-12">
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+            <p class="text-red-600 text-sm mb-3">{{ errorMessage() }}</p>
+            <button (click)="goBack()" class="text-[#1a7fd4] hover:text-[#0276C9] text-sm font-semibold">
+                ← Back to Patients
+            </button>
+        </div>
+    </div>
+    } @else if (patient(); as p) {
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20 pt-6">
+        <div class=" rounded-full flex items-center gap-3">
+
+            <button (click)="goBack()"
+                class="flex items-center gap-2 text-sm text-gray-600 px-3 py-2 rounded-xl hover:text-light transition-colors group shrink-0">
+                <lucide-icon [img]="ArrowLeftIcon"
+                    class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></lucide-icon>
+                <span class="hidden md:inline font-medium">Back to Patients</span>
+            </button>
+
+            <div class="hidden md:block w-px h-8"></div>
+
+            <div
+                class="flex-1 flex items-center border border-gray-300 shadow-sm rounded-full justify-center gap-1 overflow-x-auto">
+                @for (tab of tabs; track tab.path) {
+                <a [routerLink]="['./', tab.path]" routerLinkActive="text-light shadow-sm"
+                    [routerLinkActiveOptions]="{ exact: false }"
+                    class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-medium text-gray-600 hover:text-light transition-all whitespace-nowrap">
+                    <lucide-icon [img]="getIcon(tab.icon)" class="w-4 h-4"></lucide-icon>
+                    <span class="hidden lg:inline">{{ tab.label }}</span>
+                </a>
+                }
+            </div>
+
+            <div class="hidden md:block w-px h-8 bg-gray-200"></div>
+
+            <div class="flex items-center gap-2.5 shrink-0 pr-2">
+                <div
+                    class="w-9 h-9 rounded-full bg-gradient-to-br from-[#1a7fd4] to-[#0276C9] flex items-center justify-center text-white font-bold text-xs shrink-0">
+                    {{ getInitials(p.fullName) }}
+                </div>
+                <div class="hidden md:flex flex-col leading-tight">
+                    <p class="text-sm font-medium text-gray-800 truncate max-w-[140px]">{{ p.fullName }}</p>
+                    <p class="text-[10px] text-gray-500">
+                        {{ p.mrn }} • {{ p.age }}y • {{ p.gender }} • {{ p.bloodGroup }}
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20 mt-6">
+        <router-outlet />
+    </div>
+
+    }
+
+</main>
+
+<app-footer />
