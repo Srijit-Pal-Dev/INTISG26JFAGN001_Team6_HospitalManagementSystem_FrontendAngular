@@ -11,12 +11,12 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () =>
-      import('./auth/auth.component').then(m => m.AuthComponent)
+      import('./pages/auth/auth.component').then(m => m.AuthComponent)
   },
   {
     path: 'dashboard',
     loadComponent: () =>
-      import('./adminDashboard/adminDashboard.component').then(m => m.DashboardComponent),
+      import('./pages/adminDashboard/adminDashboard.component').then(m => m.DashboardComponent),
     canActivate: [authGuard, roleGuard],
     data: { roles: ['ADMIN'] }
   },

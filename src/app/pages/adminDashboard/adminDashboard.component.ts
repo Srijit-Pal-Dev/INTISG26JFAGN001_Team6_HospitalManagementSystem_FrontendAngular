@@ -2,16 +2,16 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UserService } from '../core/services/user.service';
-import { NotificationService } from '../core/services/notification.service';
-import { AuthService } from '../core/services/auth.service';
+import { UserService } from '../../core/services/user.service';
+import { NotificationService } from '../../core/services/notification.service';
+import { AuthService } from '../../core/services/auth.service';
 import {
   UserResponse,
   CreateUserRequest,
   NotificationResponse,
   RoleName
-} from '../core/models/index';
-import { SidebarComponent } from '../components/sidebar/sidebar';
+} from '../../core/models/index';
+import { SidebarComponent } from '../../components/sidebar/sidebar';
 
 @Component({
   selector: 'app-dashboard',
