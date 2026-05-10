@@ -57,6 +57,10 @@ export class AuthComponent {
     this.successMessage = '';
   }
 
+  goHome() {
+    this.router.navigate(['']);
+  }
+
   toggleLoginPassword() {
     this.showLoginPassword = !this.showLoginPassword;
   }
