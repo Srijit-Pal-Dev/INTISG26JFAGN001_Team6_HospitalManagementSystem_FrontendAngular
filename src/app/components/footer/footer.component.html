@@ -1,0 +1,86 @@
+<footer class="relative bg-white pt-36 pb-8 font-poppins" style="background-image: url('footer-curve.png');">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 pb-10">
+
+            <div class="lg:col-span-5">
+                <h3 class="text-white font-bold text-2xl mb-3">Stay Updated</h3>
+                <p class="text-white/80 text-sm leading-relaxed mb-5 max-w-sm">
+                    Join our Newsletter to stay up-to-date on<br>News and releases.
+                </p>
+
+                <div class="flex items-center bg-transparent border border-white/40 rounded-full p-1 max-w-md mb-4">
+                    <input type="email" [(ngModel)]="email" placeholder="Enter your email"
+                        class="flex-1 bg-transparent text-white placeholder-white/60 text-sm px-5 py-2 focus:outline-none" />
+                    <button
+                        class="bg-white text-[#0a3a73] font-semibold text-sm px-6 py-2 rounded-full hover:bg-gray-100 transition-colors">
+                        Subscribe
+                    </button>
+                </div>
+
+                <p class="text-white/60 text-xs leading-relaxed mb-6 max-w-sm">
+                    By subscribing you agree with our Privacy<br>Policy and provide consent to receive updates.
+                </p>
+
+                <div class="flex items-center gap-3">
+                    @for (social of socialLinks; track social.label) {
+                    <a href="#" [attr.aria-label]="social.label"
+                        class="w-9 h-9 bg-white rounded-full flex items-center justify-center hover:bg-blue-100 transition-colors">
+                        <div [innerHTML]="social.icon | safeHtml" class="w-4 h-4 text-[#0a3a73]"></div>
+                    </a>
+                    }
+                </div>
+            </div>
+
+            <div class="hidden lg:block lg:col-span-1"></div>
+
+            <div class="lg:col-span-2">
+                <h4 class="text-white font-semibold text-base mb-5">For Patients</h4>
+                <ul class="space-y-3">
+                    @for (link of patientLinks; track link) {
+                    <li><a href="#" class="text-white/70 text-sm hover:text-white transition-colors">{{ link }}</a></li>
+                    }
+                </ul>
+            </div>
+
+            <div class="lg:col-span-2">
+                <h4 class="text-white font-semibold text-base mb-5">Health Library</h4>
+                <ul class="space-y-3">
+                    @for (link of libraryLinks; track link) {
+                    <li><a href="#" class="text-white/70 text-sm hover:text-white transition-colors">{{ link }}</a></li>
+                    }
+                </ul>
+            </div>
+
+            <div class="lg:col-span-2">
+                <h4 class="text-white font-semibold text-base mb-5">Our Company</h4>
+                <ul class="space-y-3">
+                    @for (link of companyLinks; track link) {
+                    <li><a href="#" class="text-white/70 text-sm hover:text-white transition-colors">{{ link }}</a></li>
+                    }
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="border-t border-white/15 pt-5">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p class="text-white/60 text-xs flex items-center gap-1.5">
+                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 12v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V4.07c3.94.49 7 3.85 7 7.93 0 2.51-1.16 4.75-2.96 6.32z" />
+                    </svg>
+                    2026 Pulse Point. | All Rights Reserved.
+                </p>
+                <div class="flex items-center gap-6 flex-wrap justify-center">
+                    <a href="#" class="text-white/60 hover:text-white text-xs transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-white/60 hover:text-white text-xs transition-colors">Terms of Service</a>
+                    <a href="#" class="text-white/60 hover:text-white text-xs transition-colors">Cookies Settings</a>
+                    <a href="#" class="text-white/60 hover:text-white text-xs transition-colors">SiteMap</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</footer>

@@ -1,0 +1,164 @@
+/* ── HOST ── */
+:host {
+  display: block;
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── BACKGROUND ── */
+.bg-base {
+  position: fixed; inset: 0; z-index: 0;
+  background: linear-gradient(145deg,
+    #ffffff 0%, #f0f7ff 18%, #dbeafe 45%, #bfdbfe 72%, #93c5fd 100%);
+}
+
+.bg-orb {
+  position: fixed; border-radius: 50%;
+  filter: blur(110px);
+  animation: orb-drift ease-in-out infinite alternate;
+  z-index: 0;
+}
+.bg-orb-1 { width:680px;height:680px;top:-20%;left:-14%;background:rgba(219,234,254,.95);opacity:.9;animation-duration:22s; }
+.bg-orb-2 { width:560px;height:560px;bottom:-16%;right:-12%;background:rgba(147,197,253,.80);opacity:.85;animation-duration:28s;animation-delay:-10s; }
+.bg-orb-3 { width:380px;height:380px;top:30%;left:35%;background:rgba(191,219,254,.65);opacity:.6;animation-duration:18s;animation-delay:-5s; }
+.bg-orb-4 { width:260px;height:260px;top:8%;right:18%;background:rgba(255,255,255,.90);opacity:.75;animation-duration:20s;animation-delay:-2s; }
+
+@keyframes orb-drift {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(28px,22px) scale(1.07); }
+}
+
+.bg-grid {
+  position: fixed; inset: 0; z-index: 1;
+  background-image: radial-gradient(circle, rgba(37,99,200,.09) 1.2px, transparent 1.2px);
+  background-size: 30px 30px;
+}
+
+/* ── HERO — glass + pseudo elements ── */
+.hero {
+  background: rgba(255,255,255,0.30);
+  backdrop-filter: blur(30px) saturate(1.8);
+  -webkit-backdrop-filter: blur(30px) saturate(1.8);
+  border-right: 1px solid rgba(255,255,255,0.60);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.85), 4px 0 24px rgba(37,99,200,.06);
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -90px; right: -90px;
+  width: 340px; height: 340px; border-radius: 50%;
+  background: rgba(255,255,255,.28);
+  border: 1px solid rgba(255,255,255,.55);
+}
+.hero::after {
+  content: '';
+  position: absolute; bottom: -70px; left: -70px;
+  width: 240px; height: 240px; border-radius: 50%;
+  background: rgba(255,255,255,.22);
+  border: 1px solid rgba(255,255,255,.48);
+}
+
+/* ── LOGO ICON — shimmer overlay ── */
+.logo-icon::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.25), transparent);
+}
+
+/* ── HERO TITLE — clamp ── */
+.hero-title {
+  font-size: clamp(28px, 3vw, 46px);
+}
+
+/* ── AUTH PANEL — glass ── */
+.auth-panel {
+  backdrop-filter: blur(36px) saturate(2);
+  -webkit-backdrop-filter: blur(36px) saturate(2);
+}
+
+/* ── AUTH CARD — glass + animation ── */
+.auth-card {
+  backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow: 0 32px 80px rgba(37,99,200,.13),
+              0 8px 24px rgba(37,99,200,.07),
+              inset 0 1px 0 rgba(255,255,255,1);
+  animation: card-in .75s .2s ease both;
+}
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(26px) scale(.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── TAB INDICATOR — sliding pill ── */
+.tab-indicator {
+  position: absolute; top: 4px; bottom: 4px; left: 4px;
+  width: calc(50% - 4px);
+  background: linear-gradient(135deg, #2563c8, #1a4fa0);
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(37,99,200,.38);
+  transition: transform .42s cubic-bezier(.34,1.56,.64,1);
+}
+.tab-indicator.signup { transform: translateX(100%); }
+
+/* Tab text colour */
+.tab-btn { color: #6b8ab5; }
+.tab-btn.active { color: #fff; }
+
+/* ── INPUT — glass ── */
+.auth-input {
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(255,255,255,.88);
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 1px 4px rgba(37,99,200,.06);
+  transition: border-color .22s, box-shadow .22s;
+  -webkit-appearance: none;
+  font-family: 'Poppins', sans-serif;
+}
+.auth-input::placeholder { color: #6b8ab5; }
+.auth-input:focus {
+  border-color: rgba(59,130,246,.5);
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 0 0 3px rgba(59,130,246,.14), inset 0 1px 0 rgba(255,255,255,1);
+}
+
+/* ── CTA BUTTON — solid, strong ── */
+.btn-cta {
+  background: #2563c8;
+  background-image: linear-gradient(135deg, #2563c8 0%, #1a4fa0 100%);
+  box-shadow:
+    0 8px 24px rgba(37,99,200,.55),
+    0 2px 6px rgba(37,99,200,.35),
+    inset 0 1px 0 rgba(255,255,255,.15);
+}
+.btn-cta:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background-image: linear-gradient(135deg, #3b82f6 0%, #2563c8 100%);
+  box-shadow:
+    0 12px_32px rgba(37,99,200,.65),
+    0 4px 10px rgba(37,99,200,.4),
+    inset 0 1px 0 rgba(255,255,255,.2);
+}
+.btn-cta:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 4px 12px rgba(37,99,200,.4);
+}
+
+/* ── BADGE DOT animation ── */
+.badge-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34,197,94,.2);
+  flex-shrink: 0;
+  animation: pulse-dot 2s ease infinite;
+}
+@keyframes pulse-dot { 0%,100%{ opacity:1; } 50%{ opacity:.4; } }
+
+/* ── SPINNER ── */
+.spin {
+  display: inline-block; width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

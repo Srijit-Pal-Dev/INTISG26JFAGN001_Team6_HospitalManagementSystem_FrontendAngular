@@ -1,13 +1,81 @@
-*, *::before, *::after {
+@import '@angular/material/prebuilt-themes/azure-blue.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body {
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  font-family: 'DM Sans', sans-serif;
+html,
+body {
+  font-family: 'Poppins', 'DM Sans', sans-serif;
   background: #f0f6ff;
-}/* You can add global styles to this file, and also import other style files */
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    .animate-fadeIn {
+      animation: fadeIn 0.2s ease-out;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .animate-float {
+    animation: floatY 3.5s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: floatY 3.5s ease-in-out infinite 1.75s;
+  }
+}
+
+@keyframes floatY {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+.step-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms ease-in-out, opacity 300ms ease-in-out;
+  opacity: 0;
+}
+
+.step-content.active {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.step-content>div {
+  overflow: hidden;
+  min-height: 0;
+}

@@ -1,0 +1,536 @@
+<!-- Background -->
+<div class="bg-base"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div class="bg-orb bg-orb-3"></div>
+<div class="bg-grid"></div>
+
+<!-- App layout -->
+<div class="relative z-10 flex h-screen overflow-hidden">
+
+  <app-sidebar [unreadCount]="unreadCount" [activeRoute]="'user-management'" (notifClicked)="openNotifModal()"
+    (logoutClicked)="logout()">
+  </app-sidebar>
+
+  <!-- ═══════════ MAIN ═══════════ -->
+  <main class="flex flex-col flex-1 overflow-hidden min-w-0">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between gap-4 px-8 pt-6 pb-0">
+      <div>
+        <div class="text-[11px] font-semibold text-[#6b8ab5] tracking-[.07em] uppercase mb-1">
+          Hospital Management System
+        </div>
+        <div class="font-display text-[22px] font-bold text-navy-900">
+          User <span class="text-brand-500">Management</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2.5 mt-1">
+        <!-- Search bar -->
+        <div
+          class="flex items-center gap-2 bg-white/65 border border-white/88 rounded-xl px-3.5 h-[38px] min-w-[200px] backdrop-blur-md">
+          <svg class="w-[15px] h-[15px] fill-[#6b8ab5] flex-shrink-0" viewBox="0 0 24 24">
+            <path
+              d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+          </svg>
+          <input type="text" placeholder="Search users…"
+            class="border-none bg-transparent outline-none text-[13px] text-navy-900 w-full placeholder:text-[#6b8ab5]"
+            [(ngModel)]="searchQuery" (input)="onSearch()">
+        </div>
+        <!-- Icon buttons -->
+        <button
+          class="icon-btn w-[38px] h-[38px] rounded-xl border border-white/85 flex items-center justify-center bg-white/62 backdrop-blur-md transition-all duration-200 hover:bg-white/88 relative"
+          (click)="openNotifModal()">
+          <svg class="w-[17px] h-[17px] fill-[#2d4a7a]" viewBox="0 0 24 24">
+            <path
+              d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+          </svg>
+          <span *ngIf="unreadCount > 0"
+            class="absolute top-[7px] right-[7px] w-[7px] h-[7px] rounded-full bg-red-400 border-[1.5px] border-white">
+          </span>
+        </button>
+        <button
+          class="w-[38px] h-[38px] rounded-xl border border-white/85 flex items-center justify-center bg-white/62 backdrop-blur-md transition-all duration-200 hover:bg-white/88"
+          (click)="loadUsers()">
+          <svg class="w-[17px] h-[17px] fill-[#2d4a7a]" viewBox="0 0 24 24">
+            <path
+              d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="flex-1 overflow-y-auto px-8 py-5 pb-8 scrollbar-thin">
+
+      <!-- Stat cards -->
+      <div class="grid grid-cols-4 gap-3.5 mb-5 max-[1200px]:grid-cols-2 max-[900px]:grid-cols-2">
+        <div
+          class="stat-card flex flex-col gap-2.5 p-5 rounded-[18px] border border-white/88 transition-all duration-200 hover:-translate-y-0.5">
+          <div class="flex items-center justify-between">
+            <div class="w-9 h-9 rounded-[10px] flex items-center justify-center bg-blue-500/[.12]">
+              <svg class="w-[18px] h-[18px] fill-brand-500" viewBox="0 0 24 24">
+                <path
+                  d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+              </svg>
+            </div>
+          </div>
+          <div class="font-display text-[28px] font-bold text-navy-900">{{ totalUsers }}</div>
+          <div class="text-[12px] text-[#6b8ab5]">Total Users</div>
+        </div>
+
+        <div
+          class="stat-card flex flex-col gap-2.5 p-5 rounded-[18px] border border-white/88 transition-all duration-200 hover:-translate-y-0.5">
+          <div class="flex items-center justify-between">
+            <div class="w-9 h-9 rounded-[10px] flex items-center justify-center bg-emerald-600/10">
+              <svg class="w-[18px] h-[18px] fill-emerald-600" viewBox="0 0 24 24">
+                <path
+                  d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+              </svg>
+            </div>
+          </div>
+          <div class="font-display text-[28px] font-bold text-navy-900">{{ activeUsers }}</div>
+          <div class="text-[12px] text-[#6b8ab5]">Active Users</div>
+        </div>
+
+        <div
+          class="stat-card flex flex-col gap-2.5 p-5 rounded-[18px] border border-white/88 transition-all duration-200 hover:-translate-y-0.5">
+          <div class="flex items-center justify-between">
+            <div class="w-9 h-9 rounded-[10px] flex items-center justify-center bg-amber-600/10">
+              <svg class="w-[18px] h-[18px] fill-amber-600" viewBox="0 0 24 24">
+                <path
+                  d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 14l-3-3 1.41-1.41L11 12.17l4.59-4.58L17 9l-6 6z" />
+              </svg>
+            </div>
+          </div>
+          <div class="font-display text-[28px] font-bold text-navy-900">{{ enabledUsers }}</div>
+          <div class="text-[12px] text-[#6b8ab5]">Enabled</div>
+        </div>
+
+        <div
+          class="stat-card flex flex-col gap-2.5 p-5 rounded-[18px] border border-white/88 transition-all duration-200 hover:-translate-y-0.5">
+          <div class="flex items-center justify-between">
+            <div class="w-9 h-9 rounded-[10px] flex items-center justify-center bg-red-600/[.09]">
+              <svg class="w-[18px] h-[18px] fill-red-600" viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+              </svg>
+            </div>
+          </div>
+          <div class="font-display text-[28px] font-bold text-navy-900">{{ disabledUsers }}</div>
+          <div class="text-[12px] text-[#6b8ab5]">Disabled</div>
+        </div>
+      </div>
+
+      <!-- Find User panel -->
+      <div class="glass-panel rounded-[18px] p-5 mb-5">
+        <div class="font-display text-[14px] font-semibold text-navy-900 mb-3">Find User</div>
+
+        <!-- Search inputs — stack on small screens -->
+        <div class="grid grid-cols-2 gap-2.5 mb-2.5 max-[700px]:grid-cols-1">
+
+          <!-- Search by ID -->
+          <div class="flex gap-1.5">
+            <input type="text" placeholder="Search by ID…"
+              class="glass-input flex-1 min-w-0 px-3 py-2 rounded-[10px] text-[13px] text-navy-900 outline-none placeholder:text-[#6b8ab5]"
+              [(ngModel)]="searchById">
+            <button
+              class="glass-btn text-[11.5px] font-semibold px-3 py-2 rounded-[10px] whitespace-nowrap flex-shrink-0"
+              (click)="onSearchById()">Search</button>
+          </div>
+
+          <!-- Search by username -->
+          <div class="flex gap-1.5">
+            <input type="text" placeholder="Search by username…"
+              class="glass-input flex-1 min-w-0 px-3 py-2 rounded-[10px] text-[13px] text-navy-900 outline-none placeholder:text-[#6b8ab5]"
+              [(ngModel)]="searchByUsername">
+            <button
+              class="glass-btn text-[11.5px] font-semibold px-3 py-2 rounded-[10px] whitespace-nowrap flex-shrink-0"
+              (click)="onSearchByUsername()">Search</button>
+          </div>
+
+        </div>
+
+        <!-- Clear button -->
+        <button class="glass-btn text-[11.5px] font-semibold px-3 py-1.5 rounded-[10px]"
+          (click)="searchResult = null; searchError = ''; searchById = ''; searchByUsername = ''">
+          Clear
+        </button>
+        <div *ngIf="searchError" class="text-[12px] text-red-600 mt-2.5">{{ searchError }}</div>
+        <div *ngIf="searchResult" class="mt-3.5 bg-white/60 border border-white/85 rounded-xl p-3.5">
+          <div class="flex items-center gap-2.5">
+            <div
+              class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-[11px] font-bold text-white"
+              [style.background]="getAvatarColor(searchResult.id)">
+              {{ getInitials(searchResult.fullName) }}
+            </div>
+            <div>
+              <div class="text-[13px] font-semibold text-navy-900">{{ searchResult.fullName }}</div>
+              <div class="text-[11px] text-[#6b8ab5]">@{{ searchResult.username }} · ID: {{ searchResult.id }}</div>
+            </div>
+          </div>
+          <div class="flex gap-2 mt-2.5 flex-wrap">
+            <span *ngFor="let role of searchResult.roles" class="badge" [ngClass]="getRoleBadgeClass(role)">{{ role
+              }}</span>
+            <span class="badge" [ngClass]="searchResult.enabled ? 'badge-enabled' : 'badge-disabled'">
+              {{ searchResult.enabled ? 'Enabled' : 'Disabled' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table section header -->
+      <div class="flex items-center justify-between mb-3.5">
+        <span class="font-display text-[15px] font-bold text-navy-900">All Users</span>
+        <div class="flex items-center gap-2">
+          <div class="flex gap-1.5">
+            <div class="fpill" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">All</div>
+            <div class="fpill" [class.active]="activeFilter === 'enabled'" (click)="setFilter('enabled')">Enabled</div>
+            <div class="fpill" [class.active]="activeFilter === 'disabled'" (click)="setFilter('disabled')">Disabled
+            </div>
+          </div>
+          <button class="primary-btn flex items-center gap-1.5 text-[12.5px] font-semibold px-3.5 py-2 rounded-[10px]"
+            (click)="openAddModal()">
+            <svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+            Add User
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="isLoadingUsers" class="flex items-center gap-2.5 p-5 text-[13px] text-[#6b8ab5]">
+        <span class="spin-blue"></span>
+        <span>Loading users…</span>
+      </div>
+
+      <!-- Table -->
+      <div *ngIf="!isLoadingUsers" class="table-wrap rounded-[18px] overflow-x-auto mb-5">
+        <table class="w-full border-collapse min-w-[700px]">
+          <thead>
+            <tr class="border-b border-brand-500/10">
+              <th
+                class="px-4 py-3 text-left text-[11px] font-semibold text-[#6b8ab5] tracking-[.05em] uppercase bg-white/40 whitespace-nowrap">
+                User</th>
+              <th
+                class="px-4 py-3 text-left text-[11px] font-semibold text-[#6b8ab5] tracking-[.05em] uppercase bg-white/40 whitespace-nowrap">
+                ID</th>
+              <th
+                class="px-4 py-3 text-left text-[11px] font-semibold text-[#6b8ab5] tracking-[.05em] uppercase bg-white/40 whitespace-nowrap">
+                Roles</th>
+              <th
+                class="px-4 py-3 text-left text-[11px] font-semibold text-[#6b8ab5] tracking-[.05em] uppercase bg-white/40 whitespace-nowrap">
+                Account</th>
+              <th
+                class="px-4 py-3 text-left text-[11px] font-semibold text-[#6b8ab5] tracking-[.05em] uppercase bg-white/40 whitespace-nowrap">
+                Created</th>
+              <th
+                class="px-4 py-3 text-left text-[11px] font-semibold text-[#6b8ab5] tracking-[.05em] uppercase bg-white/40 whitespace-nowrap">
+                Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of filteredUsers()"
+              class="border-b border-brand-500/[.06] last:border-b-0 transition-colors duration-150 hover:bg-white/45">
+              <td class="px-4 py-3 text-[13px] text-[#2d4a7a] align-middle">
+                <div class="flex items-center gap-2.5">
+                  <div
+                    class="w-[30px] h-[30px] rounded-full flex-shrink-0 flex items-center justify-center text-[11px] font-bold text-white"
+                    [style.background]="getAvatarColor(user.id)">
+                    {{ getInitials(user.fullName) }}
+                  </div>
+                  <div>
+                    <div class="text-[13px] font-semibold text-navy-900">{{ user.fullName }}</div>
+                    <div class="text-[11px] text-[#6b8ab5]">@{{ user.username }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-3 align-middle">
+                <span class="text-[11.5px] font-semibold text-brand-500">USR-{{ user.id }}</span>
+              </td>
+              <td class="px-4 py-3 align-middle">
+                <div class="flex gap-1 flex-wrap">
+                  <span *ngFor="let role of user.roles" class="badge" [ngClass]="getRoleBadgeClass(role)">{{ role
+                    }}</span>
+                </div>
+              </td>
+              <td class="px-4 py-3 align-middle">
+                <span class="badge" [ngClass]="user.enabled ? 'badge-enabled' : 'badge-disabled'">
+                  {{ user.enabled ? 'Enabled' : 'Disabled' }}
+                </span>
+              </td>
+              <td class="px-4 py-3 align-middle">
+                <span class="text-[12px] text-[#6b8ab5]">{{ formatDate(user.createdAt) }}</span>
+              </td>
+              <td class="px-4 py-3 align-middle">
+                <div class="flex items-center gap-1.5">
+                  <button
+                    class="w-7 h-7 rounded-lg border-none cursor-pointer flex items-center justify-center transition-all duration-200 bg-transparent hover:bg-blue-500/[.12]"
+                    (click)="viewUser(user)">
+                    <svg class="w-3.5 h-3.5 fill-brand-500" viewBox="0 0 24 24">
+                      <path
+                        d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                    </svg>
+                  </button>
+                  <button
+                    class="w-7 h-7 rounded-lg border-none cursor-pointer flex items-center justify-center transition-all duration-200 bg-transparent hover:bg-red-600/10"
+                    (click)="openDeleteModal(user)">
+                    <svg class="w-3.5 h-3.5 fill-red-600" viewBox="0 0 24 24">
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Empty state -->
+        <div *ngIf="filteredUsers().length === 0" class="text-center py-8 px-5 text-[13px] text-[#6b8ab5]">
+          <svg class="w-9 h-9 fill-[rgba(107,138,181,.4)] mb-2.5 mx-auto block" viewBox="0 0 24 24">
+            <path
+              d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+          </svg>
+          No users found.
+        </div>
+
+        <div class="px-4 py-3 text-[12px] text-[#6b8ab5] border-t border-brand-500/[.07]">
+          Showing {{ filteredUsers().length }} of {{ totalUsers }} users
+        </div>
+      </div>
+
+      <!-- Recent Notifications -->
+      <div>
+        <div class="flex items-center justify-between mb-3.5">
+          <span class="font-display text-[15px] font-bold text-navy-900">Recent Notifications</span>
+          <button class="glass-btn text-[11.5px] font-semibold px-3 py-1.5 rounded-[10px]" (click)="markAllRead()">Mark
+            all read</button>
+        </div>
+        <div class="table-wrap rounded-[18px] overflow-hidden">
+          <div *ngIf="isLoadingNotifs" class="flex items-center gap-2.5 p-5 text-[13px] text-[#6b8ab5]">
+            <span class="spin-blue"></span><span>Loading…</span>
+          </div>
+          <div *ngIf="!isLoadingNotifs">
+            <div *ngFor="let notif of notifications().slice(0, 5)"
+              class="flex items-start gap-3 px-5 py-3.5 border-b border-brand-500/[.06] last:border-b-0 cursor-pointer transition-colors duration-150 hover:bg-white/45"
+              [class.bg-blue-500/[.04]]="!notif.read" (click)="markAsRead(notif)">
+              <div class="pt-1">
+                <div class="w-2 h-2 rounded-full flex-shrink-0" [ngClass]="getNotifDotClass(notif.type)"></div>
+              </div>
+              <div>
+                <div class="text-[13px] font-semibold text-navy-900 mb-0.5">{{ notif.title }}</div>
+                <div class="text-[12px] text-[#2d4a7a] leading-relaxed">{{ notif.message }}</div>
+                <div class="text-[10.5px] text-[#6b8ab5] mt-1">{{ formatDate(notif.createdAt) }}</div>
+              </div>
+            </div>
+            <div *ngIf="notifications().length === 0" class="text-center py-8 px-5 text-[13px] text-[#6b8ab5]">
+              <svg class="w-9 h-9 fill-[rgba(107,138,181,.4)] mb-2.5 mx-auto block" viewBox="0 0 24 24">
+                <path
+                  d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+              </svg>
+              No notifications yet.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ═══════ ADD USER MODAL ═══════ -->
+<div class="modal-bg" [class.show]="showAddModal" (click)="closeModal('add')">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <button
+      class="absolute top-4 right-4 bg-none border-none cursor-pointer opacity-50 hover:opacity-100 transition-opacity"
+      (click)="closeModal('add')">
+      <svg class="w-[18px] h-[18px] fill-[#2d4a7a]" viewBox="0 0 24 24">
+        <path
+          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+      </svg>
+    </button>
+    <div class="font-display text-[18px] font-bold text-navy-900 mb-1">Add New User</div>
+    <div class="text-[13px] text-[#6b8ab5] mb-5">Create a new hospital staff account</div>
+
+    <div *ngIf="addError"
+      class="px-3.5 py-2.5 rounded-[10px] text-[13px] font-medium mb-3.5 bg-red-600/[.09] text-red-600 border border-red-600/20">
+      {{ addError }}
+    </div>
+
+    <div class="mb-3.5">
+      <label class="block text-[11px] font-semibold text-[#2d4a7a] tracking-[.05em] uppercase mb-1.5">Full Name</label>
+      <input type="text" placeholder="Dr. John Smith"
+        class="modal-input w-full px-3.5 py-2.5 rounded-[10px] text-[13.5px] text-navy-900 outline-none"
+        [(ngModel)]="newUser.fullName">
+    </div>
+    <div class="grid grid-cols-2 gap-3 mb-3.5">
+      <div>
+        <label class="block text-[11px] font-semibold text-[#2d4a7a] tracking-[.05em] uppercase mb-1.5">Username</label>
+        <input type="text" placeholder="dr.johnsmith"
+          class="modal-input w-full px-3.5 py-2.5 rounded-[10px] text-[13.5px] text-navy-900 outline-none"
+          [(ngModel)]="newUser.username">
+      </div>
+      <div>
+        <label class="block text-[11px] font-semibold text-[#2d4a7a] tracking-[.05em] uppercase mb-1.5">Password</label>
+        <input type="password" placeholder="Min. 6 chars"
+          class="modal-input w-full px-3.5 py-2.5 rounded-[10px] text-[13.5px] text-navy-900 outline-none"
+          [(ngModel)]="newUser.password">
+      </div>
+    </div>
+    <div class="mb-3.5">
+      <label class="block text-[11px] font-semibold text-[#2d4a7a] tracking-[.05em] uppercase mb-1.5">Confirm
+        Password</label>
+      <input type="password" placeholder="Repeat password"
+        class="modal-input w-full px-3.5 py-2.5 rounded-[10px] text-[13.5px] text-navy-900 outline-none"
+        [(ngModel)]="newUser.confirmPassword">
+    </div>
+    <div class="mb-3.5">
+      <label class="block text-[11px] font-semibold text-[#2d4a7a] tracking-[.05em] uppercase mb-1.5">Role</label>
+      <div class="flex gap-1.5 flex-wrap">
+        <div
+          *ngFor="let role of [RoleName.DOCTOR, RoleName.ADMIN, RoleName.PHARMACIST, RoleName.LAB_TECHNICIAN, RoleName.USER]"
+          class="px-3 py-1 rounded-full border text-[11.5px] font-medium cursor-pointer transition-all duration-200"
+          [ngClass]="selectedRole === role
+            ? 'bg-blue-500/[.12] border-blue-500/40 text-brand-600 font-semibold'
+            : 'bg-white/60 border-brand-500/20 text-[#2d4a7a] hover:bg-blue-500/[.06]'" (click)="selectRole(role)">
+          {{ role }}
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-2.5 mt-4">
+      <button class="glass-btn flex-1 justify-center py-3 rounded-[10px] text-[13px] font-semibold"
+        (click)="closeModal('add')">Cancel</button>
+      <button
+        class="primary-btn flex-1 justify-center py-3 rounded-[10px] text-[13px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+        (click)="submitAddUser()" [disabled]="isSubmitting">
+        <span *ngIf="!isSubmitting">Create User</span>
+        <span *ngIf="isSubmitting">Creating…</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ VIEW USER MODAL ═══════ -->
+<div class="modal-bg" [class.show]="showViewModal" (click)="closeModal('view')">
+  <div class="modal" (click)="$event.stopPropagation()" *ngIf="selectedUser">
+    <button
+      class="absolute top-4 right-4 bg-none border-none cursor-pointer opacity-50 hover:opacity-100 transition-opacity"
+      (click)="closeModal('view')">
+      <svg class="w-[18px] h-[18px] fill-[#2d4a7a]" viewBox="0 0 24 24">
+        <path
+          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+      </svg>
+    </button>
+    <div class="font-display text-[18px] font-bold text-navy-900 mb-1">User Profile</div>
+    <div class="text-[13px] text-[#6b8ab5] mb-5">Full account details</div>
+    <div class="flex items-center gap-3.5 mb-5">
+      <div
+        class="w-[52px] h-[52px] rounded-full flex items-center justify-center text-[18px] font-bold text-white shadow-[0_4px_14px_rgba(37,99,200,.28)]"
+        [style.background]="getAvatarColor(selectedUser.id)">
+        {{ getInitials(selectedUser.fullName) }}
+      </div>
+      <div>
+        <div class="font-display text-[17px] font-bold text-navy-900">{{ selectedUser.fullName }}</div>
+        <div class="text-[12px] text-[#6b8ab5]">{{ getRolesList(selectedUser.roles) }}</div>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-2.5 mb-4">
+      <div class="bg-white/50 border border-white/80 rounded-[10px] px-3.5 py-2.5">
+        <div class="text-[10px] font-semibold text-[#6b8ab5] uppercase tracking-[.05em] mb-1">User ID</div>
+        <div class="text-[13px] font-medium text-navy-900">{{ selectedUser.id }}</div>
+      </div>
+      <div class="bg-white/50 border border-white/80 rounded-[10px] px-3.5 py-2.5">
+        <div class="text-[10px] font-semibold text-[#6b8ab5] uppercase tracking-[.05em] mb-1">Username</div>
+        <div class="text-[13px] font-medium text-navy-900">@{{ selectedUser.username }}</div>
+      </div>
+      <div class="bg-white/50 border border-white/80 rounded-[10px] px-3.5 py-2.5">
+        <div class="text-[10px] font-semibold text-[#6b8ab5] uppercase tracking-[.05em] mb-1">Account Status</div>
+        <span class="badge" [ngClass]="selectedUser.enabled ? 'badge-enabled' : 'badge-disabled'">
+          {{ selectedUser.enabled ? 'Enabled' : 'Disabled' }}
+        </span>
+      </div>
+      <div class="bg-white/50 border border-white/80 rounded-[10px] px-3.5 py-2.5">
+        <div class="text-[10px] font-semibold text-[#6b8ab5] uppercase tracking-[.05em] mb-1">Created</div>
+        <div class="text-[13px] font-medium text-navy-900">{{ formatDate(selectedUser.createdAt) }}</div>
+      </div>
+      <div class="bg-white/50 border border-white/80 rounded-[10px] px-3.5 py-2.5">
+        <div class="text-[10px] font-semibold text-[#6b8ab5] uppercase tracking-[.05em] mb-1">Last Updated</div>
+        <div class="text-[13px] font-medium text-navy-900">{{ formatDate(selectedUser.updatedAt) }}</div>
+      </div>
+    </div>
+    <button class="danger-btn w-full justify-center py-3 rounded-[10px] text-[13px] font-semibold"
+      (click)="closeModal('view'); openDeleteModal(selectedUser!)">
+      Delete This User
+    </button>
+  </div>
+</div>
+
+<!-- ═══════ DELETE MODAL ═══════ -->
+<div class="modal-bg" [class.show]="showDeleteModal" (click)="closeModal('delete')">
+  <div class="modal max-w-[380px] text-center" (click)="$event.stopPropagation()">
+    <div
+      class="w-[52px] h-[52px] rounded-full bg-red-600/10 border-2 border-red-600/30 flex items-center justify-center mx-auto mb-4">
+      <svg class="w-6 h-6 fill-red-600" viewBox="0 0 24 24">
+        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+      </svg>
+    </div>
+    <div class="font-display text-[18px] font-bold text-navy-900 mb-2">Delete User?</div>
+    <div *ngIf="selectedUser" class="text-[13px] text-[#6b8ab5] mb-0">
+      You are about to permanently delete <strong class="text-navy-900">{{ selectedUser.fullName }}</strong>. This
+      cannot be undone.
+    </div>
+    <div class="flex gap-2.5 mt-5">
+      <button class="glass-btn flex-1 justify-center py-3 rounded-[10px] text-[13px] font-semibold"
+        (click)="closeModal('delete')">Cancel</button>
+      <button class="danger-btn flex-1 justify-center py-3 rounded-[10px] text-[13px] font-semibold disabled:opacity-60"
+        (click)="confirmDelete()" [disabled]="isSubmitting">
+        <span *ngIf="!isSubmitting">Delete</span>
+        <span *ngIf="isSubmitting">Deleting…</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ NOTIFICATIONS MODAL ═══════ -->
+<div class="modal-bg" [class.show]="showNotifModal" (click)="closeModal('notif')">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <button
+      class="absolute top-4 right-4 bg-none border-none cursor-pointer opacity-50 hover:opacity-100 transition-opacity"
+      (click)="closeModal('notif')">
+      <svg class="w-[18px] h-[18px] fill-[#2d4a7a]" viewBox="0 0 24 24">
+        <path
+          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+      </svg>
+    </button>
+    <div class="font-display text-[18px] font-bold text-navy-900 mb-1">All Notifications</div>
+    <div class="text-[13px] text-[#6b8ab5] mb-0">System alerts and updates</div>
+    <div class="max-h-[400px] overflow-y-auto -mx-8 mt-4 border-t border-brand-500/[.08]">
+      <div *ngFor="let notif of notifications()"
+        class="flex items-start gap-3 px-8 py-3.5 border-b border-brand-500/[.06] last:border-b-0 cursor-pointer transition-colors duration-150 hover:bg-white/45"
+        [class.bg-blue-500/[.04]]="!notif.read" (click)="markAsRead(notif)">
+        <div class="pt-1">
+          <div class="w-2 h-2 rounded-full flex-shrink-0" [ngClass]="getNotifDotClass(notif.type)"></div>
+        </div>
+        <div>
+          <div class="text-[13px] font-semibold text-navy-900 mb-0.5">{{ notif.title }}</div>
+          <div class="text-[12px] text-[#2d4a7a] leading-relaxed">{{ notif.message }}</div>
+          <div class="text-[10.5px] text-[#6b8ab5] mt-1">{{ formatDate(notif.createdAt) }}</div>
+        </div>
+      </div>
+      <div *ngIf="notifications().length === 0" class="text-center py-8 text-[13px] text-[#6b8ab5]">No notifications.
+      </div>
+    </div>
+    <button class="glass-btn w-full justify-center py-3 rounded-[10px] text-[13px] font-semibold mt-4"
+      (click)="markAllRead()">Mark all as read</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div *ngIf="showToast"
+  class="fixed bottom-6 right-6 z-[400] bg-white/88 border border-white/95 rounded-2xl backdrop-blur-xl shadow-[0_8px_28px_rgba(37,99,200,.15)] px-5 py-3.5 flex items-center gap-2.5 min-w-[240px] toast-anim">
+  <div class="w-2 h-2 rounded-full flex-shrink-0"
+    [ngClass]="toastType === 'ok' ? 'bg-emerald-600' : toastType === 'err' ? 'bg-red-600' : 'bg-blue-500'">
+  </div>
+  <div class="text-[13px] text-navy-900 font-medium">{{ toastMessage }}</div>
+</div>

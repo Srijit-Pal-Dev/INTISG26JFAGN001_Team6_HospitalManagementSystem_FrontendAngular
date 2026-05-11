@@ -3,7 +3,7 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "analytics": "d00e0412-52ec-485c-b431-3d025de36688"
+    "analytics": false
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -42,9 +42,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
@@ -53,9 +51,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.css"
-            ]
+            "styles": ["src/material-theme.scss", "src/styles.css"]
           },
           "configurations": {
             "production": {
