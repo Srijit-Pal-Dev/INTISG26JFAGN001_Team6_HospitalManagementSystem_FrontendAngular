@@ -79,3 +79,22 @@ body {
   overflow: hidden;
   min-height: 0;
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #invoice-print-area,
+  #invoice-print-area * {
+    visibility: visible;
+  }
+
+  #invoice-print-area {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 40px;
+  }
+}

@@ -10,3 +10,4 @@ export * from './appointment.model';
 export * from './doctor.model';
 export * from './medicine.model';
 export * from './lab-result.model';
+export * from './invoice.model';
