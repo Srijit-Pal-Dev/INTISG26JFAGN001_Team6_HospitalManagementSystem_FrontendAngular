@@ -10,10 +10,9 @@
 
             <div class="hidden md:flex items-center gap-4">
                 @for (link of navLinks(); track link.label) {
-                <a [routerLink]="link.path" (click)="setActive(link.label)"
-                    class="text-xs font-medium transition-all duration-200 px-3 py-1.5 rounded-full" [class]="link.active 
-                ? 'text-white bg-light' 
-                : 'text-gray-700 hover:text-[#1a7fd4]'">
+                <a [routerLink]="link.path" routerLinkActive="text-white hover:text-white hover:bg-light/90 bg-light"
+                    [routerLinkActiveOptions]="{ exact: link.path === '/' }"
+                    class="text-xs font-medium transition-all duration-200 px-3 py-1.5 rounded-full text-gray-700 hover:text-[#1a7fd4]">
                     {{ link.label }}
                 </a>
                 }
@@ -154,7 +153,8 @@
         @if (menuOpen()) {
         <div class="md:hidden pb-4 pt-2 bg-white/95 backdrop-blur-sm rounded-2xl mt-2 px-4 shadow-lg">
             @for (link of navLinks(); track link.label) {
-            <a [routerLink]="link.path" (click)="setActive(link.label); toggleMenu()"
+            <a [routerLink]="link.path" routerLinkActive="text-[#1a7fd4] font-semibold"
+                [routerLinkActiveOptions]="{ exact: link.path === '/' }" (click)="toggleMenu()"
                 class="block py-2 text-sm font-medium text-gray-700 hover:text-[#1a7fd4]">
                 {{ link.label }}
             </a>

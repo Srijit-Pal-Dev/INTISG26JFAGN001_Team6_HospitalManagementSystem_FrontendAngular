@@ -1,0 +1,79 @@
+<app-navbar />
+
+<!-- Hero -->
+<section class="bg-gradient-to-b from-[#eaf4fc] to-white pt-12  pb-20 font-poppins">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20 text-center">
+        <div class="inline-block border border-[#0276C9] px-3 py-1 rounded-full mb-5">
+            <p class="text-xs text-[#0276C9] font-medium">What We Offer</p>
+        </div>
+        <h1 class="text-4xl md:text-5xl  font-semibold text-gray-900 leading-tight mb-6">
+            Healthcare Services<br>
+            <span class="text-[#1a7fd4]">Built Around You</span>
+        </h1>
+        <p class="text-gray-500 text-sm sm:text-lg max-w-2xl mx-auto mb-8">
+            From booking appointments to receiving lab results everything you need to manage your health, in one
+            simple platform.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a routerLink="/login"
+                class="w-full sm:w-auto bg-light hover:bg-[#0276C9] text-white font-semibold px-8 py-3 rounded-full shadow-md transition-colors text-center">
+                Get Started Free
+            </a>
+            <a routerLink="/doctors"
+                class="w-full sm:w-auto border border-gray-300 hover:border-[#1a7fd4] text-gray-700 hover:text-[#1a7fd4] font-semibold px-8 py-3 rounded-full transition-colors text-center">
+                Meet Our Doctors
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Strip -->
+<section class="bg-[#023C6E] py-12 font-poppins">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+            @for (stat of stats; track stat.label) {
+            <div>
+                <p class="text-3xl sm:text-4xl font-bold text-white mb-1">{{ stat.value }}</p>
+                <p class="text-blue-200 text-sm">{{ stat.label }}</p>
+            </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Services Grid (custom, more detailed than solutions component) -->
+<section class="py-20 bg-white font-poppins">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
+        <div class="text-center mb-14">
+            <div class="inline-block border border-[#0276C9] px-3 py-1 rounded-full mb-4">
+                <p class="text-xs text-[#0276C9] font-medium">Our Services</p>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                Everything You Need,<br class="hidden sm:block"> All In One Place
+            </h2>
+            <p class="text-gray-500 text-sm max-w-xl mx-auto">
+                Comprehensive healthcare services designed to make managing your health simple, fast, and stress-free.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            @for (feature of features; track feature.title) {
+            <div class="bg-[#eaf4fc] rounded-2xl p-6 hover:shadow-md transition-shadow">
+                <lucide-icon [img]="feature.icon" class="w-8 h-8 text-[#1a7fd4] mb-4"></lucide-icon>
+
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ feature.title }}</h3>
+                <p class="text-gray-600 text-sm leading-relaxed">{{ feature.description }}</p>
+            </div>
+            }
+        </div>
+
+    </div>
+</section>
+
+<!-- How It Works -->
+<app-how-it-works />
+
+<!-- CTA -->
+<app-cta-banner />
+
+<app-footer />

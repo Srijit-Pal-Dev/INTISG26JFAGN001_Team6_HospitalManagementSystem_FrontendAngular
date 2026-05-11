@@ -28,7 +28,7 @@ import { NotificationType } from '../../core/models/notification-type.enum';
 @Component({
     selector: 'app-navbar',
     standalone: true,
-    imports: [CommonModule, LucideAngularModule, RouterLink],
+    imports: [CommonModule, LucideAngularModule, RouterLink, RouterLinkActive],
     templateUrl: './navbar.component.html'
 })
 export class NavbarComponent implements OnInit {
@@ -73,11 +73,11 @@ export class NavbarComponent implements OnInit {
 
 
     navLinks = signal([
-        { label: 'Home', path: '/', active: true },
-        { label: 'Services', path: '/services', active: false },
-        { label: 'Doctors', path: '/doctors', active: false },
-        { label: 'Lab', path: '/lab', active: false },
-        { label: 'About', path: '/about', active: false },
+        { label: 'Home', path: '/home' },
+        { label: 'Services', path: '/services' },
+        { label: 'Doctors', path: '/doctors' },
+        { label: 'Lab', path: '/lab' },
+        { label: 'About', path: '/about' },
     ]);
 
     contactNumbers = [
@@ -270,12 +270,6 @@ export class NavbarComponent implements OnInit {
         this.contactModalOpen.set(false);
         this.notificationsOpen.set(false);
         this.userMenuOpen.set(false);
-    }
-
-    setActive(label: string) {
-        this.navLinks.update(links =>
-            links.map(link => ({ ...link, active: link.label === label }))
-        );
     }
 
     cleanNumber(n: string): string {

@@ -1,0 +1,120 @@
+<app-navbar />
+
+<!-- Hero -->
+<section class="bg-gradient-to-b from-[#eaf4fc] to-white pt-12 pb-20 font-poppins">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
+        <div class="flex flex-col lg:flex-row items-center gap-12">
+
+            <div class="flex-1 text-center lg:text-left">
+                <div class="inline-block border border-[#0276C9] px-3 py-1 rounded-full mb-5">
+                    <p class="text-xs text-[#0276C9] font-medium">Lab Services</p>
+                </div>
+                <h1 class="text-4xl sm:text-5xl font-semibold text-gray-900 leading-tight mb-5">
+                    Lab Tests &<br>
+                    <span class="text-[#1a7fd4]">Digital Reports</span>
+                </h1>
+                <p class="text-gray-500 text-sm mb-8 max-w-xl">
+                    Book lab tests online, get results digitally. Accurate, fast, and completely paperless all reports
+                    accessible anytime from your dashboard.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
+                    <a routerLink="/login"
+                        class="w-full sm:w-auto bg-light hover:bg-[#0276C9] text-white font-semibold px-8 py-3 rounded-full shadow-md transition-colors text-center">
+                        Book a Test
+                    </a>
+                    <a routerLink="/doctors"
+                        class="w-full sm:w-auto border border-gray-300 hover:border-[#1a7fd4] text-gray-700 hover:text-[#1a7fd4] font-semibold px-8 py-3 rounded-full transition-colors text-center">
+                        Consult a Doctor First
+                    </a>
+                </div>
+            </div>
+
+            <div class="flex-1 w-full">
+                <div class="grid grid-cols-2 gap-4">
+                    @for (benefit of benefits; track benefit.title) {
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                        <lucide-icon [img]="benefit.icon" class="w-6 h-6 text-[#1a7fd4] mb-4"></lucide-icon>
+                        <h4 class="font-bold text-gray-900 text-sm mb-1">{{ benefit.title }}</h4>
+                        <p class="text-gray-500 text-xs leading-relaxed">{{ benefit.desc }}</p>
+                    </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="py-20 bg-[#023C6E] font-poppins">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
+        <div class="text-center mb-14">
+            <h2 class="text-3xl sm:text-4xl font-semibold text-white mb-3">
+                How It Works
+            </h2>
+            <p class="text-blue-200 text-sm max-w-xl mx-auto">
+                Three simple steps from booking to receiving your report.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+            <div class="hidden md:block absolute top-10 left-1/4 right-1/4 h-0.5 bg-blue-700"></div>
+
+            @for (step of steps; track step.step) {
+            <div class="flex flex-col items-center text-center relative">
+                <div
+                    class="w-16 h-16 rounded-full bg-[#1a7fd4] flex items-center justify-center text-white font-semibold text-xl mb-5 shadow-lg z-10">
+                    {{ step.step }}
+                </div>
+                <h3 class="text-white font-semibold text-lg mb-2">{{ step.title }}</h3>
+                <p class="text-blue-200 text-sm leading-relaxed">{{ step.description }}</p>
+            </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Test Categories -->
+<section class="py-20 bg-white font-poppins">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
+        <div class="text-center mb-14">
+            <div class="inline-block border border-[#0276C9] px-3 py-1 rounded-full mb-4">
+                <p class="text-xs text-[#0276C9] font-medium">What We Test</p>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+                Comprehensive Test Categories
+            </h2>
+            <p class="text-gray-500 text-sm max-w-xl mx-auto">
+                Over 150 tests across all major medical categories, analyzed by certified experts.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            @for (cat of testCategories; track cat.name) {
+            <div class="bg-[#eaf4fc] rounded-2xl p-6 hover:shadow-md transition-shadow group">
+                <div class="flex items-start gap-4">
+                    <img [src]="cat.icon" alt="{{ cat.name }}" class="w-28 h-28 object-cover rounded-xl mb-4" />
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <h3 class="font-semibold text-gray-900 text-sm">{{ cat.name }}</h3>
+                            <span
+                                class="text-[10px] font-semibold bg-[#1a7fd4]/10 text-[#1a7fd4] px-2 py-0.5 rounded-full shrink-0">
+                                {{ cat.count }}
+                            </span>
+                        </div>
+                        <p class="text-gray-600 text-xs leading-relaxed">{{ cat.description }}</p>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<app-faq />
+
+<!-- CTA -->
+<app-cta-banner />
+
+<app-footer />

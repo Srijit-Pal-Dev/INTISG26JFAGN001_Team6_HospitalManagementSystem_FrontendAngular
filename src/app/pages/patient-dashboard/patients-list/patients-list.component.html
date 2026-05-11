@@ -8,7 +8,7 @@
                 <div class="inline-block border border-[#0276C9] px-3 py-1 rounded-md mb-4">
                     <p class="text-xs text-[#0276C9] font-medium">Patient Dashboard</p>
                 </div>
-                <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+                <h1 class="text-3xl lg:text-4xl font-semibold text-gray-900 leading-tight">
                     Manage Your Patients
                 </h1>
                 <p class="text-gray-500 text-sm mt-2">
@@ -63,7 +63,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @for (patient of patients(); track patient.id) {
             <div (click)="openPatientDashboard(patient)"
-                class="group bg-white rounded-2xl border border-gray-100 p-5 cursor-pointer hover:shadow-lg hover:border-[#1a7fd4]/40 transition-all">
+                class="group bg-white rounded-2xl border border-gray-200 p-5 cursor-pointer hover:shadow-lg hover:border-[#1a7fd4]/40 transition-all">
 
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-3">

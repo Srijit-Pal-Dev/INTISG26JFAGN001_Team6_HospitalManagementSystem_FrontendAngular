@@ -1,0 +1,138 @@
+<app-navbar />
+
+<!-- Hero -->
+<section class="bg-gradient-to-b from-[#eaf4fc] to-white pt-12 pb-6 font-poppins">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20 text-center">
+        <div class="inline-block border border-[#0276C9] px-3 py-1 rounded-full mb-5">
+            <p class="text-xs text-[#0276C9] font-medium">Our Specialists</p>
+        </div>
+        <h1 class="text-4xl sm:text-5xl  font-semibold text-gray-900 leading-tight mb-4">
+            Meet Our <span class="text-[#1a7fd4]">Doctors</span>
+        </h1>
+        <p class="text-gray-500 text-sm sm:text-lg max-w-2xl mx-auto">
+            Experienced specialists dedicated to providing you the best care across every medical field.
+        </p>
+    </div>
+</section>
+
+<!-- Search + Filter Bar -->
+<section class="bg-white top-[60px] z-30 font-poppins">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20 py-4">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+
+            <div class="relative flex-1">
+                <lucide-icon [img]="SearchIcon"
+                    class="w-4 h-4 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2"></lucide-icon>
+                <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
+                    placeholder="Search by name, specialty, qualification..."
+                    class="w-full bg-gray-50 border border-gray-200 rounded-full text-xs py-2.5 pl-10 pr-4 focus:outline-none focus:border-[#1a7fd4] focus:bg-white transition-colors" />
+            </div>
+
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+                @for (spec of specialties(); track spec) {
+                <button (click)="selectedSpecialty.set(spec)"
+                    class="whitespace-nowrap px-4 py-2 rounded-full text-xs font-semibold transition-all shrink-0"
+                    [class]="selectedSpecialty() === spec
+              ? 'bg-light text-white shadow-sm'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+                    {{ spec }}
+                </button>
+                }
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Doctors Grid -->
+<section class="py-12 bg-white font-poppins">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
+
+        @if (isLoading()) {
+        <div class="flex flex-col items-center justify-center py-24">
+            <div class="w-10 h-10 border-4 border-gray-200 border-t-[#1a7fd4] rounded-full animate-spin mb-4"></div>
+            <p class="text-gray-500 text-sm">Loading doctors...</p>
+        </div>
+
+        } @else if (errorMessage()) {
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
+            <p class="text-red-600 text-sm mb-3">{{ errorMessage() }}</p>
+            <button (click)="clearFilters()"
+                class="text-[#1a7fd4] text-sm font-semibold hover:text-[#0276C9]">Retry</button>
+        </div>
+
+        } @else if (filteredDoctors().length === 0) {
+        <div class="text-center py-20">
+            <p class="text-gray-500 text-base mb-3">No doctors match your search.</p>
+            <button (click)="clearFilters()" class="text-[#1a7fd4] text-sm font-semibold hover:text-[#0276C9]">Clear
+                filters</button>
+        </div>
+
+        } @else {
+        <div class="mb-6 flex items-center justify-between">
+            <p class="text-sm text-gray-500">
+                Showing <span class="font-semibold text-gray-900">{{ filteredDoctors().length }}</span>
+                of {{ doctors().length }} doctors
+            </p>
+            @if (searchQuery() || selectedSpecialty() !== 'All') {
+            <button (click)="clearFilters()" class="text-xs text-gray-500 hover:text-[#1a7fd4] font-semibold underline">
+                Clear filters
+            </button>
+            }
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @for (doctor of filteredDoctors(); track doctor.id) {
+            <div
+                class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all group overflow-hidden">
+
+                <div class="bg-gradient-to-br from-[#eaf4fc] to-[#dbeeff] p-6 flex flex-col items-center">
+                    <div class="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-md mb-3">
+                        <img src="doctor-avatar.png" [alt]="doctor.fullName" class="w-full h-full object-cover" />
+                    </div>
+                    <h3 class="font-bold text-gray-900 text-base text-center leading-tight">
+                        {{ doctor.fullName }}
+                    </h3>
+                    <span
+                        class="mt-1.5 inline-block bg-[#1a7fd4]/10 text-[#1a7fd4] text-[11px] font-semibold px-3 py-0.5 rounded-full">
+                        {{ doctor.specialty }}
+                    </span>
+                </div>
+
+                <div class="p-4 space-y-2">
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <lucide-icon [img]="QualIcon" class="w-3.5 h-3.5 text-[#1a7fd4] shrink-0"></lucide-icon>
+                        <span class="truncate">{{ doctor.qualification }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <lucide-icon [img]="ExpIcon" class="w-3.5 h-3.5 text-[#1a7fd4] shrink-0"></lucide-icon>
+                        <span>{{ doctor.experienceYears }} years experience</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <lucide-icon [img]="RupeeIcon" class="w-3.5 h-3.5 text-[#1a7fd4] shrink-0"></lucide-icon>
+                        <span>Consultation: <span class="font-semibold text-gray-800">₹{{ doctor.consultationFee
+                                }}</span></span>
+                    </div>
+                </div>
+
+                <div class="px-4 pb-4">
+                    <a routerLink="/login"
+                        class="block w-full text-center bg-light hover:bg-[#0276C9] text-white text-xs font-semibold py-2.5 rounded-xl transition-colors">
+                        Book Appointment
+                    </a>
+                </div>
+
+            </div>
+            }
+        </div>
+        }
+    </div>
+</section>
+
+<!-- Reviews -->
+<app-reviews />
+
+<!-- CTA -->
+<app-cta-banner />
+
+<app-footer />
