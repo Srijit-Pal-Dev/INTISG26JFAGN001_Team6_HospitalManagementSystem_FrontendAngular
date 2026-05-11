@@ -1,14 +1,21 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { LoginRequest, RegisterRequest } from '../../core/models/index';
 
+// ── Custom validator — password match ──
+export function passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
+  const password        = group.get('password')?.value;
+  const confirmPassword = group.get('confirmPassword')?.value;
+  return password === confirmPassword ? null : { passwordMismatch: true };
+}
+
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
@@ -16,23 +23,20 @@ export class AuthComponent implements OnInit {
 
   activeTab = signal<'login' | 'signup'>('login');
 
-  loginForm: LoginRequest = {
-    username: '',
-    password: ''
-  };
+  // ── Forms ──
+  loginForm!: FormGroup;
+  signupForm!: FormGroup;
 
-  signupForm: RegisterRequest & { confirmPassword: string } = {
-    username: '',
-    password: '',
-    fullName: '',
-    confirmPassword: ''
-  };
-
-  showLoginPassword = false;
-  showSignupPassword = false;
-  isLoading = false;
-  errorMessage = '';
+  // ── UI state ──
+  isLoading     = false;
+  errorMessage  = '';
   successMessage = '';
+  showLoginPassword  = false;   // ← add back
+  showSignupPassword = false;   // ← add back
+
+  // ── Methods ──
+  toggleLoginPassword()  { this.showLoginPassword  = !this.showLoginPassword;  }
+  toggleSignupPassword() { this.showSignupPassword = !this.showSignupPassword; }
 
   private readonly ROLE_REDIRECT_MAP: Record<string, string> = {
     'ADMIN':          '/dashboard',
@@ -43,111 +47,133 @@ export class AuthComponent implements OnInit {
   };
 
   constructor(
+    private fb: FormBuilder,
     private authService: AuthService,
     private router: Router
   ) {}
- 
+
   ngOnInit(): void {
+    // ── Build login form ──
+    this.loginForm = this.fb.group({
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
+    });
+
+    // ── Build signup form ──
+    this.signupForm = this.fb.group({
+      fullName:        ['', [Validators.required, Validators.minLength(2)]],
+      username:        ['', [Validators.required, Validators.minLength(3)]],
+      password:        ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['',  Validators.required]
+    }, { validators: passwordMatchValidator });
+
+    // ── Already logged in → redirect ──
     if (this.authService.isLoggedIn()) {
       this.redirectByRole(this.authService.getRole());
     }
   }
 
+  // ── Tab switching ──
   switchTab(tab: 'login' | 'signup') {
     this.activeTab.set(tab);
-    this.errorMessage = '';
+    this.errorMessage  = '';
     this.successMessage = '';
+    this.loginForm.reset();
+    this.signupForm.reset();
   }
 
   goHome() {
     this.router.navigate(['']);
   }
 
-  toggleLoginPassword() {
-    this.showLoginPassword = !this.showLoginPassword;
+  // ── Quick control accessors for template ──
+  get lf() { return this.loginForm.controls; }
+  get sf() { return this.signupForm.controls; }
+
+  // ── Per-field error messages ──
+  loginFieldError(field: string): string {
+    const c = this.loginForm.get(field);
+    if (!c || !c.touched || !c.errors) return '';
+    if (c.errors['required'])  return 'This field is required.';
+    if (c.errors['minlength']) return `Minimum ${c.errors['minlength'].requiredLength} characters required.`;
+    return '';
   }
 
-  toggleSignupPassword() {
-    this.showSignupPassword = !this.showSignupPassword;
+  signupFieldError(field: string): string {
+    const c = this.signupForm.get(field);
+    if (!c || !c.touched || !c.errors) return '';
+    if (c.errors['required'])  return 'This field is required.';
+    if (c.errors['minlength']) return `Minimum ${c.errors['minlength'].requiredLength} characters required.`;
+    return '';
   }
 
+  get passwordMismatch(): boolean {
+    return !!this.signupForm.errors?.['passwordMismatch'] &&
+           !!this.signupForm.get('confirmPassword')?.touched;
+  }
+
+  // ── Login ──
   onLogin() {
-    this.errorMessage = '';
+    this.errorMessage  = '';
     this.successMessage = '';
-
-    if (!this.loginForm.username || !this.loginForm.password) {
-      this.errorMessage = 'Please fill in all fields.';
-      return;
-    }
+    this.loginForm.markAllAsTouched();
+    if (this.loginForm.invalid) return;
 
     this.isLoading = true;
 
-    this.authService.login(this.loginForm).subscribe({
-      next: (response) => {
+    const request: LoginRequest = {
+      username: this.loginForm.value.username.trim(),
+      password: this.loginForm.value.password
+    };
+
+    this.authService.login(request).subscribe({
+      next: () => {
         this.isLoading = false;
-        const role = this.authService.getRole();
-        this.redirectByRole(role);
+        this.redirectByRole(this.authService.getRole());
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage =
-          err?.error?.message || 'Invalid username or password.';
+        this.errorMessage = err?.error?.message || 'Invalid username or password.';
       }
     });
   }
 
+  // ── Register ──
   onRegister() {
-    this.errorMessage = '';
+    this.errorMessage  = '';
     this.successMessage = '';
-
-    if (!this.signupForm.username || !this.signupForm.password ||
-        !this.signupForm.fullName || !this.signupForm.confirmPassword) {
-      this.errorMessage = 'Please fill in all fields.';
-      return;
-    }
-
-    if (this.signupForm.password !== this.signupForm.confirmPassword) {
-      this.errorMessage = 'Passwords do not match.';
-      return;
-    }
-
-    if (this.signupForm.password.length < 6) {
-      this.errorMessage = 'Password must be at least 6 characters.';
-      return;
-    }
+    this.signupForm.markAllAsTouched();
+    if (this.signupForm.invalid) return;
 
     this.isLoading = true;
 
     const request: RegisterRequest = {
-      username: this.signupForm.username,
-      password: this.signupForm.password,
-      fullName: this.signupForm.fullName
+      username: this.signupForm.value.username.trim(),
+      password: this.signupForm.value.password,
+      fullName: this.signupForm.value.fullName.trim()
     };
 
     this.authService.register(request).subscribe({
       next: (response) => {
         this.isLoading = false;
-        this.successMessage =
-          response.message || 'Account created! You can now sign in.';
+        this.successMessage = response.message || 'Account created! You can now sign in.';
         setTimeout(() => this.switchTab('login'), 2000);
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage =
-          err?.error?.message || 'Registration failed. Please try again.';
+        this.errorMessage = err?.error?.message || 'Registration failed. Please try again.';
       }
     });
   }
 
+  // ── Role redirect ──
   private redirectByRole(role: string | null) {
     if (!role) {
       this.errorMessage = 'Unable to determine user role.';
       this.authService.clearSession();
       return;
     }
-
     const route = this.ROLE_REDIRECT_MAP[role];
-
     if (route) {
       this.router.navigate([route]);
     } else {

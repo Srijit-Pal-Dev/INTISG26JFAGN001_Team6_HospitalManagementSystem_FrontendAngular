@@ -237,3 +237,26 @@
 .table-wrap::-webkit-scrollbar {
   display: none;
 }
+
+/* ── MODAL INPUT VALIDATION ── */
+.input-error {
+  border-color: rgba(220,38,38,.5) !important;
+  box-shadow: 0 0 0 3px rgba(220,38,38,.1) !important;
+}
+
+.field-error {
+  display: block;
+  font-size: 11px;
+  color: #dc2626;
+  margin-top: 4px;
+  padding-left: 2px;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear { display: none; }
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-contacts-auto-fill-button,
+input[type="password"]::-webkit-password-auto-fill-button {
+  display: none !important;
+  pointer-events: none;
+}

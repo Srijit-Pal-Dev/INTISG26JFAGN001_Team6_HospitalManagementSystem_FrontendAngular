@@ -26,7 +26,6 @@
         </div>
       </div>
       <div class="flex items-center gap-2.5 mt-1">
-        <!-- Search bar -->
         <div
           class="flex items-center gap-2 bg-white/65 border border-white/88 rounded-xl px-3.5 h-[38px] min-w-[200px] backdrop-blur-md">
           <svg class="w-[15px] h-[15px] fill-[#6b8ab5] flex-shrink-0" viewBox="0 0 24 24">
@@ -37,7 +36,6 @@
             class="border-none bg-transparent outline-none text-[13px] text-navy-900 w-full placeholder:text-[#6b8ab5]"
             [(ngModel)]="searchQuery" (input)="onSearch()">
         </div>
-        <!-- Icon buttons -->
         <button
           class="icon-btn w-[38px] h-[38px] rounded-xl border border-white/85 flex items-center justify-center bg-white/62 backdrop-blur-md transition-all duration-200 hover:bg-white/88 relative"
           (click)="openNotifModal()">
@@ -125,11 +123,7 @@
       <!-- Find User panel -->
       <div class="glass-panel rounded-[18px] p-5 mb-5">
         <div class="font-display text-[14px] font-semibold text-navy-900 mb-3">Find User</div>
-
-        <!-- Search inputs — stack on small screens -->
         <div class="grid grid-cols-2 gap-2.5 mb-2.5 max-[700px]:grid-cols-1">
-
-          <!-- Search by ID -->
           <div class="flex gap-1.5">
             <input type="text" placeholder="Search by ID…"
               class="glass-input flex-1 min-w-0 px-3 py-2 rounded-[10px] text-[13px] text-navy-900 outline-none placeholder:text-[#6b8ab5]"
@@ -138,8 +132,6 @@
               class="glass-btn text-[11.5px] font-semibold px-3 py-2 rounded-[10px] whitespace-nowrap flex-shrink-0"
               (click)="onSearchById()">Search</button>
           </div>
-
-          <!-- Search by username -->
           <div class="flex gap-1.5">
             <input type="text" placeholder="Search by username…"
               class="glass-input flex-1 min-w-0 px-3 py-2 rounded-[10px] text-[13px] text-navy-900 outline-none placeholder:text-[#6b8ab5]"
@@ -148,10 +140,7 @@
               class="glass-btn text-[11.5px] font-semibold px-3 py-2 rounded-[10px] whitespace-nowrap flex-shrink-0"
               (click)="onSearchByUsername()">Search</button>
           </div>
-
         </div>
-
-        <!-- Clear button -->
         <button class="glass-btn text-[11.5px] font-semibold px-3 py-1.5 rounded-[10px]"
           (click)="searchResult = null; searchError = ''; searchById = ''; searchByUsername = ''">
           Clear
@@ -286,7 +275,6 @@
           </tbody>
         </table>
 
-        <!-- Empty state -->
         <div *ngIf="filteredUsers().length === 0" class="text-center py-8 px-5 text-[13px] text-[#6b8ab5]">
           <svg class="w-9 h-9 fill-[rgba(107,138,181,.4)] mb-2.5 mx-auto block" viewBox="0 0 24 24">
             <path
@@ -339,9 +327,9 @@
   </main>
 </div>
 
-<!-- ═══════ ADD USER MODAL ═══════ -->
+<!-- ═══════ ADD USER MODAL — Reactive Form ═══════ -->
 <div class="modal-bg" [class.show]="showAddModal" (click)="closeModal('add')">
-  <div class="modal" (click)="$event.stopPropagation()">
+  <div class="modal" (click)="$event.stopPropagation()" [formGroup]="addUserForm">
     <button
       class="absolute top-4 right-4 bg-none border-none cursor-pointer opacity-50 hover:opacity-100 transition-opacity"
       (click)="closeModal('add')">
@@ -350,41 +338,67 @@
           d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
       </svg>
     </button>
+
     <div class="font-display text-[18px] font-bold text-navy-900 mb-1">Add New User</div>
     <div class="text-[13px] text-[#6b8ab5] mb-5">Create a new hospital staff account</div>
 
+    <!-- API error -->
     <div *ngIf="addError"
       class="px-3.5 py-2.5 rounded-[10px] text-[13px] font-medium mb-3.5 bg-red-600/[.09] text-red-600 border border-red-600/20">
       {{ addError }}
     </div>
 
-    <div class="mb-3.5">
+    <!-- Full Name -->
+    <div class="mb-3">
       <label class="block text-[11px] font-semibold text-[#2d4a7a] tracking-[.05em] uppercase mb-1.5">Full Name</label>
-      <input type="text" placeholder="Dr. John Smith"
+      <input type="text" placeholder="Dr. John Smith" formControlName="fullName"
         class="modal-input w-full px-3.5 py-2.5 rounded-[10px] text-[13.5px] text-navy-900 outline-none"
-        [(ngModel)]="newUser.fullName">
+        [class.input-error]="af['fullName'].touched && af['fullName'].invalid">
+      <span class="field-error" *ngIf="addFieldError('fullName')">{{ addFieldError('fullName') }}</span>
     </div>
-    <div class="grid grid-cols-2 gap-3 mb-3.5">
+
+    <!-- Username + Password row -->
+    <div class="grid grid-cols-2 gap-3 mb-3">
       <div>
         <label class="block text-[11px] font-semibold text-[#2d4a7a] tracking-[.05em] uppercase mb-1.5">Username</label>
-        <input type="text" placeholder="dr.johnsmith"
+        <input type="text" placeholder="dr.johnsmith" formControlName="username"
           class="modal-input w-full px-3.5 py-2.5 rounded-[10px] text-[13.5px] text-navy-900 outline-none"
-          [(ngModel)]="newUser.username">
+          [class.input-error]="af['username'].touched && af['username'].invalid">
+        <span class="field-error" *ngIf="addFieldError('username')">{{ addFieldError('username') }}</span>
       </div>
       <div>
         <label class="block text-[11px] font-semibold text-[#2d4a7a] tracking-[.05em] uppercase mb-1.5">Password</label>
-        <input type="password" placeholder="Min. 6 chars"
-          class="modal-input w-full px-3.5 py-2.5 rounded-[10px] text-[13.5px] text-navy-900 outline-none"
-          [(ngModel)]="newUser.password">
+        <div class="relative">
+          <input [type]="showAddPassword ? 'text' : 'password'" placeholder="Min. 6 chars" formControlName="password"
+            class="modal-input w-full px-3.5 pr-10 py-2.5 rounded-[10px] text-[13.5px] text-navy-900 outline-none"
+            [class.input-error]="af['password'].touched && af['password'].invalid">
+          <button type="button" (click)="toggleAddPassword()"
+            class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-0 flex items-center text-[#6b8ab5] hover:text-brand-500 transition-colors">
+            <svg *ngIf="!showAddPassword" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+            </svg>
+            <svg *ngIf="showAddPassword" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27z" />
+            </svg>
+          </button>
+        </div>
+        <span class="field-error" *ngIf="addFieldError('password')">{{ addFieldError('password') }}</span>
       </div>
     </div>
-    <div class="mb-3.5">
+
+    <!-- Confirm Password -->
+    <div class="mb-3">
       <label class="block text-[11px] font-semibold text-[#2d4a7a] tracking-[.05em] uppercase mb-1.5">Confirm
         Password</label>
-      <input type="password" placeholder="Repeat password"
+      <input type="password" placeholder="Repeat password" formControlName="confirmPassword"
         class="modal-input w-full px-3.5 py-2.5 rounded-[10px] text-[13.5px] text-navy-900 outline-none"
-        [(ngModel)]="newUser.confirmPassword">
+        [class.input-error]="af['confirmPassword'].touched && addPasswordMismatch">
+      <span class="field-error" *ngIf="addPasswordMismatch">Passwords do not match.</span>
     </div>
+
+    <!-- Role -->
     <div class="mb-3.5">
       <label class="block text-[11px] font-semibold text-[#2d4a7a] tracking-[.05em] uppercase mb-1.5">Role</label>
       <div class="flex gap-1.5 flex-wrap">
@@ -398,6 +412,8 @@
         </div>
       </div>
     </div>
+
+    <!-- Actions -->
     <div class="flex gap-2.5 mt-4">
       <button class="glass-btn flex-1 justify-center py-3 rounded-[10px] text-[13px] font-semibold"
         (click)="closeModal('add')">Cancel</button>
@@ -477,8 +493,8 @@
     </div>
     <div class="font-display text-[18px] font-bold text-navy-900 mb-2">Delete User?</div>
     <div *ngIf="selectedUser" class="text-[13px] text-[#6b8ab5] mb-0">
-      You are about to permanently delete <strong class="text-navy-900">{{ selectedUser.fullName }}</strong>. This
-      cannot be undone.
+      You are about to permanently delete
+      <strong class="text-navy-900">{{ selectedUser.fullName }}</strong>. This cannot be undone.
     </div>
     <div class="flex gap-2.5 mt-5">
       <button class="glass-btn flex-1 justify-center py-3 rounded-[10px] text-[13px] font-semibold"
@@ -518,7 +534,8 @@
           <div class="text-[10.5px] text-[#6b8ab5] mt-1">{{ formatDate(notif.createdAt) }}</div>
         </div>
       </div>
-      <div *ngIf="notifications().length === 0" class="text-center py-8 text-[13px] text-[#6b8ab5]">No notifications.
+      <div *ngIf="notifications().length === 0" class="text-center py-8 text-[13px] text-[#6b8ab5]">
+        No notifications.
       </div>
     </div>
     <button class="glass-btn w-full justify-center py-3 rounded-[10px] text-[13px] font-semibold mt-4"
