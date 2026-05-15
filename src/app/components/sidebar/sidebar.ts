@@ -17,6 +17,7 @@ export class SidebarComponent implements OnInit {
 
   @Output() notifClicked  = new EventEmitter<void>();
   @Output() logoutClicked = new EventEmitter<void>();
+  @Output() navClicked = new EventEmitter<string>();
 
   isCollapsed = false;
   userRole: string | null = null;
@@ -38,8 +39,9 @@ export class SidebarComponent implements OnInit {
       { label: 'Notifications', route: 'notifications', icon: 'bell'       },
     ],
     LAB_TECHNICIAN: [
-      { label: 'Dashboard',     route: 'overview',      icon: 'dashboard' },
-      { label: 'Notifications', route: 'notifications', icon: 'bell'      },
+      { label: 'Dashboard',     route: 'dashboard',     icon: 'dashboard' },
+      { label: 'Test Queue',    route: 'queue',          icon: 'users'     },
+      { label: 'Notifications', route: 'notifications',  icon: 'bell'      },
     ],
     USER: [
       { label: 'Dashboard',     route: 'overview',      icon: 'dashboard' },
@@ -108,7 +110,9 @@ export class SidebarComponent implements OnInit {
       this.router.navigate(['/pharmacy-dashboard', item.route]);
     } else if (item.route === 'notifications') {
       this.notifClicked.emit();
-    }
+    } else {
+      this.navClicked.emit(item.route);
+  }
   }
 
   onLogout() {
