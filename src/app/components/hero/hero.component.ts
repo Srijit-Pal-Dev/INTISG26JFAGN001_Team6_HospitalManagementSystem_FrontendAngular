@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 
 @Component({
     selector: 'app-hero',
@@ -8,4 +8,13 @@ import { RouterLink } from '@angular/router';
     imports: [CommonModule],
     templateUrl: './hero.component.html'
 })
-export class HeroComponent { }
+export class HeroComponent {
+
+    constructor(
+        private router: Router
+    ) {}
+
+    goServices() {
+        this.router.navigate(['/services']);
+    }
+ }

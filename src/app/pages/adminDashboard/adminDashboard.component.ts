@@ -1,157 +1,77 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../core/services/user.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { AuthService } from '../../core/services/auth.service';
-import {
-  UserResponse,
-  CreateUserRequest,
-  NotificationResponse,
-  RoleName
-} from '../../core/models/index';
+import { UserResponse, CreateUserRequest, NotificationResponse, RoleName } from '../../core/models/index';
 import { SidebarComponent } from '../../components/sidebar/sidebar';
-
-export function passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
-  const password        = group.get('password')?.value;
-  const confirmPassword = group.get('confirmPassword')?.value;
-  return password === confirmPassword ? null : { passwordMismatch: true };
-}
+import { UserTableComponent } from './user-table/user-table.component';
+import { NotificationsListComponent } from './notifications-list/notifications-list.component';
+import { AddUserModalComponent } from './modals/add-user-modal/add-user-modal.component';
+import { ViewUserModalComponent } from './modals/view-user-modal/view-user-modal.component';
+import { NotifModalComponent } from './modals/notif-modal/notif-modal.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, SidebarComponent],
+  imports: [
+    CommonModule, FormsModule, SidebarComponent,
+    UserTableComponent, NotificationsListComponent,
+    AddUserModalComponent, ViewUserModalComponent, NotifModalComponent
+  ],
   templateUrl: './adminDashboard.component.html',
   styleUrls: ['./adminDashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
 
-  users               = signal<UserResponse[]>([]);
-  notifications       = signal<NotificationResponse[]>([]);
-  filteredUsers       = signal<UserResponse[]>([]);
+  users           = signal<UserResponse[]>([]);
+  notifications   = signal<NotificationResponse[]>([]);
+  filteredUsers   = signal<UserResponse[]>([]);
 
-  isLoadingUsers      = false;
-  isLoadingNotifs     = false;
-  showAddModal        = false;
-  showViewModal       = false;
-  showDeleteModal     = false;
-  showNotifModal      = false;
-  isSubmitting        = false;
+  isLoadingUsers  = false;
+  isLoadingNotifs = false;
+  isSubmitting    = false;
 
-  searchQuery         = '';
-  activeFilter        = 'all';
+  showAddModal    = false;
+  showViewModal   = false;
+  showDeleteModal = false;
+  showNotifModal  = false;
+
+  searchQuery     = '';
+  activeFilter    = 'all';
   selectedUser: UserResponse | null = null;
 
-  totalUsers          = 0;
-  activeUsers         = 0;
-  enabledUsers        = 0;
-  disabledUsers       = 0;
-  unreadCount         = 0;
+  totalUsers    = 0;
+  activeUsers   = 0;
+  enabledUsers  = 0;
+  disabledUsers = 0;
+  unreadCount   = 0;
 
-  toastMessage        = '';
+  toastMessage = '';
   toastType: 'ok' | 'err' | 'info' = 'info';
-  showToast           = false;
+  showToast    = false;
 
-  addUserForm!: FormGroup;
-  selectedRole: RoleName = RoleName.DOCTOR;
   addError = '';
 
-  searchById          = '';
-  searchByUsername    = '';
+  searchById       = '';
+  searchByUsername = '';
   searchResult: UserResponse | null = null;
-  searchError         = '';
-
-  showAddPassword        = false;
-  showAddConfirmPassword = false;
-
-  toggleAddPassword()        { this.showAddPassword        = !this.showAddPassword;        }
-  toggleAddConfirmPassword() { this.showAddConfirmPassword = !this.showAddConfirmPassword; }
-
-  RoleName = RoleName;
+  searchError      = '';
 
   constructor(
-    private fb: FormBuilder,
     private userService: UserService,
     private notificationService: NotificationService,
     private authService: AuthService,
     private router: Router
   ) {}
 
-  get currentUserId(): number {
-    return this.authService.getUserId() ?? 1;
-  }
+  get currentUserId(): number { return this.authService.getUserId() ?? 1; }
 
   ngOnInit() {
-    this.buildAddUserForm();
     this.loadUsers();
     this.loadNotifications();
-  }
-
-  private buildAddUserForm() {
-    this.addUserForm = this.fb.group({
-      fullName:        ['', [Validators.required, Validators.minLength(2)]],
-      username:        ['', [Validators.required, Validators.minLength(3)]],
-      password:        ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['',  Validators.required]
-    }, { validators: passwordMatchValidator });
-  }
-
-  get af() { return this.addUserForm.controls; }
-
-  addFieldError(field: string): string {
-    const c = this.addUserForm.get(field);
-    if (!c || !c.touched || !c.errors) return '';
-    if (c.errors['required'])  return 'This field is required.';
-    if (c.errors['minlength']) return `Minimum ${c.errors['minlength'].requiredLength} characters required.`;
-    return '';
-  }
-
-  get addPasswordMismatch(): boolean {
-    return !!this.addUserForm.errors?.['passwordMismatch'] &&
-           !!this.addUserForm.get('confirmPassword')?.touched;
-  }
-
-  openAddModal() {
-    this.addUserForm.reset();
-    this.selectedRole = RoleName.DOCTOR;
-    this.addError     = '';
-    this.showAddPassword = false;
-    this.showAddConfirmPassword = false;
-    this.showAddModal = true;
-  }
-
-  selectRole(role: RoleName) {
-    this.selectedRole = role;
-  }
-
-  submitAddUser() {
-    this.addError = '';
-    this.addUserForm.markAllAsTouched();
-    if (this.addUserForm.invalid) return;
-
-    this.isSubmitting = true;
-
-    const request: CreateUserRequest = {
-      fullName: this.addUserForm.value.fullName.trim(),
-      username: this.addUserForm.value.username.trim(),
-      password: this.addUserForm.value.password,
-      roles:    [this.selectedRole]
-    };
-
-    this.userService.createUser(request).subscribe({
-      next: (user) => {
-        this.isSubmitting = false;
-        this.showAddModal = false;
-        this.toast(`${user.fullName} created successfully`, 'ok');
-        this.loadUsers();
-      },
-      error: (err) => {
-        this.isSubmitting = false;
-        this.addError = err?.error?.message || 'Failed to create user.';
-      }
-    });
   }
 
   loadUsers() {
@@ -206,11 +126,28 @@ export class DashboardComponent implements OnInit {
     this.filteredUsers.set(result);
   }
 
-  onSearch()             { this.applyFilter(); }
-  setFilter(f: string)   { this.activeFilter = f; this.applyFilter(); }
+  onSearch()           { this.applyFilter(); }
+  setFilter(f: string) { this.activeFilter = f; this.applyFilter(); }
+
+  onUserCreated(request: CreateUserRequest) {
+    this.addError    = '';
+    this.isSubmitting = true;
+    this.userService.createUser(request).subscribe({
+      next: (user) => {
+        this.isSubmitting = false;
+        this.showAddModal = false;
+        this.toast(`${user.fullName} created successfully`, 'ok');
+        this.loadUsers();
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        this.addError = err?.error?.message || 'Failed to create user.';
+      }
+    });
+  }
 
   viewUser(user: UserResponse) {
-    this.selectedUser = user;
+    this.selectedUser  = user;
     this.showViewModal = true;
   }
 
@@ -251,16 +188,12 @@ export class DashboardComponent implements OnInit {
   onSearchByUsername() {
     this.searchError  = '';
     this.searchResult = null;
-    if (!this.searchByUsername.trim()) {
-      this.searchError = 'Enter a username.'; return;
-    }
+    if (!this.searchByUsername.trim()) { this.searchError = 'Enter a username.'; return; }
     this.userService.getUserByUsername(this.searchByUsername.trim()).subscribe({
       next: (user) => { this.searchResult = user; },
       error: ()     => { this.searchError = 'No user found with that username.'; }
     });
   }
-
-  openNotifModal() { this.showNotifModal = true; }
 
   markAsRead(notif: NotificationResponse) {
     if (notif.read) return;
@@ -301,14 +234,6 @@ export class DashboardComponent implements OnInit {
     return map[role] || 'badge-user';
   }
 
-  getNotifDotClass(type: string): string {
-    const map: Record<string, string> = {
-      INFO: 'dot-info', WARNING: 'dot-warn',
-      ERROR: 'dot-err', SUCCESS: 'dot-ok'
-    };
-    return map[type] || 'dot-info';
-  }
-
   formatDate(instant: string): string {
     if (!instant) return '—';
     return new Date(instant).toLocaleDateString('en-US', {
@@ -323,15 +248,5 @@ export class DashboardComponent implements OnInit {
     setTimeout(() => this.showToast = false, 3000);
   }
 
-  closeModal(modal: 'add' | 'view' | 'delete' | 'notif') {
-    if (modal === 'add')    this.showAddModal    = false;
-    if (modal === 'view')   this.showViewModal   = false;
-    if (modal === 'delete') this.showDeleteModal = false;
-    if (modal === 'notif')  this.showNotifModal  = false;
-  }
-
   logout() { this.authService.logout(); }
-
-  getRolesList(roles: RoleName[]): string { return roles.join(', '); }
 }
-
