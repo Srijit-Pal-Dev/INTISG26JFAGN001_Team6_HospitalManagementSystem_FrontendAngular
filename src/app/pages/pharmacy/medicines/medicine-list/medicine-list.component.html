@@ -1,0 +1,104 @@
+<div class="medicine-list">
+  <div class="list-header">
+    <div>
+      <h2 class="page-title">List of Medicines</h2>
+      <p class="page-subtitle">Check the availability and the stock of the medicines.</p>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <span class="section-label">Select Medicine</span>
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Search by name or ID (e.g. 3)" [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearch($event)" />
+      <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="search-mode" *ngIf="searchQuery">
+    <i class="fas" [class.fa-hashtag]="isNumericSearch" [class.fa-font]="!isNumericSearch"></i>
+    Searching by {{ isNumericSearch ? 'Medicine ID' : 'name' }}:
+    <strong>{{ searchQuery }}</strong>
+  </div>
+
+  <div *ngIf="loading" class="state-loading">
+    <i class="fas fa-spinner fa-spin"></i> Loading medicines...
+  </div>
+  <div *ngIf="error && !loading" class="state-error">
+    <i class="fas fa-exclamation-circle"></i> {{ error }}
+  </div>
+  <div *ngIf="!loading && !error && medicines.length === 0" class="state-empty">
+    <i class="fas fa-pills"></i> No medicines found for "{{ searchQuery }}".
+  </div>
+
+  <div *ngIf="!loading && medicines.length > 0" class="medicines-grid">
+    <div *ngFor="let medicine of medicines; trackBy: trackById" class="medicine-card card"
+      [class.selected]="hasSelection(medicine.id)">
+
+      <div class="card-top">
+        <span class="med-id-tag">Medicine ID: {{ medicine.id }}</span>
+        <button class="btn-edit-med" (click)="goToEdit(medicine)" title="Edit medicine">
+          <i class="fas fa-pen"></i>
+        </button>
+      </div>
+
+      <div class="med-name-row">
+        <span class="med-name" (click)="goToDetail(medicine)" title="View full details">
+          {{ medicine.name }}
+          <span class="med-strength">{{ medicine.dosageStrength }}</span>
+        </span>
+        <span class="rx-pill" *ngIf="medicine.requiresPrescription" title="Prescription required">Rx</span>
+      </div>
+
+      <div class="card-visual">
+        <img [src]="getMedicineIcon(medicine)" [alt]="medicine.name" class="med-icon" />
+      </div>
+
+      <div class="stock-section">
+        <div class="stock-badge" [class.low]="medicine.stockQuantity < 20">
+          <i class="fas fa-box-open"></i>
+          Available: <strong>{{ medicine.stockQuantity }}</strong>
+          <span class="low-warn" *ngIf="medicine.stockQuantity < 20">Low Stock</span>
+        </div>
+
+        <div class="qty-selector">
+          <div class="qty-control">
+            <button type="button" class="qty-btn" (click)="decrement(medicine.id)">
+              <i class="fas fa-minus"></i>
+            </button>
+            <input type="number" min="1" [max]="medicine.stockQuantity" class="qty-input"
+              [value]="getQty(medicine.id)" (input)="setQty(medicine.id, $event)" />
+            <button type="button" class="qty-btn" (click)="increment(medicine.id, medicine.stockQuantity)">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          <button class="btn-select" [class.active]="hasSelection(medicine.id)" (click)="toggleSelect(medicine)">
+            <i class="fas" [class.fa-check]="hasSelection(medicine.id)"
+              [class.fa-cart-plus]="!hasSelection(medicine.id)"></i>
+            {{ hasSelection(medicine.id) ? 'Selected' : 'Select' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="selection-bar" *ngIf="selections.size > 0">
+    <i class="fas fa-pills"></i>
+    <span>{{ selections.size }} medicine{{ selections.size > 1 ? 's' : '' }} selected</span>
+    <button class="btn-clear-sel" (click)="clearSelections()">
+      <i class="fas fa-times"></i> Clear
+    </button>
+  </div>
+
+  <div class="action-row">
+    <button class="btn-primary" (click)="goToAdd()">
+      Add medicines to the inventory <i class="fas fa-chevron-right"></i>
+    </button>
+    <button class="btn-primary" [disabled]="selections.size === 0" (click)="goToDispense()">
+      Continue to create dispense <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+</div>
