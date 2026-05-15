@@ -1,0 +1,73 @@
+<div class="medicine-detail">
+
+  <div class="detail-header">
+    <button class="btn-back" (click)="back()">
+      <i class="fas fa-arrow-left"></i> Back
+    </button>
+    <h2 class="page-title">Medicine Details</h2>
+    <button class="btn-primary btn-sm" (click)="edit()">
+      <i class="fas fa-pen"></i> Edit
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="state-loading">
+    <i class="fas fa-spinner fa-spin"></i> Loading...
+  </div>
+  <div *ngIf="error" class="state-error">
+    <i class="fas fa-exclamation-circle"></i> {{ error }}
+  </div>
+
+  <div *ngIf="medicine && !loading" class="detail-card card">
+    <div class="detail-top">
+      <img [src]="getIcon()" [alt]="medicine.name" class="detail-img" />
+      <div class="detail-title-block">
+        <div class="med-id-badge">MId: {{ medicine.id }}</div>
+        <h3 class="med-name">{{ medicine.name }}</h3>
+        <span class="rx-badge" [class.required]="medicine.requiresPrescription">
+          <i class="fas" [class.fa-file-prescription]="medicine.requiresPrescription"
+            [class.fa-check-circle]="!medicine.requiresPrescription"></i>
+          {{ medicine.requiresPrescription ? 'Prescription Required' : 'OTC – No Prescription' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-row">
+        <span class="detail-label">Category</span>
+        <span class="detail-value">{{ medicine.category }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Manufacturer</span>
+        <span class="detail-value">{{ medicine.manufacturer }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Unit</span>
+        <span class="detail-value">{{ medicine.unit }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Dosage Strength</span>
+        <span class="detail-value">{{ medicine.dosageStrength }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Price per Unit</span>
+        <span class="detail-value price">₹ {{ medicine.pricePerUnit | number:'1.2-2' }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Stock Quantity</span>
+        <span class="detail-value stock" [class.low]="medicine.stockQuantity < 20">
+          <i class="fas fa-box-open"></i>
+          {{ medicine.stockQuantity }} units
+          <span class="low-tag" *ngIf="medicine.stockQuantity < 20">Low Stock</span>
+        </span>
+      </div>
+      <div class="detail-row" *ngIf="medicine.createdAt">
+        <span class="detail-label">Added On</span>
+        <span class="detail-value">{{ medicine.createdAt | date:'dd MMM yyyy, hh:mm a' }}</span>
+      </div>
+      <div class="detail-row" *ngIf="medicine.updatedAt">
+        <span class="detail-label">Last Updated</span>
+        <span class="detail-value">{{ medicine.updatedAt | date:'dd MMM yyyy, hh:mm a' }}</span>
+      </div>
+    </div>
+  </div>
+</div>
