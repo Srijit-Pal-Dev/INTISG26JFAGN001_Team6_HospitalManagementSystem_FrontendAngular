@@ -28,8 +28,8 @@ export class AuthComponent implements OnInit {
   isLoading     = false;
   errorMessage  = '';
   successMessage = '';
-  showLoginPassword  = false;   // ← add back
-  showSignupPassword = false;   // ← add back
+  showLoginPassword  = false;
+  showSignupPassword = false;
 
   toggleLoginPassword()  { this.showLoginPassword  = !this.showLoginPassword;  }
   toggleSignupPassword() { this.showSignupPassword = !this.showSignupPassword; }
