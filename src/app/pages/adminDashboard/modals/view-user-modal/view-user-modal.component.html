@@ -1,5 +1,5 @@
 <div class="modal-bg" [class.show]="show && !!selectedUser" (click)="closed.emit()">
-  <div class="modal" (click)="$event.stopPropagation()">
+  <div class="modal" (click)="$event.stopPropagation()" *ngIf="selectedUser as user">
 
     <button class="absolute top-4 right-4 bg-none border-none cursor-pointer opacity-50 hover:opacity-100 transition-opacity"
       (click)="closed.emit()">
@@ -13,42 +13,42 @@
 
     <div class="flex items-center gap-3.5 mb-5">
       <div class="w-[52px] h-[52px] rounded-full flex items-center justify-center text-[18px] font-bold text-white shadow-[0_4px_14px_rgba(37,99,200,.28)]"
-        [style.background]="getAvatarColor(selectedUser.id)">
-        {{ getInitials(selectedUser.fullName) }}
+        [style.background]="getAvatarColor(user.id)">
+        {{ getInitials(user.fullName) }}
       </div>
       <div>
-        <div class="font-display text-[17px] font-bold text-navy-900">{{ selectedUser.fullName }}</div>
-        <div class="text-[12px] text-[#6b8ab5]">{{ getRolesList(selectedUser.roles) }}</div>
+        <div class="font-display text-[17px] font-bold text-navy-900">{{ user.fullName }}</div>
+        <div class="text-[12px] text-[#6b8ab5]">{{ getRolesList(user.roles) }}</div>
       </div>
     </div>
 
     <div class="grid grid-cols-2 gap-2.5 mb-4">
       <div class="bg-white/50 border border-white/80 rounded-[10px] px-3.5 py-2.5">
         <div class="text-[10px] font-semibold text-[#6b8ab5] uppercase tracking-[.05em] mb-1">User ID</div>
-        <div class="text-[13px] font-medium text-navy-900">{{ selectedUser.id }}</div>
+        <div class="text-[13px] font-medium text-navy-900">{{ user.id }}</div>
       </div>
       <div class="bg-white/50 border border-white/80 rounded-[10px] px-3.5 py-2.5">
         <div class="text-[10px] font-semibold text-[#6b8ab5] uppercase tracking-[.05em] mb-1">Username</div>
-        <div class="text-[13px] font-medium text-navy-900">@{{ selectedUser.username }}</div>
+        <div class="text-[13px] font-medium text-navy-900">@{{ user.username }}</div>
       </div>
       <div class="bg-white/50 border border-white/80 rounded-[10px] px-3.5 py-2.5">
         <div class="text-[10px] font-semibold text-[#6b8ab5] uppercase tracking-[.05em] mb-1">Account Status</div>
-        <span class="badge" [ngClass]="selectedUser.enabled ? 'badge-enabled' : 'badge-disabled'">
-          {{ selectedUser.enabled ? 'Enabled' : 'Disabled' }}
+        <span class="badge" [ngClass]="user.enabled ? 'badge-enabled' : 'badge-disabled'">
+          {{ user.enabled ? 'Enabled' : 'Disabled' }}
         </span>
       </div>
       <div class="bg-white/50 border border-white/80 rounded-[10px] px-3.5 py-2.5">
         <div class="text-[10px] font-semibold text-[#6b8ab5] uppercase tracking-[.05em] mb-1">Created</div>
-        <div class="text-[13px] font-medium text-navy-900">{{ formatDate(selectedUser.createdAt) }}</div>
+        <div class="text-[13px] font-medium text-navy-900">{{ formatDate(user.createdAt) }}</div>
       </div>
       <div class="bg-white/50 border border-white/80 rounded-[10px] px-3.5 py-2.5">
         <div class="text-[10px] font-semibold text-[#6b8ab5] uppercase tracking-[.05em] mb-1">Last Updated</div>
-        <div class="text-[13px] font-medium text-navy-900">{{ formatDate(selectedUser.updatedAt) }}</div>
+        <div class="text-[13px] font-medium text-navy-900">{{ formatDate(user.updatedAt) }}</div>
       </div>
     </div>
 
     <button class="danger-btn w-full justify-center py-3 rounded-[10px] text-[13px] font-semibold"
-      (click)="closed.emit(); deleteRequested.emit(selectedUser)">
+      (click)="closed.emit(); deleteRequested.emit(user)">
       Delete This User
     </button>
 
