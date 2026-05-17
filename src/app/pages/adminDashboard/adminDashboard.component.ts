@@ -12,6 +12,7 @@ import { NotificationsListComponent } from './notifications-list/notifications-l
 import { AddUserModalComponent } from './modals/add-user-modal/add-user-modal.component';
 import { ViewUserModalComponent } from './modals/view-user-modal/view-user-modal.component';
 import { NotifModalComponent } from './modals/notif-modal/notif-modal.component';
+import { ChartsComponent } from './charts/charts.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,7 +20,7 @@ import { NotifModalComponent } from './modals/notif-modal/notif-modal.component'
   imports: [
     CommonModule, FormsModule, SidebarComponent,
     UserTableComponent, NotificationsListComponent,
-    AddUserModalComponent, ViewUserModalComponent, NotifModalComponent
+    AddUserModalComponent, ViewUserModalComponent, NotifModalComponent, ChartsComponent
   ],
   templateUrl: './adminDashboard.component.html',
   styleUrls: ['./adminDashboard.component.css']

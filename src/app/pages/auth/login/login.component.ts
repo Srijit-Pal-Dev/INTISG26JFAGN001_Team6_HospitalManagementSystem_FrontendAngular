@@ -117,7 +117,7 @@ export class LoginComponent {
       next: () => {
         this.fpLoading  = false;
         this.fpSuccess  = 'Password reset successfully. You can now sign in.';
-        setTimeout(() => this.backToLogin(), 2500);
+        setTimeout(() => this.backToLogin(), 1500);
       },
       error: (err) => {
         this.fpLoading = false;
