@@ -140,12 +140,9 @@
         (deleteUser)="openDeleteModal($event)"
         (addUserClicked)="openAddModal()" />
 
-      <!-- <app-notifications-list
-        [notifications]="notifications()"
-        [isLoading]="isLoadingNotifs"
-        (markRead)="markAsRead($event)"
-        (markAllRead)="markAllRead()" /> -->
       <app-charts [users]="users()" />
+
+      <app-mediclaim />
 
     </div>
   </main>

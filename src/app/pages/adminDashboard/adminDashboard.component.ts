@@ -13,13 +13,14 @@ import { AddUserModalComponent } from './modals/add-user-modal/add-user-modal.co
 import { ViewUserModalComponent } from './modals/view-user-modal/view-user-modal.component';
 import { NotifModalComponent } from './modals/notif-modal/notif-modal.component';
 import { ChartsComponent } from './charts/charts.component';
+import { MediclaimComponent } from './mediclaim/mediclaim.component'; 
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     CommonModule, FormsModule, SidebarComponent,
-    UserTableComponent, ChartsComponent,
+    UserTableComponent, ChartsComponent, MediclaimComponent,
     AddUserModalComponent, ViewUserModalComponent, NotifModalComponent, 
   ],
   templateUrl: './adminDashboard.component.html',

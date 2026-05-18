@@ -53,6 +53,8 @@ export interface InvoiceDTO {
     appointment?: AppointmentDTO;
 }
 
+export type MediclaimStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
 export interface MediclaimDTO {
     id?: number;
     patientId: number;
@@ -62,7 +64,7 @@ export interface MediclaimDTO {
     insurerName: string;
     coveragePercentage: number;
     refundAmount?: number;
-    status?: string;
+    status?: MediclaimStatus;
     appliedAt?: string;
     processedAt?: string;
 }
