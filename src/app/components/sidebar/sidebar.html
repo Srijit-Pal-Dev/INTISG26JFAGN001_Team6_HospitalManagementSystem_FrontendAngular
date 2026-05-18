@@ -31,6 +31,12 @@
         <svg *ngIf="item.icon === 'dashboard'" class="nav-icon" viewBox="0 0 24 24">
           <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
         </svg>
+        <svg *ngIf="item.icon === 'medicines'" class="nav-icon" viewBox="0 0 24 24">
+          <path d="M6.5 10h-2v5h2v-5zm4 0h-2v5h2v-5zm8.5 7H4v1.5c0 .84.66 1.5 1.5 1.5h13c.84 0 1.5-.66 1.5-1.5V17zm-4-7h-2v5h2v-5zM11.99 2C6.47 2 2 6.48 2 12h20c0-5.52-4.47-10-10.01-10z"/>
+        </svg>
+        <svg *ngIf="item.icon === 'dispenses'" class="nav-icon" viewBox="0 0 24 24">
+          <path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 5h-2V5h2v3zM4 19h16v2H4z"/>
+        </svg>
 
         <span class="nav-label">{{ item.label }}</span>
 

@@ -6,7 +6,10 @@ import { environment } from '../../../environments/environment';
 import {
   LoginRequest,
   RegisterRequest,
-  AuthResponse
+  AuthResponse,
+  ForgotPasswordResponse,
+  VerifyOtpResponse,
+  ResetPasswordResponse
 } from '../models/index';
 
 @Injectable({
@@ -128,4 +131,26 @@ export class AuthService {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
   }
+
+  forgotPassword(email: string): Observable<ForgotPasswordResponse> {
+    return this.http.post<ForgotPasswordResponse>(
+      `${this.baseUrl}/forgot-password`,
+      { email }
+    );
+  }
+
+  verifyOtp(email: string, otp: string): Observable<VerifyOtpResponse> {
+    return this.http.post<VerifyOtpResponse>(
+      `${this.baseUrl}/verify-otp`,
+      { email, otp }
+    );
+  }
+
+  resetPassword(resetToken: string, newPassword: string): Observable<ResetPasswordResponse> {
+    return this.http.post<ResetPasswordResponse>(
+      `${this.baseUrl}/reset-password`,
+      { resetToken, newPassword }
+    );
+  }
+
 }

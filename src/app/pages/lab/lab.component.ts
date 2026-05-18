@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LabService } from '../../core/services/lab.service';
 import { AuthService } from '../../core/services/auth.service';
+import { SidebarComponent } from '../../components/sidebar/sidebar';
 
 @Component({
   selector: 'app-lab',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe],
+  imports: [CommonModule, FormsModule, DatePipe, SidebarComponent],
   templateUrl: './lab.component.html',
   styleUrls: ['./lab.component.css']
 })
@@ -193,6 +194,10 @@ export class LabComponent implements OnInit {
 
   userInitials(): string {
     return this.currentUser.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  }
+
+  setView(view: string) {
+    this.currentView = view as 'dashboard' | 'queue';
   }
 
   // ── Auth ─────────────────────────────────────

@@ -39,7 +39,7 @@
 /* ══════════════════════════
    SIDEBAR
 ══════════════════════════ */
-.sidebar {
+/* .sidebar {
   width:248px; flex-shrink:0;
   display:flex; flex-direction:column;
   height:100vh;
@@ -53,7 +53,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-right: 60px; /* adjust between 4px–10px to taste */
+  padding-right: 60px;
 }
 
 .sb-nav { flex:1;padding:18px 12px;overflow-y:auto;display:flex;flex-direction:column;gap:2px; }
@@ -78,7 +78,6 @@
 .nav-item.active .nav-label { color:#0a1628;font-weight:600; }
 .nav-item.active::before { content:'';position:absolute;left:0;top:22%;bottom:22%;width:3px;border-radius:0 3px 3px 0;background:#2563c8; }
 
-/* Profile block at bottom */
 .sb-profile-wrap { border-top:1px solid rgba(255,255,255,.55); }
 .sb-profile { display:flex;align-items:center;gap:10px;padding:16px 14px;cursor:default; }
 .avatar { width:38px;height:38px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#2563c8,#60a5fa);display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#fff;box-shadow:0 3px 10px rgba(37,99,200,.3); }
@@ -88,7 +87,7 @@
 .logout-icon { width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s; }
 .logout-icon:hover { background:rgba(239,68,68,.1); }
 .logout-icon svg { width:17px;height:17px;fill:#7a9ac0;transition:fill .18s; }
-.logout-icon:hover svg { fill:#ef4444; }
+.logout-icon:hover svg { fill:#ef4444; } */
 
 /* ══════════════════════════
    MAIN CONTENT

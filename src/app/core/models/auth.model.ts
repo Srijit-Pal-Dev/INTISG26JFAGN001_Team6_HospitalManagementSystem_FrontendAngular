@@ -30,3 +30,29 @@ export interface StoredSession {
   accessToken: string;
   refreshToken: string;
 }
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface VerifyOtpRequest {
+  email: string;
+  otp: string;
+}
+
+export interface ResetPasswordRequest {
+  resetToken: string;
+  newPassword: string;
+}
+
+export interface ForgotPasswordResponse {
+  message: string;
+}
+
+export interface VerifyOtpResponse {
+  resetToken: string;
+}
+
+export interface ResetPasswordResponse {
+  message: string;
+}

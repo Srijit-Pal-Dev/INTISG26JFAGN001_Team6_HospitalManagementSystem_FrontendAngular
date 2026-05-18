@@ -1,4 +1,4 @@
-<div class="bg-base"></div>
+<!-- <div class="bg-base"></div>
 <div class="bg-orb bg-orb-1"></div>
 <div class="bg-orb bg-orb-2"></div>
 <div class="bg-orb bg-orb-3"></div>
@@ -272,4 +272,82 @@
 
     </div>
   </aside>
+</div> -->
+
+<!-- Background layers -->
+<div class="bg-base"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div class="bg-orb bg-orb-3"></div>
+<div class="bg-orb bg-orb-4"></div>
+<div class="bg-grid"></div>
+
+<div class="relative z-10 grid grid-cols-2 h-screen overflow-hidden max-lg:grid-cols-1">
+
+  <!-- Left: Hero -->
+  <app-hero />
+
+  <!-- Right: Auth panel -->
+  <aside class="auth-panel flex items-start justify-center px-6 py-2 bg-white/40 h-screen max-lg:px-5 max-sm:px-3">
+
+    <!-- Back button -->
+    <div class="absolute top-5 left-6 z-20">
+      <button (click)="goHome()"
+        class="group w-9 h-9 flex items-center justify-center rounded-full border border-[#2d4a7a]/25 bg-white/60 backdrop-blur-md text-[#2d4a7a] transition-all duration-300 hover:border-brand-500 hover:text-brand-500 hover:shadow-md hover:scale-105 active:scale-95">
+        <svg class="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-0.5" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Card -->
+    <div class="auth-card w-full max-w-[480px] bg-white/68 border border-white/88 rounded-[28px] px-9 py-6 my-auto max-sm:px-5 max-sm:py-7 max-sm:rounded-[22px]">
+
+      <!-- Tab switcher -->
+      <div class="tab-wrapper relative flex gap-1 bg-brand-500/[.06] border border-white/70 rounded-2xl p-1 mb-2 shadow-[inset_0_1px_0_rgba(255,255,255,.9)]">
+        <div class="tab-indicator" [class.signup]="activeTab() === 'signup'"></div>
+        <button class="tab-btn flex-1 py-2.5 border-none bg-transparent text-[13.5px] font-medium rounded-xl cursor-pointer relative z-10 transition-colors duration-300"
+          [class.active]="activeTab() === 'login'" (click)="switchTab('login')">
+          Sign In
+        </button>
+        <button class="tab-btn flex-1 py-2.5 border-none bg-transparent text-[13.5px] font-medium rounded-xl cursor-pointer relative z-10 transition-colors duration-300"
+          [class.active]="activeTab() === 'signup'" (click)="switchTab('signup')">
+          Create Account
+        </button>
+      </div>
+
+      <!-- Alerts -->
+      <div *ngIf="errorMessage"
+        class="px-4 py-2.5 rounded-xl text-[13px] font-medium mb-3 bg-red-600/[.09] text-red-600 border border-red-600/20">
+        {{ errorMessage }}
+      </div>
+      <div *ngIf="successMessage"
+        class="px-4 py-2.5 rounded-xl text-[13px] font-medium mb-3 bg-emerald-600/[.09] text-emerald-600 border border-emerald-600/20">
+        {{ successMessage }}
+      </div>
+
+      <!-- Login -->
+      <app-login
+        *ngIf="activeTab() === 'login'"
+        [loginForm]="loginForm"
+        [isLoading]="isLoading"
+        [showPassword]="showLoginPassword"
+        (loginSubmit)="onLogin()"
+        (togglePassword)="showLoginPassword = !showLoginPassword"
+        (switchToSignup)="switchTab('signup')" />
+
+      <!-- Signup -->
+      <app-signup
+        *ngIf="activeTab() === 'signup'"
+        [signupForm]="signupForm"
+        [isLoading]="isLoading"
+        [showPassword]="showSignupPassword"
+        (registerSubmit)="onRegister()"
+        (togglePassword)="showSignupPassword = !showSignupPassword"
+        (switchToLogin)="switchTab('login')" />
+
+    </div>
+  </aside>
+
 </div>

@@ -80,6 +80,105 @@ body {
   min-height: 0;
 }
 
+.pharmacy-page {
+  --primary: #1565C0;
+  --primary-dark: #0D3C7A;
+  --primary-light: #1976D2;
+  --accent: #2196F3;
+  --accent-hover: #1976D2;
+  --white: #ffffff;
+  --off-white: #F5F7FA;
+  --text-dark: #1A1A2E;
+  --text-mid: #4A5568;
+  --text-light: #718096;
+  --border: #E2E8F0;
+  --card-shadow: 0 2px 16px rgba(21, 101, 192, 0.08);
+  --card-shadow-hover: 0 8px 32px rgba(21, 101, 192, 0.16);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --font: 'DM Sans', 'Poppins', sans-serif;
+}
+
+.pharmacy-page .card {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--card-shadow);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.pharmacy-page .card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.pharmacy-page .page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+.pharmacy-page .page-subtitle {
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.pharmacy-page .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary-dark);
+  color: var(--white);
+  padding: 13px 28px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  transition: background 0.2s, transform 0.15s;
+  border: none;
+  cursor: pointer;
+}
+.pharmacy-page .btn-primary:hover {
+  background: var(--primary);
+  transform: translateY(-1px);
+}
+.pharmacy-page .btn-primary:active { transform: translateY(0); }
+.pharmacy-page .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.pharmacy-page .btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--primary-dark);
+  padding: 12px 28px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  border: 2px solid var(--primary-dark);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.pharmacy-page .btn-outline:hover {
+  background: var(--primary-dark);
+  color: var(--white);
+}
+
+.pharmacy-page .state-loading,
+.pharmacy-page .state-error,
+.pharmacy-page .state-empty {
+  text-align: center;
+  padding: 48px 0;
+  color: var(--text-light);
+  font-size: 15px;
+}
+.pharmacy-page .state-loading i,
+.pharmacy-page .state-error i,
+.pharmacy-page .state-empty i {
+  font-size: 36px;
+  margin-bottom: 12px;
+  display: block;
+}
+.pharmacy-page .state-error { color: #E53E3E; }
+
 @media print {
   body>* {
     display: none !important;

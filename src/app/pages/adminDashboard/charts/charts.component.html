@@ -1,0 +1,62 @@
+<div class="charts-wrapper">
+
+  <!-- Top row: Donut + Bar side by side -->
+  <div class="charts-top-row">
+
+    <!-- Chart 1 — Role Distribution -->
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div class="chart-title">Role Distribution</div>
+        <div class="chart-subtitle">Users by assigned role</div>
+      </div>
+      <apx-chart
+        [series]="donutSeries"
+        [chart]="donutChart"
+        [labels]="donutLabels"
+        [legend]="donutLegend"
+        [dataLabels]="donutDataLabels"
+        [colors]="donutColors"
+        [tooltip]="donutTooltip">
+      </apx-chart>
+    </div>
+
+    <!-- Chart 2 — Enabled vs Disabled -->
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div class="chart-title">Account Status</div>
+        <div class="chart-subtitle">Enabled vs disabled accounts</div>
+      </div>
+      <apx-chart
+        [series]="barSeries"
+        [chart]="barChart"
+        [xaxis]="barXAxis"
+        [plotOptions]="barPlotOptions"
+        [dataLabels]="barDataLabels"
+        [colors]="barColors"
+        [legend]="barLegend"
+        [grid]="barGrid">
+      </apx-chart>
+    </div>
+
+  </div>
+
+  <!-- Bottom row: Line chart full width -->
+  <div class="chart-card chart-card-full">
+    <div class="chart-card-header">
+      <div class="chart-title">User Growth</div>
+      <div class="chart-subtitle">New accounts registered over time</div>
+    </div>
+    <apx-chart
+      [series]="lineSeries"
+      [chart]="lineChart"
+      [xaxis]="lineXAxis"
+      [fill]="lineFill"
+      [stroke]="lineStroke"
+      [dataLabels]="lineDataLabels"
+      [colors]="lineColors"
+      [grid]="lineGrid"
+      [tooltip]="lineTooltip">
+    </apx-chart>
+  </div>
+
+</div>

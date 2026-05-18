@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
@@ -17,6 +17,7 @@ export class SidebarComponent implements OnInit {
 
   @Output() notifClicked  = new EventEmitter<void>();
   @Output() logoutClicked = new EventEmitter<void>();
+  @Output() navClicked = new EventEmitter<string>();
 
   isCollapsed = false;
   userRole: string | null = null;
@@ -33,13 +34,14 @@ export class SidebarComponent implements OnInit {
       { label: 'Settings',      route: 'settings',      icon: 'settings'  },
     ],
     PHARMACIST: [
-      { label: 'Dashboard',     route: 'overview',      icon: 'dashboard' },
-      { label: 'Notifications', route: 'notifications', icon: 'bell'      },
-      { label: 'Settings',      route: 'settings',      icon: 'settings'  },
+      { label: 'Medicines',     route: 'medicines',     icon: 'medicines'  },
+      { label: 'Dispenses',     route: 'dispenses',     icon: 'dispenses'  },
+      { label: 'Notifications', route: 'notifications', icon: 'bell'       },
     ],
     LAB_TECHNICIAN: [
-      { label: 'Dashboard',     route: 'overview',      icon: 'dashboard' },
-      { label: 'Notifications', route: 'notifications', icon: 'bell'      },
+      { label: 'Dashboard',     route: 'dashboard',     icon: 'dashboard' },
+      { label: 'Test Queue',    route: 'queue',          icon: 'users'     },
+      { label: 'Notifications', route: 'notifications',  icon: 'bell'      },
     ],
     USER: [
       { label: 'Dashboard',     route: 'overview',      icon: 'dashboard' },
@@ -47,7 +49,9 @@ export class SidebarComponent implements OnInit {
     ],
   };
 
-  constructor(private authService: AuthService) {}
+  private readonly pharmacistRoutes = new Set(['medicines', 'dispenses', 'notifications']);
+
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
     this.userRole = this.authService.getRole();
@@ -102,9 +106,13 @@ export class SidebarComponent implements OnInit {
   }
 
   onNavClick(item: { label: string; route: string; icon: string }) {
-    if (item.route === 'notifications') {
+    if (this.pharmacistRoutes.has(item.route)) {
+      this.router.navigate(['/pharmacy-dashboard', item.route]);
+    } else if (item.route === 'notifications') {
       this.notifClicked.emit();
-    }
+    } else {
+      this.navClicked.emit(item.route);
+  }
   }
 
   onLogout() {
