@@ -2,8 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Medicine, MedicineRequest, DispenseRequestResponse } from '../models/index';
-import { PHARMACY_API_URL } from '../config/pharmacy-api.config';
+// import { PHARMACY_API_URL } from '../config/pharmacy-api.config';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 export interface PharmacyDTO {
   medicineId: number;
@@ -17,7 +18,8 @@ export interface PharmacyDTO {
 export class MedicineService {
   private readonly http = inject(HttpClient);
   private readonly auth = inject(AuthService);
-  private readonly base = `${PHARMACY_API_URL}/medicines`;
+  // private readonly base = `${PHARMACY_API_URL}/medicines`;
+  private readonly base = `${environment.apiGatewayUrl}/medicines`;
 
   private get headers(): HttpHeaders {
     return new HttpHeaders({ 'X-User-Role': this.auth.getRole() ?? 'PHARMACIST' });

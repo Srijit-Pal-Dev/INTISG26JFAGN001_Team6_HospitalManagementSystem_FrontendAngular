@@ -6,7 +6,7 @@ import { catchError } from 'rxjs/operators';
 import {
     LucideAngularModule,
     Plus, Pencil, ArrowRight, Users, Phone, Cake, Droplet,
-    Receipt, Clock, CheckCircle, AlertCircle
+    Receipt, Clock, CheckCircle, AlertCircle, ShieldCheck
 } from 'lucide-angular';
 import { NavbarComponent } from '../../../components/navbar/navbar.component';
 import { FooterComponent } from '../../../components/footer/footer.component';
@@ -15,7 +15,9 @@ import { InvoiceModalComponent } from './invoice-modal/invoice-modal.component';
 import { PatientService } from '../../../core/services/patient.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { InvoiceService } from '../../../core/services/invoice.service';
-import { PatientDTO, InvoiceDTO, InvoiceStatus } from '../../../core/models/index';
+import { MediclaimService } from '../../../core/services/mediclaim.service';
+import { PatientDTO, InvoiceDTO, InvoiceStatus, MediclaimDTO } from '../../../core/models/index';
+import { MediclaimModalComponent } from '../patient-detail/mediclaim-modal/mediclaim-modal.component';
 
 type BillingTab = 'pending' | 'paid';
 
@@ -28,7 +30,8 @@ type BillingTab = 'pending' | 'paid';
         NavbarComponent,
         FooterComponent,
         PatientFormModalComponent,
-        InvoiceModalComponent
+        InvoiceModalComponent,
+        MediclaimModalComponent
     ],
     templateUrl: './patients-list.component.html'
 })
@@ -44,6 +47,7 @@ export class PatientsListComponent implements OnInit {
     readonly ClockIcon = Clock;
     readonly PaidIcon = CheckCircle;
     readonly AlertIcon = AlertCircle;
+    readonly ShieldIcon = ShieldCheck;
 
     readonly InvoiceStatus = InvoiceStatus;
 
@@ -55,6 +59,9 @@ export class PatientsListComponent implements OnInit {
     invoicesLoading = signal(false);
     billingTab = signal<BillingTab>('pending');
     selectedInvoice = signal<InvoiceDTO | null>(null);
+
+    allMediclaims = signal<MediclaimDTO[]>([]);
+    mediclaimInvoice = signal<InvoiceDTO | null>(null);
 
     modalOpen = signal(false);
     editingPatient = signal<PatientDTO | null>(null);
@@ -73,6 +80,7 @@ export class PatientsListComponent implements OnInit {
     private patientService = inject(PatientService);
     private authService = inject(AuthService);
     private invoiceService = inject(InvoiceService);
+    private mediclaimService = inject(MediclaimService);
     private router = inject(Router);
 
     ngOnInit() {
@@ -92,7 +100,10 @@ export class PatientsListComponent implements OnInit {
             next: (list) => {
                 this.patients.set(list);
                 this.isLoading.set(false);
-                if (list.length > 0) this.loadAllInvoices(list);
+                if (list.length > 0) {
+                    this.loadAllInvoices(list);
+                    this.loadAllMediclaims(list);
+                }
             },
             error: (err) => {
                 if (err?.status === 404) {
@@ -122,6 +133,35 @@ export class PatientsListComponent implements OnInit {
                 this.invoicesLoading.set(false);
             }
         });
+    }
+
+    loadAllMediclaims(patients: PatientDTO[]) {
+        const requests = patients.map(p =>
+            this.mediclaimService.getMediclaimsByPatient(p.id).pipe(catchError(() => of([])))
+        );
+
+        forkJoin(requests).subscribe({
+            next: (results) => {
+                const all = results.flat() as MediclaimDTO[];
+                this.allMediclaims.set(all);
+            },
+            error: () => { }
+        });
+    }
+
+    getMediclaimForInvoice(invoiceId: number): MediclaimDTO | null {
+        return this.allMediclaims().find(m => m.invoiceId === invoiceId) ?? null;
+    }
+
+    getMediclaimBadgeStyle(status: string | undefined): { bg: string; text: string; border: string } {
+        switch (status) {
+            case 'APPROVED':
+                return { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' };
+            case 'REJECTED':
+                return { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' };
+            default:
+                return { bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200' };
+        }
     }
 
     openAddModal() {
@@ -160,7 +200,6 @@ export class PatientsListComponent implements OnInit {
     }
 
     onPaymentCompleted(invoiceId: number) {
-        // Instantly update local state — move invoice to paid
         this.allInvoices.update(list =>
             list.map(inv =>
                 inv.id === invoiceId
@@ -170,11 +209,15 @@ export class PatientsListComponent implements OnInit {
         );
         this.closeInvoice();
 
-        // Refetch in background after short delay for fresh data
         setTimeout(() => {
             const patients = this.patients();
             if (patients.length > 0) this.loadAllInvoices(patients);
         }, 1000);
+    }
+
+    onMediclaimSubmitted(mediclaim: MediclaimDTO) {
+        this.allMediclaims.update(list => [...list, mediclaim]);
+        this.closeInvoice();
     }
 
     getPatientName(patientId: number): string {
@@ -189,5 +232,18 @@ export class PatientsListComponent implements OnInit {
 
     formatAmount(amount: number): string {
         return amount?.toFixed(2) ?? '0.00';
+    }
+    openMediclaimFromCard(invoice: InvoiceDTO, event: MouseEvent) {
+        event.stopPropagation();
+        this.mediclaimInvoice.set(invoice);
+    }
+
+    closeMediclaimModal() {
+        this.mediclaimInvoice.set(null);
+    }
+
+    onMediclaimSubmittedFromCard(mediclaim: MediclaimDTO) {
+        this.allMediclaims.update(list => [...list, mediclaim]);
+        this.mediclaimInvoice.set(null);
     }
 }

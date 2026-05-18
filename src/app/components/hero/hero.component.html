@@ -22,11 +22,11 @@
                 </p>
 
                 <div class="flex items-center gap-4 mb-12 flex-wrap">
-                    <button
+                    <button (click)="handleBookAppointment()"
                         class="bg-light hover:bg-[#0276C9] text-white px-7 py-3 rounded-full text-sm font-semibold transition-colors shadow-md shadow-blue-200">
                         Book Appointment
                     </button>
-                    <button
+                    <button routerLink="/services"
                         class="bg-[#023C6E] hover:bg-[#02508f] text-white px-7 py-3 rounded-full text-sm font-semibold transition-colors shadow-md">
                         View Services
                     </button>

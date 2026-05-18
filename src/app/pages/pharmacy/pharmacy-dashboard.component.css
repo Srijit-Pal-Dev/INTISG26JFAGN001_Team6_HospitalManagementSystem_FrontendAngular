@@ -1,6 +1,7 @@
 .ph-layout {
   display: flex;
   min-height: 100vh;
+  
 }
 
 .ph-main {
@@ -8,7 +9,8 @@
   display: flex;
   flex-direction: column;
   padding: 32px 36px;
-  background: var(--off-white, #F5F7FA);
+  /* background: var(--off-white, #F5F7FA); */
+  background: #f0f6ff;
   overflow-y: auto;
 }
 
@@ -62,3 +64,4 @@
 .ph-content {
   flex: 1;
 }
+

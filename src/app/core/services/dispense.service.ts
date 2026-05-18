@@ -3,14 +3,16 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map, forkJoin } from 'rxjs';
 import { CreateDispenseRequest, DispenseGroup } from '../models/dispense.model';
 import { DispenseRequestResponse } from '../models/medicine.model';
-import { PHARMACY_API_URL } from '../config/pharmacy-api.config';
+// import { PHARMACY_API_URL } from '../config/pharmacy-api.config';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DispenseService {
   private readonly http = inject(HttpClient);
   private readonly auth = inject(AuthService);
-  private readonly base = `${PHARMACY_API_URL}/dispense`;
+  // private readonly base = `${PHARMACY_API_URL}/dispense`;  
+  private readonly base = `${environment.apiGatewayUrl}/dispense`;
 
   private get pharmacistHeaders(): HttpHeaders {
     return new HttpHeaders({ 'X-User-Role': this.auth.getRole() ?? 'PHARMACIST' });
