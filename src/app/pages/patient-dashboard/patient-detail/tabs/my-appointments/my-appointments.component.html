@@ -34,9 +34,10 @@
     @if (upcomingAppointments().length > 0) {
     <div class="mb-8">
         <h2 class="text-lg font-bold text-gray-900 mb-4">Upcoming Appointments</h2>
-        <div class="space-y-3">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             @for (appt of upcomingAppointments(); track appt.id) {
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-300 p-5 hover:shadow-md transition-shadow">
+            <div
+                class="bg-white rounded-2xl shadow-sm border border-gray-300 p-5 hover:shadow-md transition-shadow h-full">
                 <div class="flex items-start gap-4">
 
                     <div
@@ -48,7 +49,7 @@
                     <div class="flex-1 min-w-0">
                         <div class="flex items-start justify-between gap-3 mb-2">
                             <div class="min-w-0">
-                                <h3 class="font-bold text-gray-900 text-base truncate">{{ appt.doctor?.fullName ??
+                                <h3 class="font-semibold text-gray-900 text-base truncate">{{ appt.doctor?.fullName ??
                                     'Doctor' }}</h3>
                                 <p class="text-xs text-gray-500">{{ appt.doctor?.specialty ?? '—' }}</p>
                             </div>
@@ -233,18 +234,18 @@
             <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <lucide-icon [img]="AlertIcon" class="w-7 h-7 text-red-500"></lucide-icon>
             </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">Cancel this appointment?</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Cancel this appointment?</h3>
             <p class="text-sm text-gray-500 mb-6">
                 This action cannot be undone. The slot will be released and made available for others.
             </p>
 
             <div class="flex gap-3">
                 <button (click)="closeCancelConfirm()"
-                    class="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition-colors">
+                    class="flex-1 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors">
                     Keep Appointment
                 </button>
                 <button (click)="confirmCancel(showCancelConfirm()!)" [disabled]="cancellingId() !== null"
-                    class="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+                    class="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white text-sm font-medium transition-colors flex items-center justify-center gap-2">
                     @if (cancellingId() !== null) {
                     <div class="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
                     Cancelling...

@@ -69,8 +69,8 @@
             <button type="button" class="qty-btn" (click)="decrement(medicine.id)">
               <i class="fas fa-minus"></i>
             </button>
-            <input type="number" min="1" [max]="medicine.stockQuantity" class="qty-input"
-              [value]="getQty(medicine.id)" (input)="setQty(medicine.id, $event)" />
+            <input type="number" min="1" [max]="medicine.stockQuantity" class="qty-input" [value]="getQty(medicine.id)"
+              (input)="setQty(medicine.id, $event)" />
             <button type="button" class="qty-btn" (click)="increment(medicine.id, medicine.stockQuantity)">
               <i class="fas fa-plus"></i>
             </button>

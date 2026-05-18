@@ -1,29 +1,17 @@
 <div class="ph-layout">
-  <app-sidebar
-    [activeRoute]="activeTab"
-    [unreadCount]="unreadCount"
-    (logoutClicked)="logout()">
+  <app-sidebar [activeRoute]="activeTab" [unreadCount]="unreadCount" (logoutClicked)="logout()">
   </app-sidebar>
 
   <main class="ph-main pharmacy-page">
     <!-- Tab toggle -->
     <div class="ph-tabs">
-      <button
-        class="ph-tab"
-        [class.active]="activeTab === 'medicines'"
-        (click)="setTab('medicines')">
+      <button class="ph-tab" [class.active]="activeTab === 'medicines'" (click)="setTab('medicines')">
         <i class="fas fa-pills"></i> Medicines
       </button>
-      <button
-        class="ph-tab"
-        [class.active]="activeTab === 'dispenses'"
-        (click)="setTab('dispenses')">
+      <button class="ph-tab" [class.active]="activeTab === 'dispenses'" (click)="setTab('dispenses')">
         <i class="fas fa-prescription-bottle-medical"></i> Dispenses
       </button>
-      <button
-        class="ph-tab"
-        [class.active]="activeTab === 'notifications'"
-        (click)="setTab('notifications')">
+      <button class="ph-tab" [class.active]="activeTab === 'notifications'" (click)="setTab('notifications')">
         <i class="fas fa-bell"></i> Notifications
         <span class="ph-tab-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
       </button>
