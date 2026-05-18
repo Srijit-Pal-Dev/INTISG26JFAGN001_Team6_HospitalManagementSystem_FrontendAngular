@@ -10,11 +10,10 @@
        SIDEBAR
   ═══════════════════════════════ -->
   <aside class="sidebar">
-    <div class="logo-icon">
+    <div class="sb-logo">
       <div class="flex items-center flex-shrink-0 my-6">
         <img src="logo.png" alt="Pulse Point" class="w-[150px] h-[40px] object-contain" />
       </div>
-
     </div>
 
     <nav class="sb-nav">
@@ -38,11 +37,6 @@
         <span class="nav-label">Notifications</span>
         <span class="nav-badge notif-badge-red" *ngIf="unreadCount > 0">{{unreadCount}}</span>
       </div>
-
-<!--      <div class="nav-item" [class.active]="currentView === 'settings'" (click)="currentView = 'settings'">-->
-<!--        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>-->
-<!--        <span class="nav-label">Settings</span>-->
-<!--      </div>-->
     </nav>
 
     <!-- Profile + Logout -->
@@ -65,10 +59,9 @@
   ═══════════════════════════════ -->
   <main class="main">
 
-    <!-- ── HEADER ── -->
     <header class="pg-header">
       <div class="pg-title-block">
-        <div class="pg-eyebrow">PulseLab · {{today | date:'EEEE, d MMM yyyy'}}</div>
+        <div class="pg-eyebrow">PulsePoint · {{today | date:'EEEE, d MMM yyyy'}}</div>
         <h1 class="pg-title" *ngIf="currentView === 'dashboard'">Dashboard <span>Overview</span></h1>
         <h1 class="pg-title" *ngIf="currentView === 'queue'">Test <span>Queue</span></h1>
         <h1 class="pg-title" *ngIf="currentView === 'settings'">Lab <span>Settings</span></h1>
@@ -83,59 +76,8 @@
 
     <div class="content">
 
-      <!-- ══════════════
-           DASHBOARD VIEW
-      ══════════════ -->
+      <!-- DASHBOARD VIEW -->
       <ng-container *ngIf="currentView === 'dashboard'">
-
-        <!-- Stat Cards -->
-        <div class="stats-row">
-          <div class="stat-card stat-pending">
-            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
-            <div class="stat-body">
-              <div class="stat-num">{{getByStatus('PENDING').length}}</div>
-              <div class="stat-label">Pending Tests</div>
-            </div>
-            <div class="stat-trend up">▲ Awaiting</div>
-          </div>
-          <div class="stat-card stat-inprog">
-            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
-            <div class="stat-body">
-              <div class="stat-num">{{getByStatus('IN_PROGRESS').length}}</div>
-              <div class="stat-label">In Progress</div>
-            </div>
-            <div class="stat-trend neutral">● Running</div>
-          </div>
-          <div class="stat-card stat-collected">
-            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg></div>
-            <div class="stat-body">
-              <div class="stat-num">{{getByStatus('SAMPLE_COLLECTED').length}}</div>
-              <div class="stat-label">Sample Collected</div>
-            </div>
-            <div class="stat-trend neutral">● Ready</div>
-          </div>
-          <div class="stat-card stat-done">
-            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
-            <div class="stat-body">
-              <div class="stat-num">{{getByStatus('COMPLETED').length}}</div>
-              <div class="stat-label">Completed Today</div>
-            </div>
-            <div class="stat-trend down">✓ Done</div>
-          </div>
-        </div>
-
-        <!-- Progress bar -->
-        <div class="progress-banner">
-          <div class="pb-label">
-            <span>Today's Completion Rate</span>
-            <strong>{{completionRate()}}%</strong>
-          </div>
-          <div class="pb-track">
-            <div class="pb-fill" [style.width]="completionRate() + '%'"></div>
-          </div>
-        </div>
-
-        <!-- Recent Activity -->
         <div class="section-header">
           <span>Recent Activity</span>
           <button class="link-btn" (click)="currentView = 'queue'">View All →</button>
@@ -155,9 +97,7 @@
         </div>
       </ng-container>
 
-      <!-- ══════════════
-           QUEUE VIEW
-      ══════════════ -->
+      <!-- QUEUE VIEW -->
       <ng-container *ngIf="currentView === 'queue'">
         <div class="filter-pills">
           <button class="fpill" [class.active]="activeFilter === 'all'" (click)="activeFilter = 'all'">All <span class="pill-count">{{tests.length}}</span></button>
@@ -166,7 +106,6 @@
           <button class="fpill" [class.active]="activeFilter === 'IN_PROGRESS'" (click)="activeFilter = 'IN_PROGRESS'">In Progress <span class="pill-count">{{getByStatus('IN_PROGRESS').length}}</span></button>
           <button class="fpill" [class.active]="activeFilter === 'COMPLETED'" (click)="activeFilter = 'COMPLETED'">Completed <span class="pill-count">{{getByStatus('COMPLETED').length}}</span></button>
         </div>
-
         <div class="table-wrap">
           <table>
             <thead>
@@ -204,9 +143,7 @@
         </div>
       </ng-container>
 
-      <!-- ══════════════
-           SETTINGS VIEW
-      ══════════════ -->
+      <!-- SETTINGS VIEW -->
       <ng-container *ngIf="currentView === 'settings'">
         <div class="settings-placeholder">
           <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
@@ -214,14 +151,15 @@
         </div>
       </ng-container>
 
-    </div><!-- /content -->
+    </div>
   </main>
 
   <!-- ═══════════════════════════════
        PATIENT DETAIL DRAWER
+       Backdrop only closes the DRAWER — not the notif panel
   ═══════════════════════════════ -->
-  <div class="drawer-backdrop" [class.show]="selectedTest" (click)="closeDrawer()"></div>
-  <div class="drawer" [class.open]="selectedTest">
+  <div class="drawer-backdrop" [class.show]="selectedTest && !showNotifPanel" (click)="closeDrawer()"></div>
+  <div class="drawer" [class.open]="selectedTest && !showNotifPanel">
     <ng-container *ngIf="selectedTest">
 
       <div class="drawer-header">
@@ -289,10 +227,7 @@
         </div>
       </div>
 
-      <!-- Result entry form (only when IN_PROGRESS) -->
-      <ng-container *ngIf="selectedTest.status === 'IN_PROGRESS' && !showResultForm">
-        <!-- shown below via action button -->
-      </ng-container>
+      <!-- Result Form -->
       <div class="result-form" *ngIf="showResultForm">
         <div class="drawer-section-title">Upload Result</div>
         <input class="drawer-input" type="text" [(ngModel)]="resultValue" placeholder="Result value (e.g. 5.4 mmol/L)">
@@ -303,7 +238,7 @@
         </div>
       </div>
 
-      <!-- ACTION BUTTONS -->
+      <!-- Action Buttons -->
       <div class="drawer-actions" *ngIf="!showResultForm">
         <button class="action-btn action-collect" *ngIf="selectedTest.status === 'PENDING'" (click)="collectSample(selectedTest)">
           <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6z"/></svg>
@@ -328,16 +263,23 @@
 
   <!-- ═══════════════════════════════
        NOTIFICATIONS PANEL
+       Has its OWN separate backdrop — never conflicts with drawer
   ═══════════════════════════════ -->
-  <div class="drawer-backdrop" [class.show]="showNotifPanel" (click)="showNotifPanel = false"></div>
+  <div class="notif-backdrop" [class.show]="showNotifPanel" (click)="closeNotifPanel()"></div>
   <div class="notif-panel" [class.open]="showNotifPanel">
     <div class="notif-header">
       <span>Notifications</span>
-      <button class="link-btn" (click)="markAllRead()" *ngIf="unreadCount > 0">Mark all read</button>
+      <div class="notif-header-actions">
+        <button class="link-btn" (click)="markAllRead()" *ngIf="unreadCount > 0">Mark all read</button>
+        <div class="notif-close" (click)="closeNotifPanel()">
+          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </div>
+      </div>
     </div>
     <div class="notif-empty" *ngIf="notifications.length === 0">
       <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-      <p>All caught up!</p>
+      <p>No notifications yet</p>
+      <small>Actions like collecting samples or uploading results will appear here</small>
     </div>
     <div class="notif-list">
       <div class="notif-item" *ngFor="let n of notifications" [class.unread]="!n.read" (click)="n.read = true; recalcUnread()">

@@ -22,13 +22,13 @@ export class LabComponent implements OnInit {
   currentView: 'dashboard' | 'queue' | 'settings' = 'dashboard';
   activeFilter: string = 'all';
 
-  // Drawer (patient detail panel)
+  // Drawer
   selectedTest: any = null;
   showResultForm = false;
   resultValue = '';
   remarks = '';
 
-  // Notifications
+  // Notifications — panel is separate from drawer, never conflict
   showNotifPanel = false;
   unreadCount = 0;
   notifications: { id: number; title: string; message: string; type: string; read: boolean; time: Date }[] = [];
@@ -48,16 +48,21 @@ export class LabComponent implements OnInit {
     this.loadTests();
   }
 
+  // ── Load tests ───────────────────────────────
   loadTests() {
     this.isLoading = true;
-    this.labService.getPendingTests().subscribe({
+    this.labService.getAllTests().subscribe({
       next: (data) => { this.tests = data; this.isLoading = false; },
-      error: () => { this.error = 'Failed to load tests'; this.isLoading = false; }
+      error: () => {
+        this.labService.getPendingTests().subscribe({
+          next: (data) => { this.tests = data; this.isLoading = false; },
+          error: () => { this.error = 'Failed to load tests'; this.isLoading = false; }
+        });
+      }
     });
   }
 
   // ── Search ──────────────────────────────────
-  // Called on every keystroke. Auto-switches to queue view so results are visible.
   onSearch(query: string) {
     this.searchQuery = query;
     if (query.trim()) {
@@ -66,13 +71,37 @@ export class LabComponent implements OnInit {
     }
   }
 
-  // ── Navigation ──────────────────────────────
+  // ── Notifications ────────────────────────────
+  // Close drawer first, then open notif panel — they must never overlap
   openNotifications() {
+    this.selectedTest = null;      // close patient drawer
+    this.showResultForm = false;
     this.showNotifPanel = true;
+  }
+
+  closeNotifPanel() {
+    this.showNotifPanel = false;
+  }
+
+  pushNotif(title: string, message: string, type: string) {
+    this.notifications.unshift({
+      id: Date.now(), title, message, type, read: false, time: new Date()
+    });
+    this.unreadCount++;
+  }
+
+  markAllRead() {
+    this.notifications.forEach(n => n.read = true);
+    this.unreadCount = 0;
+  }
+
+  recalcUnread() {
+    this.unreadCount = this.notifications.filter(n => !n.read).length;
   }
 
   // ── Drawer ──────────────────────────────────
   openPatient(test: any) {
+    this.showNotifPanel = false;   // close notif panel if open
     this.selectedTest = test;
     this.showResultForm = false;
     this.resultValue = '';
@@ -103,7 +132,6 @@ export class LabComponent implements OnInit {
     return list;
   }
 
-  // Dashboard recent activity — also respects search query
   dashboardTests() {
     const q = this.searchQuery.trim().toLowerCase();
     if (!q) return this.tests.slice(0, 5);
@@ -125,24 +153,33 @@ export class LabComponent implements OnInit {
 
   // ── Actions ─────────────────────────────────
   collectSample(test: any) {
-    this.labService.collectSample(test.id).subscribe(() => {
-      test.status = 'SAMPLE_COLLECTED';
-      this.pushNotif('Sample Collected', `Sample collected for Patient #${test.patientId} — ${test.testName}`, 'info');
+    this.labService.collectSample(test.id).subscribe({
+      next: (updated) => {
+        test.status = updated?.status ?? 'SAMPLE_COLLECTED';
+        this.pushNotif('Sample Collected', `Sample collected for Patient #${test.patientId} — ${test.testName}`, 'info');
+      },
+      error: () => { test.status = 'SAMPLE_COLLECTED'; }
     });
   }
 
   startTest(test: any) {
     const username = this.authService.getUsername() || 'Unknown Tech';
-    this.labService.startTest(test.id, username).subscribe(() => {
-      test.status = 'IN_PROGRESS';
-      test.assignedTo = username;
-      this.pushNotif('Test Started', `${test.testName} is now in progress (Patient #${test.patientId})`, 'info');
+    this.labService.startTest(test.id, username).subscribe({
+      next: (updated) => {
+        test.status = updated?.status ?? 'IN_PROGRESS';
+        test.assignedTo = updated?.assignedTo ?? username;
+        this.pushNotif('Test Started', `${test.testName} assigned to ${test.assignedTo}`, 'info');
+      },
+      error: () => { test.status = 'IN_PROGRESS'; test.assignedTo = username; }
     });
   }
 
   uploadResult(test: any) {
     if (!this.resultValue.trim()) { alert('Please enter a result value'); return; }
-    this.labService.uploadResult(test.id, { resultValue: this.resultValue, remarks: this.remarks }).subscribe({
+    this.labService.uploadResult(test.id, {
+      resultValue: this.resultValue,
+      remarks: this.remarks
+    }).subscribe({
       next: () => {
         test.status = 'COMPLETED';
         test.resultValue = this.resultValue;
@@ -155,35 +192,16 @@ export class LabComponent implements OnInit {
     });
   }
 
-  // ── Notifications ────────────────────────────
-  pushNotif(title: string, message: string, type: string) {
-    this.notifications.unshift({ id: Date.now(), title, message, type, read: false, time: new Date() });
-    this.unreadCount++;
-  }
-
-  markAllRead() {
-    this.notifications.forEach(n => n.read = true);
-    this.unreadCount = 0;
-  }
-
-  recalcUnread() {
-    this.unreadCount = this.notifications.filter(n => !n.read).length;
-  }
-
   // ── Status helpers ───────────────────────────
   statusOrder = ['PENDING', 'SAMPLE_COLLECTED', 'IN_PROGRESS', 'COMPLETED'];
 
   isStepDone(step: string): boolean {
     if (!this.selectedTest) return false;
-    const currentIdx = this.statusOrder.indexOf(this.selectedTest.status);
-    const stepIdx = this.statusOrder.indexOf(step);
-    return currentIdx > stepIdx;
+    return this.statusOrder.indexOf(this.selectedTest.status) > this.statusOrder.indexOf(step);
   }
 
   formatStatus(s: string): string {
-    return s?.replace(/_/g, ' ')
-      .toLowerCase()
-      .replace(/\b\w/g, c => c.toUpperCase()) ?? '';
+    return s?.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) ?? '';
   }
 
   completionRate(): number {
@@ -195,10 +213,7 @@ export class LabComponent implements OnInit {
     return this.currentUser.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
   }
 
-  // ── Auth ─────────────────────────────────────
-  logout() {
-    this.authService.logout();
-  }
+  logout() { this.authService.logout(); }
 
   getStatusClass(status: string) { return 'badge-' + status; }
 }
