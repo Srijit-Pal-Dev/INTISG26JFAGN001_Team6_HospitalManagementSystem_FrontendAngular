@@ -1,6 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SafeHtmlPipe } from '../../pipes/safe-html.pipe';
+import { AuthService } from '../../core/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-doctors',
@@ -9,6 +11,19 @@ import { SafeHtmlPipe } from '../../pipes/safe-html.pipe';
     templateUrl: './doctor.component.html'
 })
 export class DoctorsComponent {
+
+    private authService = inject(AuthService);
+    private router = inject(Router);
+
+    handleBookAppointment() {
+        if (this.authService.isLoggedIn()) {
+            this.router.navigate(['/patient-dashboard'])
+        }
+        else {
+            this.router.navigate(['/login'])
+        }
+    }
+
     doctors = signal([
         {
             name: 'Dr. Ayesha Khan',

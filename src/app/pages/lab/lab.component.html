@@ -9,11 +9,12 @@
   <!-- ═══════════════════════════════
        SIDEBAR
   ═══════════════════════════════ -->
-  <aside class="sidebar">
-    <div class="sb-logo">
+  <!-- <aside class="sidebar">
+    <div class="logo-icon">
       <div class="flex items-center flex-shrink-0 my-6">
         <img src="logo.png" alt="Pulse Point" class="w-[150px] h-[40px] object-contain" />
       </div>
+
     </div>
 
     <nav class="sb-nav">
@@ -39,7 +40,6 @@
       </div>
     </nav>
 
-    <!-- Profile + Logout -->
     <div class="sb-profile-wrap">
       <div class="sb-profile">
         <div class="avatar">{{userInitials()}}</div>
@@ -52,7 +52,14 @@
         </div>
       </div>
     </div>
-  </aside>
+  </aside> -->
+  <app-sidebar
+    [activeRoute]="currentView"
+    [unreadCount]="unreadCount"
+    (notifClicked)="openNotifications()"
+    (navClicked)="setView($event)"
+    (logoutClicked)="logout()">
+  </app-sidebar>
 
   <!-- ═══════════════════════════════
        MAIN
@@ -263,7 +270,6 @@
 
   <!-- ═══════════════════════════════
        NOTIFICATIONS PANEL
-       Has its OWN separate backdrop — never conflicts with drawer
   ═══════════════════════════════ -->
   <div class="notif-backdrop" [class.show]="showNotifPanel" (click)="closeNotifPanel()"></div>
   <div class="notif-panel" [class.open]="showNotifPanel">
@@ -272,7 +278,7 @@
       <div class="notif-header-actions">
         <button class="link-btn" (click)="markAllRead()" *ngIf="unreadCount > 0">Mark all read</button>
         <div class="notif-close" (click)="closeNotifPanel()">
-          <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          <svg viewBox="5 -21 100 100"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </div>
       </div>
     </div>

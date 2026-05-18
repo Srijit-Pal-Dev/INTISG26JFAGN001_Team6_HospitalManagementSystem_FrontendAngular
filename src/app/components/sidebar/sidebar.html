@@ -31,6 +31,8 @@
         <svg *ngIf="item.icon === 'dashboard'" class="nav-icon" viewBox="0 0 24 24">
           <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
         </svg>
+        <i *ngIf="item.icon === 'medicines'" class="fas fa-pills nav-fa-icon"></i>
+        <i *ngIf="item.icon === 'dispenses'" class="fas fa-prescription-bottle-medical nav-fa-icon"></i>
 
         <span class="nav-label">{{ item.label }}</span>
 

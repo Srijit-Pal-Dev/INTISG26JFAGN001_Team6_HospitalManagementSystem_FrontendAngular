@@ -221,22 +221,34 @@ export class NavbarComponent implements OnInit {
         return created.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
     }
 
-    getTypeIcon(type: NotificationType) {
+    getTypeCategory(type: NotificationType): 'success' | 'warning' | 'error' | 'info' {
         switch (type) {
-            case NotificationType.SUCCESS: return this.SuccessIcon;
-            case NotificationType.WARNING: return this.WarningIcon;
-            case NotificationType.ERROR: return this.ErrorIcon;
-            case NotificationType.INFO:
+            case NotificationType.APPOINTMENT: return 'success';
+            case NotificationType.BILLING: return 'success';
+            case NotificationType.MEDICLAIM: return 'info';
+            case NotificationType.LAB: return 'success';
+            case NotificationType.PRESCRIPTION: return 'info';
+            case NotificationType.GENERAL:
+            default: return 'info';
+        }
+    }
+
+    getTypeIcon(type: NotificationType) {
+        switch (this.getTypeCategory(type)) {
+            case 'success': return this.SuccessIcon;
+            case 'warning': return this.WarningIcon;
+            case 'error': return this.ErrorIcon;
+            case 'info':
             default: return this.InfoIcon;
         }
     }
 
     getTypeColor(type: NotificationType): { bg: string; text: string } {
-        switch (type) {
-            case NotificationType.SUCCESS: return { bg: 'bg-green-100', text: 'text-green-600' };
-            case NotificationType.WARNING: return { bg: 'bg-yellow-100', text: 'text-yellow-600' };
-            case NotificationType.ERROR: return { bg: 'bg-red-100', text: 'text-red-600' };
-            case NotificationType.INFO:
+        switch (this.getTypeCategory(type)) {
+            case 'success': return { bg: 'bg-green-100', text: 'text-green-600' };
+            case 'warning': return { bg: 'bg-yellow-100', text: 'text-yellow-600' };
+            case 'error': return { bg: 'bg-red-100', text: 'text-red-600' };
+            case 'info':
             default: return { bg: 'bg-blue-100', text: 'text-[#1a7fd4]' };
         }
     }

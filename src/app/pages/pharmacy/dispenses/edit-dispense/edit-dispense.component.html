@@ -1,0 +1,77 @@
+<div class="edit-dispense">
+  <h2 class="page-title">{{ isEdit ? 'Edit' : 'Create' }} Dispense</h2>
+
+  <form class="dispense-form card" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="form-split">
+
+      <!-- Left: IDs panel -->
+      <div class="ids-panel">
+        <div class="id-field">
+          <label>Dispense Id:</label>
+          <input placeholder="Auto" disabled class="small-field" />
+        </div>
+        <div class="id-field">
+          <label>Prescription Id:</label>
+          <input formControlName="prescriptionId" type="number" class="small-field"
+            [class.invalid]="invalid('prescriptionId')" />
+        </div>
+        <div class="id-field">
+          <label>Patient Id:</label>
+          <input formControlName="patientId" type="number" class="small-field"
+            [class.invalid]="invalid('patientId')" />
+        </div>
+        <div class="id-field">
+          <label>Appointment Id:</label>
+          <input formControlName="appointmentId" type="number" class="small-field"
+            [class.invalid]="invalid('appointmentId')" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Right: Medicines panel -->
+      <div class="medicines-panel">
+        <h3 class="panel-title">Medicines:</h3>
+
+        <div formArrayName="medicines" class="medicine-rows">
+          <div *ngFor="let item of medicinesArray.controls; let i = index"
+            [formGroupName]="i" class="medicine-row">
+            <input formControlName="medicineId" type="number" placeholder="Med ID" class="med-id-field"
+              [class.invalid]="itemInvalid(i, 'medicineId')" />
+            <input formControlName="medicineName" type="text" placeholder="Medicine Name" class="med-name-field" />
+            <div class="qty-control">
+              <button type="button" class="qty-btn" (click)="decrement(i)"><i class="fas fa-minus"></i></button>
+              <input formControlName="quantity" type="number" min="1" class="qty-input"
+                [class.invalid]="itemInvalid(i, 'quantity')" />
+              <button type="button" class="qty-btn" (click)="increment(i)"><i class="fas fa-plus"></i></button>
+            </div>
+            <button type="button" class="remove-btn" *ngIf="medicinesArray.length > 1" (click)="removeRow(i)">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="button" class="add-row-btn" (click)="addRow()">
+          <i class="fas fa-plus"></i> Add
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="apiError" class="api-error">
+      <i class="fas fa-exclamation-circle"></i> {{ apiError }}
+    </div>
+    <div *ngIf="success" class="api-success">
+      <i class="fas fa-check-circle"></i> Dispense request saved successfully!
+    </div>
+  </form>
+
+  <div class="submit-row">
+    <button class="btn-outline" type="button" (click)="cancel()">
+      <i class="fas fa-arrow-left"></i> Back
+    </button>
+    <button class="btn-primary" type="button" [disabled]="submitting" (click)="submit()">
+      <span *ngIf="!submitting">Save</span>
+      <span *ngIf="submitting"><i class="fas fa-spinner fa-spin"></i> Saving...</span>
+    </button>
+  </div>
+</div>

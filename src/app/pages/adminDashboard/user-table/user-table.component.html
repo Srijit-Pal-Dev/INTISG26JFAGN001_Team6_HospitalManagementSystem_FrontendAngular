@@ -1,0 +1,97 @@
+<div class="flex items-center justify-between mb-3.5">
+  <span class="font-display text-[15px] font-bold text-navy-900">All Users</span>
+  <div class="flex items-center gap-2">
+    <div class="flex gap-1.5">
+      <div class="fpill" [class.active]="activeFilter === 'all'" (click)="filterChanged.emit('all')">All</div>
+      <div class="fpill" [class.active]="activeFilter === 'enabled'" (click)="filterChanged.emit('enabled')">Enabled</div>
+      <div class="fpill" [class.active]="activeFilter === 'disabled'" (click)="filterChanged.emit('disabled')">Disabled</div>
+    </div>
+    <button class="primary-btn flex items-center gap-1.5 text-[12.5px] font-semibold px-3.5 py-2 rounded-[10px]"
+      (click)="addUserClicked.emit()">
+      <svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24">
+        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+      </svg>
+      Add User
+    </button>
+  </div>
+</div>
+
+<div *ngIf="isLoading" class="flex items-center gap-2.5 p-5 text-[13px] text-[#6b8ab5]">
+  <span class="spin-blue"></span>
+  <span>Loading users…</span>
+</div>
+
+<div *ngIf="!isLoading" class="table-wrap rounded-[18px] overflow-x-auto mb-5">
+  <table class="w-full border-collapse min-w-[700px]">
+    <thead>
+      <tr class="border-b border-brand-500/10">
+        <th class="px-4 py-3 text-left text-[11px] font-semibold text-[#6b8ab5] tracking-[.05em] uppercase bg-white/40 whitespace-nowrap">User</th>
+        <th class="px-4 py-3 text-left text-[11px] font-semibold text-[#6b8ab5] tracking-[.05em] uppercase bg-white/40 whitespace-nowrap">ID</th>
+        <th class="px-4 py-3 text-left text-[11px] font-semibold text-[#6b8ab5] tracking-[.05em] uppercase bg-white/40 whitespace-nowrap">Roles</th>
+        <th class="px-4 py-3 text-left text-[11px] font-semibold text-[#6b8ab5] tracking-[.05em] uppercase bg-white/40 whitespace-nowrap">Account</th>
+        <th class="px-4 py-3 text-left text-[11px] font-semibold text-[#6b8ab5] tracking-[.05em] uppercase bg-white/40 whitespace-nowrap">Created</th>
+        <th class="px-4 py-3 text-left text-[11px] font-semibold text-[#6b8ab5] tracking-[.05em] uppercase bg-white/40 whitespace-nowrap">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users"
+        class="border-b border-brand-500/[.06] last:border-b-0 transition-colors duration-150 hover:bg-white/45">
+        <td class="px-4 py-3 text-[13px] text-[#2d4a7a] align-middle">
+          <div class="flex items-center gap-2.5">
+            <div class="w-[30px] h-[30px] rounded-full flex-shrink-0 flex items-center justify-center text-[11px] font-bold text-white"
+              [style.background]="getAvatarColor(user.id)">
+              {{ getInitials(user.fullName) }}
+            </div>
+            <div>
+              <div class="text-[13px] font-semibold text-navy-900">{{ user.fullName }}</div>
+              <div class="text-[11px] text-[#6b8ab5]">@{{ user.username }}</div>
+            </div>
+          </div>
+        </td>
+        <td class="px-4 py-3 align-middle">
+          <span class="text-[11.5px] font-semibold text-brand-500">USR-{{ user.id }}</span>
+        </td>
+        <td class="px-4 py-3 align-middle">
+          <div class="flex gap-1 flex-wrap">
+            <span *ngFor="let role of user.roles" class="badge" [ngClass]="getRoleBadgeClass(role)">{{ role }}</span>
+          </div>
+        </td>
+        <td class="px-4 py-3 align-middle">
+          <span class="badge" [ngClass]="user.enabled ? 'badge-enabled' : 'badge-disabled'">
+            {{ user.enabled ? 'Enabled' : 'Disabled' }}
+          </span>
+        </td>
+        <td class="px-4 py-3 align-middle">
+          <span class="text-[12px] text-[#6b8ab5]">{{ formatDate(user.createdAt) }}</span>
+        </td>
+        <td class="px-4 py-3 align-middle">
+          <div class="flex items-center gap-1.5">
+            <button class="w-7 h-7 rounded-lg border-none cursor-pointer flex items-center justify-center transition-all duration-200 bg-transparent hover:bg-blue-500/[.12]"
+              (click)="viewUser.emit(user)">
+              <svg class="w-3.5 h-3.5 fill-brand-500" viewBox="0 0 24 24">
+                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+              </svg>
+            </button>
+            <button class="w-7 h-7 rounded-lg border-none cursor-pointer flex items-center justify-center transition-all duration-200 bg-transparent hover:bg-red-600/10"
+              (click)="deleteUser.emit(user)">
+              <svg class="w-3.5 h-3.5 fill-red-600" viewBox="0 0 24 24">
+                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+              </svg>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="users.length === 0" class="text-center py-8 px-5 text-[13px] text-[#6b8ab5]">
+    <svg class="w-9 h-9 fill-[rgba(107,138,181,.4)] mb-2.5 mx-auto block" viewBox="0 0 24 24">
+      <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+    </svg>
+    No users found.
+  </div>
+
+  <div class="px-4 py-3 text-[12px] text-[#6b8ab5] border-t border-brand-500/[.07]">
+    Showing {{ users.length }} of {{ totalUsers }} users
+  </div>
+</div>

@@ -93,6 +93,61 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'pharmacy-dashboard',
+    loadComponent: () =>
+      import('./pages/pharmacy/pharmacy-dashboard.component').then(m => m.PharmacyDashboardComponent),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['PHARMACIST'] },
+    children: [
+      { path: '', redirectTo: 'medicines', pathMatch: 'full' },
+      {
+        path: 'medicines',
+        loadComponent: () =>
+          import('./pages/pharmacy/medicines/medicine-list/medicine-list.component').then(m => m.MedicineListComponent)
+      },
+      {
+        path: 'medicines/add',
+        loadComponent: () =>
+          import('./pages/pharmacy/medicines/add-medicine/add-medicine.component').then(m => m.AddMedicineComponent)
+      },
+      {
+        path: 'medicines/edit/:id',
+        loadComponent: () =>
+          import('./pages/pharmacy/medicines/add-medicine/add-medicine.component').then(m => m.AddMedicineComponent)
+      },
+      {
+        path: 'medicines/detail/:id',
+        loadComponent: () =>
+          import('./pages/pharmacy/medicines/medicine-detail/medicine-detail.component').then(m => m.MedicineDetailComponent)
+      },
+      {
+        path: 'dispenses',
+        loadComponent: () =>
+          import('./pages/pharmacy/dispenses/dispense-list/dispense-list.component').then(m => m.DispenseListComponent)
+      },
+      {
+        path: 'dispenses/create',
+        loadComponent: () =>
+          import('./pages/pharmacy/dispenses/edit-dispense/edit-dispense.component').then(m => m.EditDispenseComponent)
+      },
+      {
+        path: 'dispenses/edit/:id',
+        loadComponent: () =>
+          import('./pages/pharmacy/dispenses/edit-dispense/edit-dispense.component').then(m => m.EditDispenseComponent)
+      },
+      {
+        path: 'dispenses/appointment',
+        loadComponent: () =>
+          import('./pages/pharmacy/dispenses/appointment-medicines/appointment-medicines.component').then(m => m.AppointmentMedicinesComponent)
+      },
+      {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./pages/pharmacy/notifications/notifications.component').then(m => m.PhNotificationsComponent)
+      }
+    ]
+  },
+  {
     path: '**',
     redirectTo: ''
   }

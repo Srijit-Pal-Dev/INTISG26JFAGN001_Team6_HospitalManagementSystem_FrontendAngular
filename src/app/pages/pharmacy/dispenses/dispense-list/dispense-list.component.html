@@ -1,0 +1,87 @@
+<div class="dispense-list">
+  <div class="dispense-list-toolbar">
+    <h2 class="page-title">Yet to Dispense</h2>
+    <button class="btn-appt-lookup" (click)="goToAppointmentLookup()">
+      <i class="fas fa-search"></i> Look Up by Appointment ID
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="state-loading">
+    <i class="fas fa-spinner fa-spin"></i> Loading pending dispenses...
+  </div>
+  <div *ngIf="error && !loading" class="state-error">
+    <i class="fas fa-exclamation-circle"></i> {{ error }}
+  </div>
+  <div *ngIf="!loading && !error && groups.length === 0" class="state-empty">
+    <i class="fas fa-check-circle" style="color:#48BB78"></i>
+    No pending dispense requests. All caught up!
+  </div>
+
+  <div *ngIf="!loading && groups.length > 0" class="dispense-grid">
+    <div *ngFor="let group of groups; trackBy: trackByPrescription" class="dispense-card card">
+
+      <div class="card-header">
+        <div class="patient-meta">
+          <div class="patient-info">
+            <span class="info-label">Patient ID</span>
+            <span class="info-value">{{ group.patientId ?? '—' }}</span>
+          </div>
+          <div class="patient-info">
+            <span class="info-label">Patient Name</span>
+            <span class="info-value">{{ group.patientName ?? ('Patient ' + group.patientId) }}</span>
+          </div>
+          <div class="patient-info">
+            <span class="info-label">Prescription ID</span>
+            <span class="info-value">{{ group.prescriptionId }}</span>
+          </div>
+        </div>
+        <button class="btn-edit" (click)="goToEdit(group)" title="Edit dispense">
+          <i class="fas fa-pen"></i> Edit
+        </button>
+      </div>
+
+      <div class="card-body">
+        <div class="med-thumbnails">
+          <ng-container *ngFor="let item of group.items; let i = index">
+            <div class="thumb" *ngIf="i < 3">
+              <img [src]="getMedIcon(item)" [alt]="item.medicineName" />
+            </div>
+            <div class="thumb thumb-more" *ngIf="i === 3">
+              <ng-container *ngIf="group.items.length === 4">
+                <img [src]="getMedIcon(group.items[3])" [alt]="group.items[3].medicineName" />
+              </ng-container>
+              <ng-container *ngIf="group.items.length > 4">
+                +{{ group.items.length - 3 }}
+              </ng-container>
+            </div>
+          </ng-container>
+        </div>
+
+        <div class="card-details">
+          <div class="medicine-names">
+            <span class="detail-label">Medicine: </span>{{ getMedicineNamesSummary(group) }}
+          </div>
+          <div class="price">
+            Price: <strong>Rs. {{ group.totalPrice | number:'1.0-0' }}</strong>
+          </div>
+          <div class="action-btns">
+            <button class="btn-dispense"
+              [disabled]="dispensingId === group.prescriptionId || dispensedIds.has(group.prescriptionId)"
+              [class.dispensed]="dispensedIds.has(group.prescriptionId)"
+              (click)="dispenseGroup(group)">
+              <ng-container *ngIf="dispensingId === group.prescriptionId">
+                <i class="fas fa-spinner fa-spin"></i> Dispensing...
+              </ng-container>
+              <ng-container *ngIf="dispensedIds.has(group.prescriptionId)">
+                <i class="fas fa-check"></i> Dispensed
+              </ng-container>
+              <ng-container *ngIf="dispensingId !== group.prescriptionId && !dispensedIds.has(group.prescriptionId)">
+                <i class="fas fa-check-circle"></i> Dispense
+              </ng-container>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

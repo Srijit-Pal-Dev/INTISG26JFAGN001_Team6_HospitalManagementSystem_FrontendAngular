@@ -1,0 +1,63 @@
+.medicine-detail { padding: 8px 0; }
+
+.detail-header {
+  display: flex; align-items: center; gap: 16px; margin-bottom: 28px;
+}
+.detail-header .page-title { flex: 1; margin: 0; }
+
+.btn-back {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--off-white); border: 1.5px solid var(--border);
+  border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 600;
+  color: var(--text-mid); cursor: pointer; transition: all .2s;
+}
+.btn-back:hover { background: #EBF5FF; border-color: var(--primary); color: var(--primary); }
+.btn-sm { padding: 8px 18px; font-size: 13px; }
+
+.detail-card { padding: 32px 36px; border-radius: 16px; }
+
+.detail-top {
+  display: flex; align-items: flex-start; gap: 28px;
+  margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1.5px solid var(--border);
+}
+.detail-img { width: 100px; height: 100px; object-fit: contain; flex-shrink: 0; }
+.detail-title-block { display: flex; flex-direction: column; gap: 8px; }
+
+.med-id-badge {
+  display: inline-block; background: var(--off-white); border: 1px solid var(--border);
+  border-radius: 6px; padding: 3px 10px; font-size: 12px; font-weight: 600; color: var(--text-mid);
+}
+.med-name { font-size: 24px; font-weight: 800; color: var(--text-dark); margin: 0; }
+
+.rx-badge {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px;
+  border-radius: 20px; font-size: 12px; font-weight: 600;
+  background: #F0FFF4; border: 1px solid #9AE6B4; color: #276749;
+}
+.rx-badge i { font-size: 11px; }
+.rx-badge.required { background: #FFF5F5; border-color: #FEB2B2; color: #C53030; }
+
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.detail-row {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.detail-row:nth-last-child(-n+2) { border-bottom: none; }
+
+.detail-label { font-size: 13px; font-weight: 600; color: var(--text-light); min-width: 130px; flex-shrink: 0; }
+.detail-value { font-size: 14px; font-weight: 500; color: var(--text-dark); }
+.detail-value.price { font-weight: 700; color: var(--primary-dark); font-size: 16px; }
+.detail-value.stock { display: flex; align-items: center; gap: 8px; }
+.detail-value.stock i { color: var(--primary); font-size: 13px; }
+.detail-value.stock.low { color: #C2410C; }
+.detail-value.stock.low i { color: #C2410C; }
+
+.low-tag {
+  background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 4px;
+  padding: 2px 8px; font-size: 11px; font-weight: 700; color: #C2410C;
+}
+
+@media (max-width: 768px) {
+  .detail-grid { grid-template-columns: 1fr; }
+  .detail-top { flex-direction: column; align-items: center; text-align: center; }
+}
