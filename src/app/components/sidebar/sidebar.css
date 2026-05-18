@@ -134,6 +134,15 @@
   transition: fill .2s;
 }
 
+.nav-fa-icon {
+  font-size: 16px;
+  width: 18px;
+  color: #6b8ab5;
+  flex-shrink: 0;
+  text-align: center;
+  transition: color .2s;
+}
+
 .nav-label {
   font-size: 13px; font-weight: 500;
   color: #2d4a7a;
@@ -169,6 +178,7 @@
 /* Hover */
 .nav-item:hover { background: rgba(255,255,255,.55); }
 .nav-item:hover .nav-icon { fill: #2563c8; }
+.nav-item:hover .nav-fa-icon { color: #2563c8; }
 .nav-item:hover .nav-label { color: #0a1628; }
 
 /* Active */
@@ -177,6 +187,7 @@
   box-shadow: 0 2px 12px rgba(37,99,200,.12);
 }
 .nav-item.active .nav-icon { fill: #2563c8; }
+.nav-item.active .nav-fa-icon { color: #2563c8; }
 .nav-item.active .nav-label { color: #0a1628; font-weight: 600; }
 .nav-item.active::before {
   content: '';
