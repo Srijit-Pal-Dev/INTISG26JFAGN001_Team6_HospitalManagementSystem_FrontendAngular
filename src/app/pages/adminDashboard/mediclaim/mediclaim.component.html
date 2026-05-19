@@ -5,25 +5,20 @@
     <span class="font-display text-[15px] font-bold text-navy-900">Mediclaim Requests</span>
     <div class="flex items-center gap-2">
       <div class="flex gap-1.5">
-        <div class="fpill" [class.active]="activeFilter === 'all'"
-          (click)="setFilter('all')">
+        <div class="fpill" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
           All <span class="fpill-count">{{ mediclaims().length }}</span>
         </div>
-        <div class="fpill" [class.active]="activeFilter === 'PENDING'"
-          (click)="setFilter('PENDING')">
+        <div class="fpill" [class.active]="activeFilter === 'PENDING'" (click)="setFilter('PENDING')">
           Pending <span class="fpill-count">{{ countByStatus('PENDING') }}</span>
         </div>
-        <div class="fpill" [class.active]="activeFilter === 'APPROVED'"
-          (click)="setFilter('APPROVED')">
+        <div class="fpill" [class.active]="activeFilter === 'APPROVED'" (click)="setFilter('APPROVED')">
           Approved <span class="fpill-count">{{ countByStatus('APPROVED') }}</span>
         </div>
-        <div class="fpill" [class.active]="activeFilter === 'REJECTED'"
-          (click)="setFilter('REJECTED')">
+        <div class="fpill" [class.active]="activeFilter === 'REJECTED'" (click)="setFilter('REJECTED')">
           Rejected <span class="fpill-count">{{ countByStatus('REJECTED') }}</span>
         </div>
       </div>
-      <button class="glass-btn text-[11.5px] font-semibold px-3 py-1.5 rounded-[10px]"
-        (click)="loadAll()">
+      <button class="glass-btn text-[11.5px] font-semibold px-3 py-1.5 rounded-[10px]" (click)="loadAll()">
         <svg class="w-3.5 h-3.5 fill-[#2d4a7a]" viewBox="0 0 24 24">
           <path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
         </svg>
@@ -32,13 +27,16 @@
   </div>
 
   <!-- Loading -->
-  <div *ngIf="isLoading" class="flex items-center gap-2.5 p-5 text-[13px] text-[#6b8ab5]">
+  @if (isLoading) {
+  <div class="flex items-center gap-2.5 p-5 text-[13px] text-[#6b8ab5]">
     <span class="spin-blue"></span>
     <span>Loading mediclaims…</span>
   </div>
+  }
 
   <!-- Table -->
-  <div *ngIf="!isLoading" class="table-wrap rounded-[18px] overflow-x-auto">
+  @if (!isLoading) {
+  <div class="table-wrap rounded-[18px] overflow-x-auto">
     <table class="w-full border-collapse min-w-[750px]">
       <thead>
         <tr class="border-b border-brand-500/10">
@@ -54,37 +52,24 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let claim of filteredMediclaims()"
-          class="border-b border-brand-500/[.06] last:border-b-0 transition-colors duration-150 hover:bg-white/45">
+        @for (claim of filteredMediclaims(); track claim.id) {
+        <tr class="border-b border-brand-500/[.06] last:border-b-0 transition-colors duration-150 hover:bg-white/45">
           <td class="px-4 py-3 align-middle">
             <span class="text-[11.5px] font-semibold text-brand-500">CLM-{{ claim.id }}</span>
           </td>
-          <td class="px-4 py-3 align-middle text-[13px] text-[#2d4a7a]">
-            {{ claim.patientId }}
-          </td>
-          <td class="px-4 py-3 align-middle text-[13px] font-semibold text-navy-900">
-            {{ claim.policyNumber }}
-          </td>
-          <td class="px-4 py-3 align-middle text-[13px] text-[#2d4a7a]">
-            {{ claim.insurerName }}
-          </td>
-          <td class="px-4 py-3 align-middle text-[13px] text-[#2d4a7a]">
-            {{ claim.coveragePercentage }}%
-          </td>
+          <td class="px-4 py-3 align-middle text-[13px] text-[#2d4a7a]">{{ claim.patientId }}</td>
+          <td class="px-4 py-3 align-middle text-[13px] font-semibold text-navy-900">{{ claim.policyNumber }}</td>
+          <td class="px-4 py-3 align-middle text-[13px] text-[#2d4a7a]">{{ claim.insurerName }}</td>
+          <td class="px-4 py-3 align-middle text-[13px] text-[#2d4a7a]">{{ claim.coveragePercentage }}%</td>
           <td class="px-4 py-3 align-middle text-[13px] text-[#2d4a7a]">
             {{ claim.refundAmount ? '₹' + claim.refundAmount : '—' }}
           </td>
           <td class="px-4 py-3 align-middle">
-            <span class="badge" [ngClass]="getStatusBadgeClass(claim.status)">
-              {{ claim.status }}
-            </span>
+            <span class="badge" [ngClass]="getStatusBadgeClass(claim.status)">{{ claim.status }}</span>
           </td>
-          <td class="px-4 py-3 align-middle text-[12px] text-[#6b8ab5]">
-            {{ formatDate(claim.appliedAt) }}
-          </td>
+          <td class="px-4 py-3 align-middle text-[12px] text-[#6b8ab5]">{{ formatDate(claim.appliedAt) }}</td>
           <td class="px-4 py-3 align-middle">
-            <button
-              class="w-7 h-7 rounded-lg border-none cursor-pointer flex items-center justify-center transition-all duration-200 bg-transparent hover:bg-blue-500/[.12]"
+            <button class="w-7 h-7 rounded-lg border-none cursor-pointer flex items-center justify-center transition-all duration-200 bg-transparent hover:bg-blue-500/[.12]"
               (click)="viewClaim(claim)">
               <svg class="w-3.5 h-3.5 fill-brand-500" viewBox="0 0 24 24">
                 <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
@@ -92,26 +77,31 @@
             </button>
           </td>
         </tr>
+        }
       </tbody>
     </table>
 
-    <div *ngIf="filteredMediclaims().length === 0" class="text-center py-8 px-5 text-[13px] text-[#6b8ab5]">
+    @if (filteredMediclaims().length === 0) {
+    <div class="text-center py-8 px-5 text-[13px] text-[#6b8ab5]">
       <svg class="w-9 h-9 fill-[rgba(107,138,181,.4)] mb-2.5 mx-auto block" viewBox="0 0 24 24">
         <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12z"/>
       </svg>
       No mediclaims found.
     </div>
+    }
 
     <div class="px-4 py-3 text-[12px] text-[#6b8ab5] border-t border-brand-500/[.07]">
       Showing {{ filteredMediclaims().length }} of {{ mediclaims().length }} claims
     </div>
   </div>
+  }
+
 </div>
 
 <!-- Detail Modal -->
-<div class="modal-bg" [class.show]="showDetailModal && !!selectedClaim"
-  (click)="showDetailModal = false">
-  <div class="modal" (click)="$event.stopPropagation()" *ngIf="selectedClaim as claim">
+<div class="modal-bg" [class.show]="showDetailModal && !!selectedClaim" (click)="showDetailModal = false">
+  @if (selectedClaim; as claim) {
+  <div class="modal" (click)="$event.stopPropagation()">
 
     <button class="absolute top-4 right-4 bg-none border-none cursor-pointer opacity-50 hover:opacity-100 transition-opacity"
       (click)="showDetailModal = false">
@@ -158,42 +148,46 @@
         <div class="text-[10px] font-semibold text-[#6b8ab5] uppercase tracking-[.05em] mb-1">Applied At</div>
         <div class="text-[13px] font-medium text-navy-900">{{ formatDate(claim.appliedAt) }}</div>
       </div>
-      <div class="bg-white/50 border border-white/80 rounded-[10px] px-3.5 py-2.5" *ngIf="claim.processedAt">
+      @if (claim.processedAt) {
+      <div class="bg-white/50 border border-white/80 rounded-[10px] px-3.5 py-2.5">
         <div class="text-[10px] font-semibold text-[#6b8ab5] uppercase tracking-[.05em] mb-1">Processed At</div>
         <div class="text-[13px] font-medium text-navy-900">{{ formatDate(claim.processedAt) }}</div>
       </div>
+      }
     </div>
 
-    <!-- Actions — only show for PENDING -->
-    <div class="flex gap-2.5 mt-4" *ngIf="claim.status === 'PENDING'">
+    @if (claim.status === 'PENDING') {
+    <div class="flex gap-2.5 mt-4">
       <button class="glass-btn flex-1 justify-center py-3 rounded-[10px] text-[13px] font-semibold"
         (click)="showDetailModal = false">Cancel</button>
       <button class="danger-btn flex-1 justify-center py-3 rounded-[10px] text-[13px] font-semibold disabled:opacity-60"
         (click)="reject()" [disabled]="isSubmitting">
-        <span *ngIf="!isSubmitting">Reject</span>
-        <span *ngIf="isSubmitting">Processing…</span>
+        @if (!isSubmitting) { Reject } @else { Processing… }
       </button>
       <button class="primary-btn flex-1 justify-center py-3 rounded-[10px] text-[13px] font-semibold disabled:opacity-60"
         (click)="approve()" [disabled]="isSubmitting">
-        <span *ngIf="!isSubmitting">Approve</span>
-        <span *ngIf="isSubmitting">Processing…</span>
+        @if (!isSubmitting) { Approve } @else { Processing… }
       </button>
     </div>
+    }
 
-    <div *ngIf="claim.status !== 'PENDING'"
-      class="mt-4 py-3 rounded-[10px] text-center text-[13px] font-semibold"
+    @if (claim.status !== 'PENDING') {
+    <div class="mt-4 py-3 rounded-[10px] text-center text-[13px] font-semibold"
       [ngClass]="claim.status === 'APPROVED' ? 'bg-emerald-600/10 text-emerald-600' : 'bg-red-600/10 text-red-600'">
       This claim has been {{ claim.status === 'APPROVED' ? 'approved' : 'rejected' }}
     </div>
+    }
 
   </div>
+  }
 </div>
 
 <!-- Toast -->
-<div *ngIf="showToast"
-  class="fixed bottom-6 right-6 z-[400] bg-white/88 border border-white/95 rounded-2xl backdrop-blur-xl shadow-[0_8px_28px_rgba(37,99,200,.15)] px-5 py-3.5 flex items-center gap-2.5 min-w-[240px] toast-anim">
+@if (showToast) {
+<div class="fixed bottom-6 right-6 z-[400] bg-white/88 border border-white/95 rounded-2xl backdrop-blur-xl shadow-[0_8px_28px_rgba(37,99,200,.15)] px-5 py-3.5 flex items-center gap-2.5 min-w-[240px] toast-anim">
   <div class="w-2 h-2 rounded-full flex-shrink-0"
     [ngClass]="toastType === 'ok' ? 'bg-emerald-600' : toastType === 'err' ? 'bg-red-600' : 'bg-blue-500'">
   </div>
   <div class="text-[13px] text-navy-900 font-medium">{{ toastMessage }}</div>
 </div>
+}

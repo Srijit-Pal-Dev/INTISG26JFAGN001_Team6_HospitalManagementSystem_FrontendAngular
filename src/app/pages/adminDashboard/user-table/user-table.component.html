@@ -16,12 +16,15 @@
   </div>
 </div>
 
-<div *ngIf="isLoading" class="flex items-center gap-2.5 p-5 text-[13px] text-[#6b8ab5]">
+@if (isLoading) {
+<div class="flex items-center gap-2.5 p-5 text-[13px] text-[#6b8ab5]">
   <span class="spin-blue"></span>
   <span>Loading users…</span>
 </div>
+}
 
-<div *ngIf="!isLoading" class="table-wrap rounded-[18px] overflow-x-auto mb-5">
+@if (!isLoading) {
+<div class="table-wrap rounded-[18px] overflow-x-auto mb-5">
   <table class="w-full border-collapse min-w-[700px]">
     <thead>
       <tr class="border-b border-brand-500/10">
@@ -34,8 +37,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let user of users"
-        class="border-b border-brand-500/[.06] last:border-b-0 transition-colors duration-150 hover:bg-white/45">
+      @for (user of users; track user.id) {
+      <tr class="border-b border-brand-500/[.06] last:border-b-0 transition-colors duration-150 hover:bg-white/45">
         <td class="px-4 py-3 text-[13px] text-[#2d4a7a] align-middle">
           <div class="flex items-center gap-2.5">
             <div class="w-[30px] h-[30px] rounded-full flex-shrink-0 flex items-center justify-center text-[11px] font-bold text-white"
@@ -53,7 +56,9 @@
         </td>
         <td class="px-4 py-3 align-middle">
           <div class="flex gap-1 flex-wrap">
-            <span *ngFor="let role of user.roles" class="badge" [ngClass]="getRoleBadgeClass(role)">{{ role }}</span>
+            @for (role of user.roles; track role) {
+            <span class="badge" [ngClass]="getRoleBadgeClass(role)">{{ role }}</span>
+            }
           </div>
         </td>
         <td class="px-4 py-3 align-middle">
@@ -81,17 +86,21 @@
           </div>
         </td>
       </tr>
+      }
     </tbody>
   </table>
 
-  <div *ngIf="users.length === 0" class="text-center py-8 px-5 text-[13px] text-[#6b8ab5]">
+  @if (users.length === 0) {
+  <div class="text-center py-8 px-5 text-[13px] text-[#6b8ab5]">
     <svg class="w-9 h-9 fill-[rgba(107,138,181,.4)] mb-2.5 mx-auto block" viewBox="0 0 24 24">
       <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
     </svg>
     No users found.
   </div>
+  }
 
   <div class="px-4 py-3 text-[12px] text-[#6b8ab5] border-t border-brand-500/[.07]">
     Showing {{ users.length }} of {{ totalUsers }} users
   </div>
 </div>
+}

@@ -12,23 +12,17 @@
     <div class="text-[13px] text-[#6b8ab5] mb-0">System alerts and updates</div>
 
     <div class="max-h-[400px] overflow-y-auto -mx-8 mt-4 border-t border-brand-500/[.08]">
-      <div *ngFor="let notif of notifications"
-        class="flex items-start gap-3 px-8 py-3.5 border-b border-brand-500/[.06] last:border-b-0 cursor-pointer transition-colors duration-150 hover:bg-white/45"
+      @for (notif of notifications; track notif.id) {
+      <div class="flex items-start gap-3 px-8 py-3.5 border-b border-brand-500/[.06] last:border-b-0 cursor-pointer transition-colors duration-150 hover:bg-white/45"
         [class.bg-blue-500/[.04]]="!notif.read" (click)="markRead.emit(notif)">
-        <div class="pt-1">
-          <!-- <div class="w-2 h-2 rounded-full flex-shrink-0" [ngClass]="getNotifDotClass(notif.type)"></div> -->
-           <!-- Unread: colored dot | Read: grey checkmark -->
-            <div class="pt-1 flex-shrink-0">
-              <div *ngIf="!notif.read"
-                class="w-2 h-2 rounded-full mt-1"
-                [ngClass]="getNotifDotClass(notif.type)">
-              </div>
-              <svg *ngIf="notif.read"
-                class="w-3.5 h-3.5 fill-[#32cd32]"
-                viewBox="0 0 24 24">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-              </svg>
-            </div>
+        <div class="pt-1 flex-shrink-0">
+          @if (!notif.read) {
+          <div class="w-2 h-2 rounded-full mt-1" [ngClass]="getNotifDotClass(notif.type)"></div>
+          } @else {
+          <svg class="w-3.5 h-3.5 fill-emerald-500" viewBox="0 0 24 24">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+          }
         </div>
         <div>
           <div class="text-[13px] font-semibold text-navy-900 mb-0.5">{{ notif.title }}</div>
@@ -36,9 +30,10 @@
           <div class="text-[10.5px] text-[#6b8ab5] mt-1">{{ formatDate(notif.createdAt) }}</div>
         </div>
       </div>
-      <div *ngIf="notifications.length === 0" class="text-center py-8 text-[13px] text-[#6b8ab5]">
-        No notifications.
-      </div>
+      }
+      @if (notifications.length === 0) {
+      <div class="text-center py-8 text-[13px] text-[#6b8ab5]">No notifications.</div>
+      }
     </div>
 
     <button class="glass-btn w-full justify-center py-3 rounded-[10px] text-[13px] font-semibold mt-4"

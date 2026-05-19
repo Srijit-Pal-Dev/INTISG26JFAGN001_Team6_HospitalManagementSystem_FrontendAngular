@@ -1,8 +1,4 @@
 <div class="bg-base"></div>
-<!-- <div class="bg-orb bg-orb-1"></div>
-<div class="bg-orb bg-orb-2"></div>
-<div class="bg-orb bg-orb-3"></div>
-<div class="bg-grid"></div> -->
 
 <div class="relative z-10 flex h-screen overflow-hidden">
 
@@ -35,9 +31,9 @@
           <svg class="w-[17px] h-[17px] fill-[#2d4a7a]" viewBox="0 0 24 24">
             <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
           </svg>
-          <span *ngIf="unreadCount > 0"
-            class="absolute top-[7px] right-[7px] w-[7px] h-[7px] rounded-full bg-red-400 border-[1.5px] border-white">
-          </span>
+          @if (unreadCount > 0) {
+          <span class="absolute top-[7px] right-[7px] w-[7px] h-[7px] rounded-full bg-red-400 border-[1.5px] border-white"></span>
+          }
         </button>
         <button class="w-[38px] h-[38px] rounded-xl border border-white/88 flex items-center justify-center bg-white backdrop-blur-md transition-all duration-200 hover:bg-white/88"
           (click)="loadUsers()">
@@ -109,8 +105,11 @@
         </div>
         <button class="glass-btn text-[11.5px] font-semibold px-3 py-1.5 rounded-[10px]"
           (click)="searchResult = null; searchError = ''; searchById = ''; searchByUsername = ''">Clear</button>
-        <div *ngIf="searchError" class="text-[12px] text-red-600 mt-2.5">{{ searchError }}</div>
-        <div *ngIf="searchResult" class="mt-3.5 bg-white/60 border border-white/85 rounded-xl p-3.5">
+        @if (searchError) {
+        <div class="text-[12px] text-red-600 mt-2.5">{{ searchError }}</div>
+        }
+        @if (searchResult) {
+        <div class="mt-3.5 bg-white/60 border border-white/85 rounded-xl p-3.5">
           <div class="flex items-center gap-2.5">
             <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-[11px] font-bold text-white"
               [style.background]="getAvatarColor(searchResult.id)">
@@ -122,12 +121,15 @@
             </div>
           </div>
           <div class="flex gap-2 mt-2.5 flex-wrap">
-            <span *ngFor="let role of searchResult.roles" class="badge" [ngClass]="getRoleBadgeClass(role)">{{ role }}</span>
+            @for (role of searchResult.roles; track role) {
+            <span class="badge" [ngClass]="getRoleBadgeClass(role)">{{ role }}</span>
+            }
             <span class="badge" [ngClass]="searchResult.enabled ? 'badge-enabled' : 'badge-disabled'">
               {{ searchResult.enabled ? 'Enabled' : 'Disabled' }}
             </span>
           </div>
         </div>
+        }
       </div>
 
       <app-user-table
@@ -156,17 +158,18 @@
       </svg>
     </div>
     <div class="font-display text-[18px] font-bold text-navy-900 mb-2">Delete User?</div>
-    <div *ngIf="selectedUser" class="text-[13px] text-[#6b8ab5]">
+    @if (selectedUser) {
+    <div class="text-[13px] text-[#6b8ab5]">
       You are about to permanently delete
       <strong class="text-navy-900">{{ selectedUser.fullName }}</strong>. This cannot be undone.
     </div>
+    }
     <div class="flex gap-2.5 mt-5">
       <button class="glass-btn flex-1 justify-center py-3 rounded-[10px] text-[13px] font-semibold"
         (click)="showDeleteModal = false">Cancel</button>
       <button class="danger-btn flex-1 justify-center py-3 rounded-[10px] text-[13px] font-semibold disabled:opacity-60"
         (click)="confirmDelete()" [disabled]="isSubmitting">
-        <span *ngIf="!isSubmitting">Delete</span>
-        <span *ngIf="isSubmitting">Deleting…</span>
+        @if (!isSubmitting) { Delete } @else { Deleting… }
       </button>
     </div>
   </div>
@@ -192,10 +195,11 @@
   (markRead)="markAsRead($event)"
   (markAllRead)="markAllRead()" />
 
-<div *ngIf="showToast"
-  class="fixed bottom-6 right-6 z-[400] bg-white/88 border border-white/95 rounded-2xl backdrop-blur-xl shadow-[0_8px_28px_rgba(37,99,200,.15)] px-5 py-3.5 flex items-center gap-2.5 min-w-[240px] toast-anim">
+@if (showToast) {
+<div class="fixed bottom-6 right-6 z-[400] bg-white/88 border border-white/95 rounded-2xl backdrop-blur-xl shadow-[0_8px_28px_rgba(37,99,200,.15)] px-5 py-3.5 flex items-center gap-2.5 min-w-[240px] toast-anim">
   <div class="w-2 h-2 rounded-full flex-shrink-0"
     [ngClass]="toastType === 'ok' ? 'bg-emerald-600' : toastType === 'err' ? 'bg-red-600' : 'bg-blue-500'">
   </div>
   <div class="text-[13px] text-navy-900 font-medium">{{ toastMessage }}</div>
 </div>
+}
