@@ -117,7 +117,7 @@ export class DoctorAppointmentsComponent implements OnInit {
             SCHEDULED: 'da-status--scheduled',
             COMPLETED: 'da-status--completed',
             CANCELLED: 'da-status--cancelled',
-            NO_SHOW:   'da-status--noshow'
+            NO_SHOW: 'da-status--noshow'
         };
         return map[status] ?? '';
     }
@@ -127,7 +127,11 @@ export class DoctorAppointmentsComponent implements OnInit {
     }
 
     countByStatus(status: string): number {
-        if (status === 'ALL') return this.appointments().length;
-        return this.appointments().filter(a => a.status === status).length;
+        const list = this.appointments();
+        if (!Array.isArray(list)) return 0;
+
+        if (status === 'ALL') return list.length;
+        return list.filter(a => a.status === status).length;
     }
+
 }
