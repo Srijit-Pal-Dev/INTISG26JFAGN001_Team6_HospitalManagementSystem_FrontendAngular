@@ -123,6 +123,7 @@ export class CreatePrescriptionComponent implements OnInit {
         this.medicines = [
             ...this.medicines,
             {
+                medicineId: med.id,
                 medicineName: med.name,
                 dosage: med.dosageStrength ?? '',
                 frequency: '',

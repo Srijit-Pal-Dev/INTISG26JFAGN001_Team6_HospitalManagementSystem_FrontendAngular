@@ -58,15 +58,30 @@ export class DoctorAppointmentsComponent implements OnInit {
         });
     }
 
+    // loadAppointments(): void {
+    //     this.isLoading.set(true);
+    //     this.errorMessage.set('');
+    //     this.patientService.getAppointmentsByDoctor(this.doctorId()).subscribe({
+    //         next: (list) => {
+    //             this.appointments.set(list);
+    //             this.isLoading.set(false);
+    //         },
+    //         error: (err) => {
+    //             this.errorMessage.set(err?.error?.message || 'Failed to load appointments');
+    //             this.isLoading.set(false);
+    //         }
+    //     });
+    // }
     loadAppointments(): void {
         this.isLoading.set(true);
         this.errorMessage.set('');
         this.patientService.getAppointmentsByDoctor(this.doctorId()).subscribe({
             next: (list) => {
-                this.appointments.set(list);
+                this.appointments.set(Array.isArray(list) ? list : []);
                 this.isLoading.set(false);
             },
             error: (err) => {
+                this.appointments.set([]);
                 this.errorMessage.set(err?.error?.message || 'Failed to load appointments');
                 this.isLoading.set(false);
             }
@@ -126,8 +141,14 @@ export class DoctorAppointmentsComponent implements OnInit {
         this.filterStatus.set(status);
     }
 
+//     countByStatus(status: string): number {
+//         if (status === 'ALL') return this.appointments().length;
+//         return this.appointments().filter(a => a.status === status).length;
+//     }
     countByStatus(status: string): number {
-        if (status === 'ALL') return this.appointments().length;
-        return this.appointments().filter(a => a.status === status).length;
+        const list = this.appointments();
+        if (!Array.isArray(list)) return 0;
+        if (status === 'ALL') return list.length;
+        return list.filter(a => a.status === status).length;
     }
 }

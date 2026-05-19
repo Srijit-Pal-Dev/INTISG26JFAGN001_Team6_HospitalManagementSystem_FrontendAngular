@@ -79,10 +79,18 @@ export class PatientService {
         return this.http.delete<void>(`${this.baseUrl}/appointment/delete/${id}`);
     }
 
+    // getAppointmentsByDoctor(doctorId: number): Observable<AppointmentDTO[]> {
+    //     return this.http
+    //         .get<ApiResponse<AppointmentDTO[]> | AppointmentDTO[]>(`${this.baseUrl}/appointment/doctor/${doctorId}`)
+    //         .pipe(map((r: any) => Array.isArray(r) ? r : (r.data ?? [])));
+    // }
     getAppointmentsByDoctor(doctorId: number): Observable<AppointmentDTO[]> {
         return this.http
             .get<ApiResponse<AppointmentDTO[]> | AppointmentDTO[]>(`${this.baseUrl}/appointment/doctor/${doctorId}`)
-            .pipe(map((r: any) => Array.isArray(r) ? r : (r.data ?? [])));
+            .pipe(map((r: any) => {
+                const data = Array.isArray(r) ? r : (r.data ?? []);
+                return Array.isArray(data) ? data : data ? [data] : [];
+            }));
     }
 
     completeAppointment(id: number): Observable<AppointmentDTO> {
