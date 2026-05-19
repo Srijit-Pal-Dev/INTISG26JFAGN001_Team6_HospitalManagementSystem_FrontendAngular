@@ -11,3 +11,4 @@ export * from './medicine.model';
 export * from './dispense.model';
 export * from './lab-result.model';
 export * from './invoice.model';
+export * from './prescription.model';

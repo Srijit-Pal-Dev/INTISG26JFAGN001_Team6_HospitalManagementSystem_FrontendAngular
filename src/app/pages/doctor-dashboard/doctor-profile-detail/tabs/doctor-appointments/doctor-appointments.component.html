@@ -1,0 +1,87 @@
+<div class="da-container">
+
+  <!-- Filter Tabs -->
+  <div class="da-filters" *ngIf="!isLoading()">
+    <button class="da-filter-btn" [class.active]="filterStatus() === 'ALL'"
+      (click)="setFilter('ALL')">All <span class="da-filter-count">{{ countByStatus('ALL') }}</span></button>
+    <button class="da-filter-btn" [class.active]="filterStatus() === 'SCHEDULED'"
+      (click)="setFilter('SCHEDULED')">Scheduled <span class="da-filter-count">{{ countByStatus('SCHEDULED') }}</span></button>
+    <button class="da-filter-btn" [class.active]="filterStatus() === 'COMPLETED'"
+      (click)="setFilter('COMPLETED')">Completed <span class="da-filter-count">{{ countByStatus('COMPLETED') }}</span></button>
+    <button class="da-filter-btn" [class.active]="filterStatus() === 'CANCELLED'"
+      (click)="setFilter('CANCELLED')">Cancelled <span class="da-filter-count">{{ countByStatus('CANCELLED') }}</span></button>
+    <button class="da-filter-btn" [class.active]="filterStatus() === 'NO_SHOW'"
+      (click)="setFilter('NO_SHOW')">No Show <span class="da-filter-count">{{ countByStatus('NO_SHOW') }}</span></button>
+  </div>
+
+  <!-- Loading -->
+  <div class="da-loading" *ngIf="isLoading()">
+    <div class="da-spinner"></div>
+    <span>Loading appointments...</span>
+  </div>
+
+  <!-- Error -->
+  <div class="da-error" *ngIf="errorMessage()">
+    <lucide-icon [img]="AlertIcon" size="18"></lucide-icon>
+    {{ errorMessage() }}
+    <button (click)="loadAppointments()">Retry</button>
+  </div>
+
+  <!-- Appointment Cards -->
+  <div class="da-list" *ngIf="!isLoading() && !errorMessage()">
+
+    <div class="da-card" *ngFor="let appt of filteredAppointments()">
+      <div class="da-card-top">
+        <div class="da-appt-id">#{{ appt.id }}</div>
+        <span class="da-status-badge" [ngClass]="getStatusClass(appt.status)">
+          {{ appt.status }}
+        </span>
+      </div>
+
+      <div class="da-card-body">
+        <div class="da-info-row">
+          <lucide-icon [img]="CalendarIcon" size="15"></lucide-icon>
+          <span>{{ formatDateForDisplay(appt.appointmentDate) }}</span>
+          <span class="da-separator">·</span>
+          <lucide-icon [img]="ClockIcon" size="15"></lucide-icon>
+          <span>{{ formatTimeForDisplay(appt.appointmentTime) }}</span>
+        </div>
+        <div class="da-info-row">
+          <lucide-icon [img]="UserIcon" size="15"></lucide-icon>
+          <span>Patient ID: <strong>{{ appt.patientId }}</strong></span>
+        </div>
+        <div class="da-reason" *ngIf="appt.reason">
+          <strong>Reason:</strong> {{ appt.reason }}
+        </div>
+      </div>
+
+      <div class="da-card-actions">
+        <!-- Mark Complete -->
+        <button
+          class="da-action-btn da-btn-complete"
+          *ngIf="appt.status === AppointmentStatus.SCHEDULED"
+          (click)="markComplete(appt)"
+          [disabled]="completingId() === appt.id">
+          <lucide-icon [img]="CheckIcon" size="15"></lucide-icon>
+          {{ completingId() === appt.id ? 'Completing...' : 'Mark Complete' }}
+        </button>
+
+        <!-- Create Prescription -->
+        <button
+          class="da-action-btn da-btn-prescription"
+          *ngIf="appt.status === AppointmentStatus.COMPLETED"
+          (click)="createPrescription(appt)">
+          <lucide-icon [img]="PrescriptionIcon" size="15"></lucide-icon>
+          Create Prescription
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="da-empty" *ngIf="filteredAppointments().length === 0">
+      <lucide-icon [img]="CalendarIcon" size="48"></lucide-icon>
+      <p>No appointments found{{ filterStatus() !== 'ALL' ? ' for this filter' : '' }}.</p>
+    </div>
+  </div>
+
+</div>

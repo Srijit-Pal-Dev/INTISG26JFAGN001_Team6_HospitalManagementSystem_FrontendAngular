@@ -1,0 +1,262 @@
+<div class="cp-container">
+
+  <!-- Back -->
+  <button class="cp-back-btn" (click)="goBack()">
+    <lucide-icon [img]="BackIcon" size="16"></lucide-icon>
+    Back to Appointments
+  </button>
+
+  <h2 class="cp-title">
+    <lucide-icon [img]="PrescriptionIcon" size="22"></lucide-icon>
+    Create Prescription
+  </h2>
+
+  <!-- Loading Appointment -->
+  <div class="cp-loading" *ngIf="isLoadingAppt()">
+    <div class="cp-spinner"></div>
+    <span>Loading appointment details...</span>
+  </div>
+
+  <!-- Appointment Error -->
+  <div class="cp-error" *ngIf="apptError()">{{ apptError() }}</div>
+
+  <!-- Success Modal -->
+  <div class="cp-success-overlay" *ngIf="showSuccess()">
+    <div class="cp-success-modal">
+      <lucide-icon [img]="SuccessIcon" size="52" class="cp-success-icon"></lucide-icon>
+      <h3>Prescription Created!</h3>
+      <p>The prescription has been successfully sent to pharmacy and lab.</p>
+      <button class="cp-btn-primary" (click)="goBack()">
+        Back to Appointments
+      </button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!isLoadingAppt() && !apptError() && appointment() as appt">
+
+    <!-- Appointment Summary -->
+    <div class="cp-appt-card">
+      <div class="cp-appt-label">Appointment Details</div>
+      <div class="cp-appt-row">
+        <span><strong>Appointment #{{ appt.id }}</strong></span>
+        <span>Patient ID: <strong>{{ appt.patientId }}</strong></span>
+        <span>{{ formatDateForDisplay(appt.appointmentDate) }}</span>
+        <span>{{ formatTimeForDisplay(appt.appointmentTime) }}</span>
+      </div>
+      <div class="cp-appt-reason" *ngIf="appt.reason">
+        <strong>Reason:</strong> {{ appt.reason }}
+      </div>
+    </div>
+
+    <!-- Form — single white card -->
+    <form class="cp-form" (ngSubmit)="submit()">
+
+      <!-- Diagnosis -->
+      <div class="cp-section">
+        <h3>Diagnosis *</h3>
+        <textarea
+          class="cp-textarea"
+          placeholder="Enter diagnosis..."
+          rows="3"
+          [value]="diagnosis()"
+          (input)="diagnosis.set($any($event.target).value)">
+        </textarea>
+      </div>
+
+      <!-- Doctor Notes -->
+      <div class="cp-section">
+        <h3>Doctor Notes</h3>
+        <textarea
+          class="cp-textarea"
+          placeholder="Additional notes for patient (optional)..."
+          rows="2"
+          [value]="doctorNotes()"
+          (input)="doctorNotes.set($any($event.target).value)">
+        </textarea>
+      </div>
+
+      <!-- Medicines -->
+      <div class="cp-section">
+        <div class="cp-section-header">
+          <h3>
+            <lucide-icon [img]="PillIcon" size="18"></lucide-icon>
+            Medicines *
+          </h3>
+          <span class="cp-selected-count" *ngIf="medicines.length > 0">
+            {{ medicines.length }} selected
+          </span>
+        </div>
+
+        <!-- Medicine Picker -->
+        <div class="cp-picker-wrap">
+          <div class="cp-picker-search-row">
+            <lucide-icon [img]="SearchIcon" size="16" class="cp-search-icon"></lucide-icon>
+            <input
+              type="text"
+              class="cp-picker-search"
+              placeholder="Search medicines by name, category or ID..."
+              [value]="medicineSearch()"
+              (input)="medicineSearch.set($any($event.target).value)" />
+          </div>
+
+          <!-- Loading medicines -->
+          <div class="cp-picker-loading" *ngIf="isLoadingMedicines()">
+            <div class="cp-spinner"></div>
+            <span>Loading medicines...</span>
+          </div>
+
+          <!-- Error -->
+          <div class="cp-picker-error" *ngIf="medicinesError()">{{ medicinesError() }}</div>
+
+          <!-- Medicine Cards Grid -->
+          <div class="cp-picker-grid" *ngIf="!isLoadingMedicines() && !medicinesError()">
+            <div
+              class="cp-picker-card"
+              *ngFor="let med of filteredMedicines()"
+              [class.cp-picker-card--selected]="isSelected(med)"
+              (click)="selectMedicine(med)">
+
+              <div class="cp-picker-card-top">
+                <span class="cp-picker-id">ID: {{ med.id }}</span>
+                <span class="cp-picker-rx" *ngIf="med.requiresPrescription">Rx</span>
+                <span class="cp-picker-check" *ngIf="isSelected(med)">✓ Added</span>
+              </div>
+
+              <div class="cp-picker-name">{{ med.name }}</div>
+              <div class="cp-picker-strength">{{ med.dosageStrength }}</div>
+              <div class="cp-picker-category">{{ med.category }}</div>
+
+              <div class="cp-picker-footer">
+                <div class="cp-picker-stock" [class.cp-stock-low]="med.stockQuantity <= 15">
+                  <lucide-icon [img]="PackageIcon" size="12"></lucide-icon>
+                  Available: <strong>{{ med.stockQuantity }}</strong>
+                  <span class="cp-low-badge" *ngIf="med.stockQuantity <= 15">Low Stock</span>
+                </div>
+                <button
+                  type="button"
+                  class="cp-picker-add-btn"
+                  [class.cp-picker-add-btn--added]="isSelected(med)"
+                  (click)="$event.stopPropagation(); selectMedicine(med)">
+                  {{ isSelected(med) ? '✓ Added' : '+ Add' }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Empty search result -->
+            <div class="cp-picker-empty" *ngIf="filteredMedicines().length === 0">
+              No medicines found for "{{ medicineSearch() }}"
+            </div>
+          </div>
+        </div>
+
+        <!-- Selected Medicines List -->
+        <div class="cp-selected-wrap" *ngIf="medicines.length > 0">
+          <div class="cp-selected-label">
+            <lucide-icon [img]="PillIcon" size="14"></lucide-icon>
+            Selected Medicines — fill in details below
+          </div>
+
+          <div class="cp-medicine-list">
+            <div class="cp-medicine-row" *ngFor="let med of medicines; let i = index">
+              <div class="cp-medicine-num">{{ i + 1 }}</div>
+              <div class="cp-medicine-fields">
+                <div class="cp-field-group cp-field-wide">
+                  <label>Medicine Name</label>
+                  <input type="text" [(ngModel)]="med.medicineName" name="medicineName_{{i}}" readonly class="cp-input-readonly" />
+                </div>
+                <div class="cp-field-group">
+                  <label>Dosage</label>
+                  <input type="text" placeholder="e.g. 500mg" [(ngModel)]="med.dosage" name="dosage_{{i}}" />
+                </div>
+                <div class="cp-field-group">
+                  <label>Frequency</label>
+                  <input type="text" placeholder="e.g. Twice daily" [(ngModel)]="med.frequency" name="frequency_{{i}}" />
+                </div>
+                <div class="cp-field-group">
+                  <label>Duration</label>
+                  <input type="text" placeholder="e.g. 7 days" [(ngModel)]="med.duration" name="duration_{{i}}" />
+                </div>
+                <div class="cp-field-group">
+                  <label>Qty</label>
+                  <input type="number" placeholder="1" min="1" [(ngModel)]="med.quantity" name="quantity_{{i}}" />
+                </div>
+                <div class="cp-field-group cp-field-wide">
+                  <label>Instructions</label>
+                  <input type="text" placeholder="e.g. After meals" [(ngModel)]="med.instructions" name="instructions_{{i}}" />
+                </div>
+              </div>
+              <button type="button" class="cp-remove-btn" (click)="removeMedicine(i)" title="Remove medicine">
+                <lucide-icon [img]="TrashIcon" size="16"></lucide-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- No medicines yet hint -->
+        <div class="cp-no-med-hint" *ngIf="medicines.length === 0">
+          <lucide-icon [img]="PillIcon" size="20"></lucide-icon>
+          Click a medicine card above to add it to the prescription.
+        </div>
+      </div>
+
+      <!-- Lab Tests -->
+      <div class="cp-section">
+        <div class="cp-section-header">
+          <h3>
+            <lucide-icon [img]="LabIcon" size="18"></lucide-icon>
+            Lab Tests
+          </h3>
+          <label class="cp-toggle-label">
+            <input type="checkbox"
+              [checked]="labRequired"
+              (change)="onLabRequiredChange($any($event.target).checked)" />
+            <span class="cp-toggle-text">Lab Required</span>
+          </label>
+          <button type="button" class="cp-btn-add" (click)="addLabTest()" *ngIf="labRequired">
+            <lucide-icon [img]="PlusIcon" size="15"></lucide-icon>
+            Add Test
+          </button>
+        </div>
+
+        <div class="cp-lab-list" *ngIf="labRequired && labTests.length > 0">
+          <div class="cp-lab-row" *ngFor="let test of labTests; let i = index">
+            <div class="cp-lab-num">{{ i + 1 }}</div>
+            <div class="cp-lab-fields">
+              <div class="cp-field-group cp-field-wide">
+                <label>Test Name *</label>
+                <input type="text" placeholder="e.g. Complete Blood Count"
+                  [(ngModel)]="test.testName" name="testName_{{i}}" />
+              </div>
+              <div class="cp-field-group cp-field-wide">
+                <label>Notes</label>
+                <input type="text" placeholder="Special instructions (optional)"
+                  [(ngModel)]="test.notes" name="testNotes_{{i}}" />
+              </div>
+            </div>
+            <button type="button" class="cp-remove-btn" (click)="removeLabTest(i)" title="Remove test">
+              <lucide-icon [img]="TrashIcon" size="16"></lucide-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="cp-lab-empty" *ngIf="!labRequired">
+          <p>Check "Lab Required" above to add lab tests.</p>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="cp-submit-error" *ngIf="submitError()">{{ submitError() }}</div>
+
+      <!-- Submit -->
+      <div class="cp-form-footer">
+        <button type="button" class="cp-btn-secondary" (click)="goBack()">Cancel</button>
+        <button type="submit" class="cp-btn-primary" [disabled]="!canSubmit() || isSubmitting()">
+          <lucide-icon [img]="SendIcon" size="16"></lucide-icon>
+          {{ isSubmitting() ? 'Sending...' : 'Send Prescription' }}
+        </button>
+      </div>
+
+    </form>
+  </ng-container>
+
+</div>

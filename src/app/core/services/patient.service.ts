@@ -78,4 +78,16 @@ export class PatientService {
     cancelAppointment(id: number): Observable<void> {
         return this.http.delete<void>(`${this.baseUrl}/appointment/delete/${id}`);
     }
+
+    getAppointmentsByDoctor(doctorId: number): Observable<AppointmentDTO[]> {
+        return this.http
+            .get<ApiResponse<AppointmentDTO[]> | AppointmentDTO[]>(`${this.baseUrl}/appointment/doctor/${doctorId}`)
+            .pipe(map((r: any) => Array.isArray(r) ? r : (r.data ?? [])));
+    }
+
+    completeAppointment(id: number): Observable<AppointmentDTO> {
+        return this.http
+            .put<ApiResponse<AppointmentDTO> | AppointmentDTO>(`${this.baseUrl}/appointment/complete/${id}`, {})
+            .pipe(map((r: any) => r.data ?? r));
+    }
 }

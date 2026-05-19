@@ -107,13 +107,36 @@ export class SidebarComponent implements OnInit {
   }
 
   onNavClick(item: { label: string; route: string; icon: string }) {
+    // Pharmacist routes navigate directly
     if (this.pharmacistRoutes.has(item.route)) {
       this.router.navigate(['/pharmacy-dashboard', item.route]);
-    } else if (item.route === 'notifications') {
-      this.notifClicked.emit();
-    } else {
-      this.navClicked.emit(item.route);
-  }
+      return;
+    }
+
+    // Notifications
+    if (item.route === 'notifications') {
+      if (this.userRole === 'PHARMACIST') {
+        this.router.navigate(['/pharmacy-dashboard', 'notifications']);
+      } else {
+        this.notifClicked.emit();
+      }
+      return;
+    }
+
+    // Doctor-specific routes
+    if (this.userRole === 'DOCTOR') {
+      if (item.route === 'overview') {
+        this.router.navigate(['/doctor-dashboard']);
+      }
+      // settings / other doctor routes: emit for the component to handle
+      else {
+        this.navClicked.emit(item.route);
+      }
+      return;
+    }
+
+    // All other roles
+    this.navClicked.emit(item.route);
   }
 
   onLogout() {

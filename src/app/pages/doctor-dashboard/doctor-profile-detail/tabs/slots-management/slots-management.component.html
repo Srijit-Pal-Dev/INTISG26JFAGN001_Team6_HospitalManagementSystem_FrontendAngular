@@ -1,0 +1,227 @@
+<div class="sm-container">
+
+  <!-- Stats Row -->
+  <div class="sm-stats" *ngIf="!isLoading()">
+    <div class="sm-stat">
+      <span class="sm-stat-num sm-stat-total">{{ slots().length }}</span>
+      <span class="sm-stat-label">Total Slots</span>
+    </div>
+    <div class="sm-stat">
+      <span class="sm-stat-num sm-stat-available">{{ availableSlots() }}</span>
+      <span class="sm-stat-label">Available</span>
+    </div>
+    <div class="sm-stat">
+      <span class="sm-stat-num sm-stat-booked">{{ bookedSlots() }}</span>
+      <span class="sm-stat-label">Booked</span>
+    </div>
+  </div>
+
+  <!-- Create Slot Section -->
+  <div class="sm-section">
+    <div class="sm-section-header">
+      <h3>Create Single Slot</h3>
+      <button class="sm-btn-outline" (click)="showBulkForm.set(!showBulkForm())">
+        <lucide-icon [img]="BulkIcon" size="15"></lucide-icon>
+        {{ showBulkForm() ? 'Hide Bulk Form' : 'Bulk Create' }}
+      </button>
+    </div>
+
+    <div class="sm-create-form">
+
+      <!-- Row 1: Select Date -->
+      <div class="sm-form-field">
+        <label>Select Date</label>
+        <mat-form-field appearance="outline" class="sm-date-field">
+          <input matInput [matDatepicker]="picker" placeholder="Pick a date"
+            [min]="minDate"
+            [value]="selectedDate()"
+            (dateChange)="onDateSelected($event.value)" readonly />
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <!-- Row 2: Time + Availability side by side -->
+      <div class="sm-sub-row">
+        <div class="sm-form-field">
+          <label>Time (HH:MM)</label>
+          <input type="time" class="sm-time-input"
+            [value]="slotTime()"
+            (input)="slotTime.set($any($event.target).value)" />
+        </div>
+
+        <div class="sm-form-field">
+          <label>Availability</label>
+          <div class="sm-avail-toggle">
+            <button type="button"
+              class="sm-avail-btn"
+              [class.sm-avail-btn--active]="slotAvailability() === 'available'"
+              [class.sm-avail-btn--available]="slotAvailability() === 'available'"
+              (click)="slotAvailability.set('available')">
+              <lucide-icon [img]="CheckIcon" size="14"></lucide-icon>
+              Available
+            </button>
+            <button type="button"
+              class="sm-avail-btn"
+              [class.sm-avail-btn--active]="slotAvailability() === 'booked'"
+              [class.sm-avail-btn--booked]="slotAvailability() === 'booked'"
+              (click)="slotAvailability.set('booked')">
+              <lucide-icon [img]="XIcon" size="14"></lucide-icon>
+              Booked
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3: Add Slot button -->
+      <button class="sm-btn-primary sm-add-slot-btn" (click)="createSlot()" [disabled]="isCreating()">
+        <lucide-icon [img]="PlusIcon" size="16"></lucide-icon>
+        {{ isCreating() ? 'Creating...' : 'Add Slot' }}
+      </button>
+
+    </div>
+
+    <div class="sm-msg-error" *ngIf="createError()">{{ createError() }}</div>
+    <div class="sm-msg-success" *ngIf="createSuccess()">{{ createSuccess() }}</div>
+  </div>
+
+  <!-- Bulk Create -->
+  <div class="sm-section sm-bulk-section" *ngIf="showBulkForm()">
+    <h3>Bulk Create Slots</h3>
+    <p class="sm-bulk-hint">Generate multiple slots for a day at fixed intervals.</p>
+
+    <div class="sm-bulk-form">
+      <div class="sm-form-field">
+        <label>Select Date</label>
+        <mat-form-field appearance="outline" class="sm-date-field">
+          <input matInput [matDatepicker]="bulkPicker" placeholder="Pick a date"
+            [min]="minDate"
+            [value]="bulkDate()"
+            (dateChange)="onBulkDateSelected($event.value)" readonly />
+          <mat-datepicker-toggle matIconSuffix [for]="bulkPicker"></mat-datepicker-toggle>
+          <mat-datepicker #bulkPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="sm-bulk-row">
+        <div class="sm-form-field">
+          <label>Start Time</label>
+          <input type="time" class="sm-time-input"
+            [value]="bulkStartTime()"
+            (input)="bulkStartTime.set($any($event.target).value)" />
+        </div>
+        <div class="sm-form-field">
+          <label>End Time</label>
+          <input type="time" class="sm-time-input"
+            [value]="bulkEndTime()"
+            (input)="bulkEndTime.set($any($event.target).value)" />
+        </div>
+        <div class="sm-form-field">
+          <label>Interval (mins)</label>
+          <select class="sm-select"
+            [value]="bulkInterval()"
+            (change)="bulkInterval.set(+$any($event.target).value)">
+            <option value="15">15 min</option>
+            <option value="20">20 min</option>
+            <option value="30" selected>30 min</option>
+            <option value="45">45 min</option>
+            <option value="60">60 min</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sm-form-field" style="margin-top: 8px;">
+        <label>Availability</label>
+        <div class="sm-avail-toggle">
+          <button type="button"
+            class="sm-avail-btn"
+            [class.sm-avail-btn--active]="bulkAvailability() === 'available'"
+            [class.sm-avail-btn--available]="bulkAvailability() === 'available'"
+            (click)="bulkAvailability.set('available')">
+            <lucide-icon [img]="CheckIcon" size="14"></lucide-icon>
+            Available
+          </button>
+          <button type="button"
+            class="sm-avail-btn"
+            [class.sm-avail-btn--active]="bulkAvailability() === 'booked'"
+            [class.sm-avail-btn--booked]="bulkAvailability() === 'booked'"
+            (click)="bulkAvailability.set('booked')">
+            <lucide-icon [img]="XIcon" size="14"></lucide-icon>
+            Booked
+          </button>
+        </div>
+      </div>
+
+      <div class="sm-msg-error" *ngIf="bulkError()">{{ bulkError() }}</div>
+      <div class="sm-msg-success" *ngIf="bulkSuccess()">{{ bulkSuccess() }}</div>
+
+      <button class="sm-btn-primary" (click)="generateBulkSlots()" [disabled]="isBulkCreating()">
+        <lucide-icon [img]="BulkIcon" size="16"></lucide-icon>
+        {{ isBulkCreating() ? 'Generating...' : 'Generate Slots' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="sm-loading" *ngIf="isLoading()">
+    <div class="sm-spinner"></div>
+    <span>Loading slots...</span>
+  </div>
+
+  <!-- Error -->
+  <div class="sm-msg-error" *ngIf="errorMessage()">{{ errorMessage() }}</div>
+
+  <!-- Slots Table -->
+  <div class="sm-section" *ngIf="!isLoading() && sortedSlots().length > 0">
+    <h3>Existing Slots ({{ slots().length }})</h3>
+    <div class="sm-table-wrap">
+      <table class="sm-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let slot of sortedSlots()">
+            <td>
+              <div class="sm-date-cell">
+                <lucide-icon [img]="CalendarIcon" size="14"></lucide-icon>
+                {{ formatDateForDisplay(slot.slotDate) }}
+              </div>
+            </td>
+            <td>
+              <div class="sm-time-cell">
+                <lucide-icon [img]="ClockIcon" size="14"></lucide-icon>
+                {{ formatTimeForDisplay(slot.slotTime) }}
+              </div>
+            </td>
+            <td>
+              <span class="sm-status-badge" [class.sm-status--available]="!slot.booked" [class.sm-status--booked]="slot.booked">
+                {{ slot.booked ? 'Booked' : 'Available' }}
+              </span>
+            </td>
+            <td>
+              <button
+                class="sm-del-btn"
+                (click)="deleteSlot(slot.id)"
+                [disabled]="deletingId() === slot.id || slot.booked"
+                [title]="slot.booked ? 'Cannot delete booked slot' : 'Delete slot'">
+                <lucide-icon [img]="TrashIcon" size="15"></lucide-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Empty slots -->
+  <div class="sm-empty" *ngIf="!isLoading() && slots().length === 0 && !errorMessage()">
+    <lucide-icon [img]="CalendarIcon" size="48"></lucide-icon>
+    <p>No slots created yet. Add your first slot above.</p>
+  </div>
+
+</div>
