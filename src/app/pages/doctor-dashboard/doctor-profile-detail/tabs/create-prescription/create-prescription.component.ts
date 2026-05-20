@@ -162,7 +162,7 @@ export class CreatePrescriptionComponent implements OnInit {
         if (!this.diagnosis().trim()) return false;
         if (this.medicines.length === 0) return false;
         if (this.medicines.some(m => !m.medicineName.trim())) return false;
-        if (this.labRequired && this.labTests.some(t => !t.testName.trim())) return false;
+        if (this.labRequired && this.labTests.some(t => !t.testName.trim() || t.fee == null || isNaN(Number(t.fee)) || Number(t.fee) < 0)) return false;
         return true;
     }
 
