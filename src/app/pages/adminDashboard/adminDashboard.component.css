@@ -7,10 +7,11 @@
 
 .bg-base {
   position: fixed; inset: 0; z-index: 0;
-  background: linear-gradient(145deg,
-    #ffffff 0%, #f0f7ff 18%, #dbeafe 45%, #bfdbfe 72%, #93c5fd 100%);
+  /* background: linear-gradient(145deg,
+    #ffffff 0%, #f0f7ff 18%, #dbeafe 45%, #bfdbfe 72%, #93c5fd 100%); */
+    background: #f0f6ff;
 }
-.bg-orb {
+/* .bg-orb {
   position: fixed; border-radius: 50%;
   filter: blur(110px);
   animation: orb-drift ease-in-out infinite alternate;
@@ -28,7 +29,7 @@
   position: fixed; inset: 0; z-index: 1;
   background-image: radial-gradient(circle, rgba(37,99,200,.08) 1.2px, transparent 1.2px);
   background-size: 30px 30px;
-}
+} */
 
 .scrollbar-thin::-webkit-scrollbar { width: 5px; }
 .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(37,99,200,.15); border-radius: 5px; }
@@ -37,12 +38,14 @@
   background: rgba(255,255,255,.62);
   backdrop-filter: blur(20px);
   box-shadow: 0 4px 20px rgba(37,99,200,.08), inset 0 1px 0 rgba(255,255,255,1);
+  border: 1px solid rgba(37,99,200,.12);
 }
+
 .stat-card:hover { box-shadow: 0 8px 28px rgba(37,99,200,.13); }
 
 .glass-panel {
   background: rgba(255,255,255,.58);
-  border: 1px solid rgba(255,255,255,.85);
+  border: 1px solid rgba(37,99,200,.10);
   backdrop-filter: blur(20px);
   box-shadow: 0 4px 16px rgba(37,99,200,.07);
 }
@@ -50,7 +53,7 @@
 .glass-btn {
   display: inline-flex; align-items: center; justify-content: center;
   background: rgba(255,255,255,.65);
-  border: 1px solid rgba(255,255,255,.88);
+  border: 1px solid rgba(37,99,200,.15);
   color: #2d4a7a;
   backdrop-filter: blur(8px);
   cursor: pointer;
@@ -60,13 +63,13 @@
 
 .glass-input {
   background: rgba(255,255,255,.72);
-  border: 1px solid rgba(255,255,255,.88);
+  border: 1px solid rgba(37,99,200,.15);
   backdrop-filter: blur(8px);
   transition: border-color .22s, box-shadow .22s;
 }
 .glass-input:focus {
-  border-color: rgba(59,130,246,.45);
-  box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+  border-color: rgba(37,99,200,.40);
+  box-shadow: 0 0 0 3px rgba(37,99,200,.08);
   outline: none;
 }
 .glass-input::placeholder { color: #6b8ab5; }

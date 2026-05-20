@@ -1,0 +1,253 @@
+.da-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Filters */
+.da-filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.da-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.da-filter-btn.active {
+  background: #1565C0;
+  border-color: #1565C0;
+  color: #fff;
+}
+
+.da-filter-btn:hover:not(.active) {
+  border-color: #1565C0;
+  color: #1565C0;
+}
+
+.da-filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.25);
+}
+
+.da-filter-btn:not(.active) .da-filter-count {
+  background: #e2e8f0;
+  color: #718096;
+}
+
+/* Loading */
+.da-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 48px;
+  justify-content: center;
+  color: #718096;
+}
+
+.da-spinner {
+  width: 26px;
+  height: 26px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #1565C0;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Error */
+.da-error {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: #fff5f5;
+  color: #c53030;
+  border: 1px solid #feb2b2;
+  border-radius: 10px;
+}
+
+.da-error button {
+  margin-left: auto;
+  padding: 5px 14px;
+  background: #c53030;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* List */
+.da-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Card */
+.da-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+  border: 1.5px solid transparent;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.da-card:hover {
+  border-color: #bee3f8;
+  box-shadow: 0 4px 16px rgba(21,101,192,0.1);
+}
+
+.da-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.da-appt-id {
+  font-size: 13px;
+  font-weight: 700;
+  color: #a0aec0;
+}
+
+/* Status badges */
+.da-status-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.da-status--scheduled {
+  background: #ebf8ff;
+  color: #2b6cb0;
+  border: 1px solid #bee3f8;
+}
+
+.da-status--completed {
+  background: #f0fff4;
+  color: #276749;
+  border: 1px solid #9ae6b4;
+}
+
+.da-status--cancelled {
+  background: #fff5f5;
+  color: #c53030;
+  border: 1px solid #feb2b2;
+}
+
+.da-status--noshow {
+  background: #fffaf0;
+  color: #c05621;
+  border: 1px solid #fbd38d;
+}
+
+/* Card body */
+.da-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.da-info-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #4a5568;
+  flex-wrap: wrap;
+}
+
+.da-separator {
+  color: #cbd5e0;
+}
+
+.da-reason {
+  font-size: 13px;
+  color: #718096;
+  background: #f7fafc;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border-left: 3px solid #bee3f8;
+}
+
+/* Actions */
+.da-card-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.da-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+
+.da-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.da-btn-complete {
+  background: #276749;
+  color: #fff;
+}
+
+.da-btn-complete:hover:not(:disabled) { background: #1e4d35; }
+
+.da-btn-prescription {
+  background: #1565C0;
+  color: #fff;
+}
+
+.da-btn-prescription:hover { background: #0d47a1; }
+
+/* Empty */
+.da-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 60px;
+  color: #a0aec0;
+  font-size: 15px;
+  text-align: center;
+}

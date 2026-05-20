@@ -213,21 +213,41 @@ export class MyAppointmentsComponent implements OnInit {
         });
     }
 
+    // assignLabResultsToAppointment(appt: AppointmentWithDoctor) {
+    //     const apptDate = this.parseDate(appt.appointmentDate, appt.appointmentTime);
+    //     const dayStart = new Date(apptDate); dayStart.setHours(0, 0, 0, 0);
+    //     const dayEnd = new Date(apptDate); dayEnd.setHours(23, 59, 59, 999);
+
+    //     const matched = this.allLabResults().filter(r => {
+    //         const recorded = new Date(r.recordedAt);
+    //         return recorded >= dayStart && recorded <= dayEnd;
+    //     });
+
+    //     this.appointments.update(list =>
+    //         list.map(a => a.id === appt.id
+    //             ? { ...a, labResults: matched, labLoaded: true }
+    //             : a)
+    //     );
+    // }
     assignLabResultsToAppointment(appt: AppointmentWithDoctor) {
-        const apptDate = this.parseDate(appt.appointmentDate, appt.appointmentTime);
-        const dayStart = new Date(apptDate); dayStart.setHours(0, 0, 0, 0);
-        const dayEnd = new Date(apptDate); dayEnd.setHours(23, 59, 59, 999);
-
-        const matched = this.allLabResults().filter(r => {
-            const recorded = new Date(r.recordedAt);
-            return recorded >= dayStart && recorded <= dayEnd;
+        this.labService.getTestsByAppointment(appt.id).subscribe({
+            next: (tests) => {
+                const testIds = new Set(tests.map((t: any) => t.id));
+                const matched = this.allLabResults().filter(r => testIds.has(r.labTestId));
+                this.appointments.update(list =>
+                    list.map(a => a.id === appt.id
+                        ? { ...a, labResults: matched, labLoaded: true }
+                        : a)
+                );
+            },
+            error: () => {
+                this.appointments.update(list =>
+                    list.map(a => a.id === appt.id
+                        ? { ...a, labResults: [], labLoaded: true }
+                        : a)
+                );
+            }
         });
-
-        this.appointments.update(list =>
-            list.map(a => a.id === appt.id
-                ? { ...a, labResults: matched, labLoaded: true }
-                : a)
-        );
     }
 
     askCancel(appointmentId: number) {

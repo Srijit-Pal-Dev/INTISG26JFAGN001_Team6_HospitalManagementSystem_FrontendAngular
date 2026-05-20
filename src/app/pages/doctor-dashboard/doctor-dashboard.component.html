@@ -1,0 +1,169 @@
+<div class="dd-layout">
+  <app-sidebar [activeRoute]="'overview'" (logoutClicked)="logout()" (navClicked)="onNavClicked($event)" (notifClicked)="onNotifClicked()"></app-sidebar>
+
+  <main class="dd-main">
+
+    <!-- ───── Loading ───── -->
+    <div class="dd-checking" *ngIf="isLoading()">
+      <div class="dd-spinner"></div>
+      <span>Loading your dashboard...</span>
+    </div>
+
+    <!-- ───── Dashboard Content ───── -->
+    <ng-container *ngIf="!isLoading()">
+
+      <!-- Top Welcome Banner -->
+      <div class="dd-welcome-banner">
+        <div class="dd-welcome-text">
+          <h1>Welcome, Doctor <span class="dd-username">{{ username }}</span></h1>
+          <p>{{ hasProfile() ? 'Manage your slots, appointments and prescriptions from here.' : 'Get started by creating your doctor profile below.' }}</p>
+        </div>
+        <div class="dd-welcome-icon">
+          <lucide-icon [img]="StethoscopeIcon" size="48"></lucide-icon>
+        </div>
+      </div>
+
+      <!-- ── Profile EXISTS: stats + quick actions ── -->
+      <ng-container *ngIf="hasProfile()">
+
+        <!-- Profile Card -->
+        <div class="dd-profile-card">
+          <div class="dd-profile-avatar">{{ getInitials(profile()!.fullName) }}</div>
+          <div class="dd-profile-info">
+            <h2 class="dd-profile-name">{{ profile()!.fullName }}</h2>
+            <span class="dd-specialty-badge">{{ profile()!.specialty }}</span>
+            <div class="dd-profile-meta">
+              <span class="dd-meta-item">
+                <lucide-icon [img]="QualIcon" size="14"></lucide-icon>
+                {{ profile()!.qualification }}
+              </span>
+              <span class="dd-meta-item">
+                <lucide-icon [img]="ExpIcon" size="14"></lucide-icon>
+                {{ profile()!.experienceYears }} yrs experience
+              </span>
+              <span class="dd-meta-item">
+                <lucide-icon [img]="RupeeIcon" size="14"></lucide-icon>
+                ₹{{ profile()!.consultationFee }} / visit
+              </span>
+            </div>
+          </div>
+          <button class="dd-go-btn" (click)="goToProfile()">
+            Go to My Dashboard
+            <lucide-icon [img]="ArrowIcon" size="16"></lucide-icon>
+          </button>
+        </div>
+
+        <!-- Quick Action Cards -->
+        <div class="dd-actions-grid">
+          <div class="dd-action-card dd-action-slots" (click)="goToSlots()">
+            <div class="dd-action-icon">
+              <lucide-icon [img]="CalendarIcon" size="28"></lucide-icon>
+            </div>
+            <h3>Manage Slots</h3>
+            <p>Create and manage your available time slots for patient bookings.</p>
+            <span class="dd-action-link">Open Slots <lucide-icon [img]="ArrowIcon" size="14"></lucide-icon></span>
+          </div>
+
+          <div class="dd-action-card dd-action-appts" (click)="goToAppointments()">
+            <div class="dd-action-icon">
+              <lucide-icon [img]="ClipboardIcon" size="28"></lucide-icon>
+            </div>
+            <h3>View Appointments</h3>
+            <p>See your scheduled appointments and mark them complete.</p>
+            <span class="dd-action-link">Open Appointments <lucide-icon [img]="ArrowIcon" size="14"></lucide-icon></span>
+          </div>
+
+          <div class="dd-action-card dd-action-rx" (click)="goToAppointments()">
+            <div class="dd-action-icon">
+              <lucide-icon [img]="PrescriptionIcon" size="28"></lucide-icon>
+            </div>
+            <h3>Prescriptions</h3>
+            <p>Create prescriptions for completed appointments sent to pharmacy & lab.</p>
+            <span class="dd-action-link">Go to Appointments <lucide-icon [img]="ArrowIcon" size="14"></lucide-icon></span>
+          </div>
+        </div>
+
+      </ng-container>
+
+      <!-- ── No Profile: Create Form ── -->
+      <ng-container *ngIf="!hasProfile()">
+
+        <!-- Steps indicator -->
+        <div class="dd-steps">
+          <div class="dd-step dd-step--active">
+            <div class="dd-step-num">1</div>
+            <span>Create Profile</span>
+          </div>
+          <div class="dd-step-line"></div>
+          <div class="dd-step dd-step--inactive">
+            <div class="dd-step-num">2</div>
+            <span>Add Slots</span>
+          </div>
+          <div class="dd-step-line"></div>
+          <div class="dd-step dd-step--inactive">
+            <div class="dd-step-num">3</div>
+            <span>Manage Appointments</span>
+          </div>
+        </div>
+
+        <!-- Create Form Card -->
+        <div class="dd-create-card">
+          <div class="dd-create-card-header">
+            <lucide-icon [img]="UserPlusIcon" size="22"></lucide-icon>
+            <h2>Create Your Doctor Profile</h2>
+          </div>
+          <p class="dd-create-subtitle">Fill in your professional details. This will be visible to patients when booking appointments.</p>
+
+          <form [formGroup]="createForm" (ngSubmit)="onCreateProfile()" class="dd-form">
+
+            <div class="dd-form-group">
+              <label>Full Name *</label>
+              <input type="text" formControlName="fullName" placeholder="e.g. Dr. John Smith" />
+              <span class="dd-field-error" *ngIf="createForm.get('fullName')?.touched && createForm.get('fullName')?.invalid">
+                Full name is required
+              </span>
+            </div>
+
+            <div class="dd-form-row">
+              <div class="dd-form-group">
+                <label>Specialty *</label>
+                <input type="text" formControlName="specialty" placeholder="e.g. Cardiology" />
+                <span class="dd-field-error" *ngIf="createForm.get('specialty')?.touched && createForm.get('specialty')?.invalid">
+                  Required
+                </span>
+              </div>
+              <div class="dd-form-group">
+                <label>Qualification *</label>
+                <input type="text" formControlName="qualification" placeholder="e.g. MBBS, MD" />
+                <span class="dd-field-error" *ngIf="createForm.get('qualification')?.touched && createForm.get('qualification')?.invalid">
+                  Required
+                </span>
+              </div>
+            </div>
+
+            <div class="dd-form-row">
+              <div class="dd-form-group">
+                <label>Experience Years *</label>
+                <input type="number" formControlName="experienceYears" min="0" placeholder="e.g. 5" />
+              </div>
+              <div class="dd-form-group">
+                <label>Consultation Fee (₹) *</label>
+                <input type="number" formControlName="consultationFee" min="1" placeholder="e.g. 500" />
+              </div>
+            </div>
+
+            <div class="dd-form-error" *ngIf="submitError()">{{ submitError() }}</div>
+            <div class="dd-form-success" *ngIf="submitSuccess()">{{ submitSuccess() }}</div>
+
+            <button type="submit" class="dd-btn-primary" [disabled]="isSubmitting()">
+              <lucide-icon [img]="UserPlusIcon" size="18"></lucide-icon>
+              {{ isSubmitting() ? 'Creating Profile...' : 'Create My Profile' }}
+            </button>
+          </form>
+        </div>
+
+      </ng-container>
+
+    </ng-container>
+  </main>
+</div>

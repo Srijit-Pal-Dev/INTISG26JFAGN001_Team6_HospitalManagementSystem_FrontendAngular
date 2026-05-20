@@ -1,0 +1,144 @@
+<div class="dpd-layout">
+  <app-sidebar
+    [activeRoute]="activeTab()"
+    (logoutClicked)="logout()"
+    (navClicked)="onNavClicked($event)"
+    (notifClicked)="onNotifClicked()">
+  </app-sidebar>
+
+  <main class="dpd-main">
+
+    <!-- Back -->
+    <button class="dpd-back-btn" (click)="goBack()">
+      <lucide-icon [img]="ArrowLeftIcon" size="16"></lucide-icon>
+      Back to Dashboard
+    </button>
+
+    <!-- Loading -->
+    <div class="dpd-loading" *ngIf="isLoading()">
+      <div class="dpd-spinner"></div>
+      <span>Loading profile...</span>
+    </div>
+
+    <!-- Error -->
+    <div class="dpd-error" *ngIf="errorMessage()">
+      {{ errorMessage() }}
+    </div>
+
+    <ng-container *ngIf="!isLoading() && !errorMessage() && doctor() as doc">
+
+      <!-- Doctor Info Card -->
+      <div class="dpd-profile-card">
+        <div class="dpd-avatar">{{ getInitials(doc.fullName) }}</div>
+        <div class="dpd-profile-info">
+          <h1 class="dpd-doctor-name">{{ doc.fullName }}</h1>
+          <span class="dpd-badge-specialty">{{ doc.specialty }}</span>
+          <div class="dpd-meta-row">
+            <span class="dpd-meta-item">
+              <lucide-icon [img]="QualIcon" size="14"></lucide-icon>
+              {{ doc.qualification }}
+            </span>
+            <span class="dpd-meta-item">
+              <lucide-icon [img]="ExpIcon" size="14"></lucide-icon>
+              {{ doc.experienceYears }} years experience
+            </span>
+            <span class="dpd-meta-item">
+              <lucide-icon [img]="RupeeIcon" size="14"></lucide-icon>
+              ₹{{ doc.consultationFee }} / consultation
+            </span>
+          </div>
+        </div>
+
+        <!-- Edit button — only for own profile -->
+        <button class="dpd-edit-btn" *ngIf="isMyProfile" (click)="openEditModal()">
+          <lucide-icon [img]="EditIcon" size="16"></lucide-icon>
+          Edit Profile
+        </button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="dpd-tabs">
+        <button
+          class="dpd-tab"
+          [class.active]="activeTab() === 'slots'"
+          (click)="setTab('slots')">
+          <lucide-icon [img]="SlotsIcon" size="16"></lucide-icon>
+          Slots Management
+        </button>
+        <button
+          class="dpd-tab"
+          [class.active]="activeTab() === 'appointments'"
+          (click)="setTab('appointments')">
+          <lucide-icon [img]="AppointmentsIcon" size="16"></lucide-icon>
+          Appointments
+        </button>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="dpd-content">
+        <router-outlet></router-outlet>
+      </div>
+
+    </ng-container>
+  </main>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="dpd-modal-overlay" *ngIf="showEditModal()" (click)="closeEditModal()">
+  <div class="dpd-modal" (click)="$event.stopPropagation()">
+    <div class="dpd-modal-header">
+      <h2>Edit Doctor Profile</h2>
+      <button class="dpd-modal-close" (click)="closeEditModal()">
+        <lucide-icon [img]="XIcon" size="20"></lucide-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="editForm" (ngSubmit)="onSaveProfile()" class="dpd-form">
+      <div class="dpd-form-group">
+        <label>Full Name *</label>
+        <input type="text" formControlName="fullName" placeholder="Dr. John Smith" />
+        <span class="dpd-field-error" *ngIf="editForm.get('fullName')?.touched && editForm.get('fullName')?.invalid">
+          Full name is required
+        </span>
+      </div>
+
+      <div class="dpd-form-row">
+        <div class="dpd-form-group">
+          <label>Specialty *</label>
+          <input type="text" formControlName="specialty" placeholder="Cardiology" />
+          <span class="dpd-field-error" *ngIf="editForm.get('specialty')?.touched && editForm.get('specialty')?.invalid">
+            Specialty is required
+          </span>
+        </div>
+        <div class="dpd-form-group">
+          <label>Qualification *</label>
+          <input type="text" formControlName="qualification" placeholder="MBBS, MD" />
+          <span class="dpd-field-error" *ngIf="editForm.get('qualification')?.touched && editForm.get('qualification')?.invalid">
+            Qualification is required
+          </span>
+        </div>
+      </div>
+
+      <div class="dpd-form-row">
+        <div class="dpd-form-group">
+          <label>Experience Years *</label>
+          <input type="number" formControlName="experienceYears" min="0" />
+        </div>
+        <div class="dpd-form-group">
+          <label>Consultation Fee (₹) *</label>
+          <input type="number" formControlName="consultationFee" min="1" />
+        </div>
+      </div>
+
+      <div class="dpd-form-error" *ngIf="editError()">{{ editError() }}</div>
+      <div class="dpd-form-success" *ngIf="editSuccess()">{{ editSuccess() }}</div>
+
+      <div class="dpd-form-actions">
+        <button type="button" class="dpd-btn-secondary" (click)="closeEditModal()">Cancel</button>
+        <button type="submit" class="dpd-btn-primary" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

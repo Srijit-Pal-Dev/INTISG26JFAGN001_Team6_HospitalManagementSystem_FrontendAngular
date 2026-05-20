@@ -1,280 +1,3 @@
-<!-- <div class="bg-base"></div>
-<div class="bg-orb bg-orb-1"></div>
-<div class="bg-orb bg-orb-2"></div>
-<div class="bg-orb bg-orb-3"></div>
-<div class="bg-orb bg-orb-4"></div>
-<div class="bg-grid"></div>
-
-<div class="relative z-10 grid grid-cols-2 h-screen overflow-hidden max-lg:grid-cols-1">
-
-  <section class="hero flex flex-col px-16 py-24 relative overflow-hidden max-lg:hidden">
-
-    <div class="flex items-center flex-shrink-0 my-6">
-      <img src="logo.png" alt="Pulse Point" class="w-[150px] h-[40px] object-contain" />
-    </div>
-
-    <h1 class="font-display font-bold leading-[1.13] text-navy-900 mb-4 hero-title">
-      Advanced<br>
-      <em class="not-italic text-brand-500">Hospital</em><br>
-      Management
-    </h1>
-
-    <p class="text-[15px] leading-relaxed text-[#2d4a7a] max-w-[400px] mb-10">
-      A unified platform for clinical workflows, patient records,
-      staff coordination, and real-time hospital operations.
-    </p>
-
-    <div class="flex gap-7">
-      <div class="flex flex-col gap-1">
-        <span class="font-display text-[26px] font-bold text-navy-900">98.9%</span>
-        <span class="text-[11px] text-[#6b8ab5] uppercase tracking-wider">Uptime SLA</span>
-      </div>
-      <div class="w-px bg-brand-500/20 self-stretch"></div>
-      <div class="flex flex-col gap-1">
-        <span class="font-display text-[26px] font-bold text-navy-900">340+</span>
-        <span class="text-[11px] text-[#6b8ab5] uppercase tracking-wider">Hospitals</span>
-      </div>
-      <div class="w-px bg-brand-500/20 self-stretch"></div>
-      <div class="flex flex-col gap-1">
-        <span class="font-display text-[26px] font-bold text-navy-900">HIPAA</span>
-        <span class="text-[11px] text-[#6b8ab5] uppercase tracking-wider">Compliant</span>
-      </div>
-    </div>
-
-    <div class="py-10 left-16 right-16 flex gap-2 flex-wrap">
-      <div
-        class="inline-flex items-center gap-2 bg-white/60 border border-white/82 rounded-full px-4 py-2 backdrop-blur-xl">
-        <svg class="w-3 h-3 fill-brand-500 flex-shrink-0" viewBox="0 0 24 24">
-          <path
-            d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 14l-3-3 1.41-1.41L11 12.17l4.59-4.58L17 9l-6 6z" />
-        </svg>
-        <span class="text-[11px] font-medium text-[#2d4a7a] whitespace-nowrap">256-bit Encryption</span>
-      </div>
-      <div
-        class="inline-flex items-center gap-2 bg-white/60 border border-white/82 rounded-full px-4 py-2 backdrop-blur-xl">
-        <svg class="w-3 h-3 fill-brand-500 flex-shrink-0" viewBox="0 0 24 24">
-          <path
-            d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" />
-        </svg>
-        <span class="text-[11px] font-medium text-[#2d4a7a] whitespace-nowrap">24/7 Patient Records</span>
-      </div>
-    </div>
-  </section>
-
-  <aside class="auth-panel flex items-start justify-center px-6 py-2 bg-white/40 h-screen max-lg:px-5 max-sm:px-3">
-
-    <div class="absolute top-5 left-6 z-20">
-      <button (click)="goHome()"
-        class="group w-9 h-9 flex items-center justify-center rounded-full border border-[#2d4a7a]/25 bg-white/60 backdrop-blur-md text-[#2d4a7a] transition-all duration-300 hover:border-brand-500 hover:text-brand-500 hover:shadow-md hover:scale-105 active:scale-95">
-        <svg class="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-0.5" viewBox="0 0 24 24"
-          fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M15 18l-6-6 6-6" />
-        </svg>
-      </button>
-    </div>
-
-    <div
-      class="auth-card w-full max-w-[480px] bg-white/68 border border-white/88 rounded-[28px] px-9 py-6 my-auto max-sm:px-5 max-sm:py-7 max-sm:rounded-[22px]">
-
-      <div
-        class="tab-wrapper relative flex gap-1 bg-brand-500/[.06] border border-white/70 rounded-2xl p-1 mb-2 shadow-[inset_0_1px_0_rgba(255,255,255,.9)]">
-        <div class="tab-indicator" [class.signup]="activeTab() === 'signup'"></div>
-        <button
-          class="tab-btn flex-1 py-2.5 border-none bg-transparent text-[13.5px] font-medium rounded-xl cursor-pointer relative z-10 transition-colors duration-300"
-          [class.active]="activeTab() === 'login'" (click)="switchTab('login')">
-          Sign In
-        </button>
-        <button
-          class="tab-btn flex-1 py-2.5 border-none bg-transparent text-[13.5px] font-medium rounded-xl cursor-pointer relative z-10 transition-colors duration-300"
-          [class.active]="activeTab() === 'signup'" (click)="switchTab('signup')">
-          Create Account
-        </button>
-      </div>
-
-      <div *ngIf="errorMessage"
-        class="px-4 py-2.5 rounded-xl text-[13px] font-medium mb-3 bg-red-600/[.09] text-red-600 border border-red-600/20">
-        {{ errorMessage }}
-      </div>
-      <div *ngIf="successMessage"
-        class="px-4 py-2.5 rounded-xl text-[13px] font-medium mb-3 bg-emerald-600/[.09] text-emerald-600 border border-emerald-600/20">
-        {{ successMessage }}
-      </div>
-
-      <div *ngIf="activeTab() === 'login'" [formGroup]="loginForm">
-
-        <div class="font-display text-[21px] font-bold text-navy-900 mb-3">Welcome back</div>
-
-        <div class="mb-3">
-          <label class="block text-[11px] font-semibold text-[#2d4a7a] mb-1.5 tracking-[.05em] uppercase">
-            Username
-          </label>
-          <div class="relative">
-            <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b8ab5] pointer-events-none"
-              viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-            </svg>
-            <input type="text" placeholder="Enter your username" formControlName="username" autocomplete="username"
-              class="auth-input w-full pl-10 pr-3.5 py-3 rounded-[11px] text-[13.5px] text-navy-900 outline-none"
-              [class.input-error]="lf['username'].touched && lf['username'].invalid">
-          </div>
-          <span class="field-error" *ngIf="loginFieldError('username')">
-            {{ loginFieldError('username') }}
-          </span>
-        </div>
-
-        <div class="mb-3">
-          <label class="block text-[11px] font-semibold text-[#2d4a7a] mb-1.5 tracking-[.05em] uppercase">
-            Password
-          </label>
-          <div class="relative">
-            <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b8ab5] pointer-events-none"
-              viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
-            </svg>
-            <input [type]="showLoginPassword ? 'text' : 'password'" placeholder="••••••••" formControlName="password"
-              autocomplete="current-password"
-              class="auth-input w-full pl-10 pr-10 py-3 rounded-[11px] text-[13.5px] text-navy-900 outline-none"
-              [class.input-error]="lf['password'].touched && lf['password'].invalid">
-            <button type="button" (click)="toggleLoginPassword()"
-              class="absolute right-3.5 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-0 flex items-center text-[#6b8ab5] hover:text-brand-500 transition-colors">
-              <svg *ngIf="!showLoginPassword" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
-              </svg>
-              <svg *ngIf="showLoginPassword" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27z" />
-              </svg>
-            </button>
-          </div>
-          <span class="field-error" *ngIf="loginFieldError('password')">
-            {{ loginFieldError('password') }}
-          </span>
-        </div>
-
-        <div class="text-[13px] text-[#2d4a7a] my-4 leading-relaxed">
-          Don't have an account?
-          <a class="font-bold underline cursor-pointer text-blue-900" (click)="switchTab('signup')">Sign Up</a>
-        </div>
-
-        <button (click)="onLogin()" [disabled]="isLoading"
-          class="btn-cta w-full py-3 border-none rounded-xl cursor-pointer font-display text-[14.5px] font-semibold text-white tracking-[.02em] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed">
-          <span *ngIf="!isLoading">Sign In to Dashboard</span>
-          <span *ngIf="isLoading" class="flex items-center justify-center gap-2">
-            <span class="spin"></span> Authenticating…
-          </span>
-        </button>
-      </div>
-
-      <div *ngIf="activeTab() === 'signup'" [formGroup]="signupForm">
-
-        <div class="font-display text-[21px] font-bold text-navy-900 mb-3">Create account</div>
-
-        <div class="mb-3">
-          <label class="block text-[11px] font-semibold text-[#2d4a7a] mb-1.5 tracking-[.05em] uppercase">
-            Full Name
-          </label>
-          <div class="relative">
-            <input type="text" placeholder="Dr. John Smith" formControlName="fullName"
-              class="auth-input w-full px-3.5 py-3 rounded-[11px] text-[13.5px] text-navy-900 outline-none"
-              [class.input-error]="sf['fullName'].touched && sf['fullName'].invalid">
-          </div>
-          <span class="field-error" *ngIf="signupFieldError('fullName')">
-            {{ signupFieldError('fullName') }}
-          </span>
-        </div>
-
-        <div class="mb-3">
-          <label class="block text-[11px] font-semibold text-[#2d4a7a] mb-1.5 tracking-[.05em] uppercase">
-            Username
-          </label>
-          <div class="relative">
-            <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b8ab5] pointer-events-none"
-              viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-            </svg>
-            <input type="text" placeholder="dr.johnsmith" formControlName="username" autocomplete="username"
-              class="auth-input w-full pl-10 pr-3.5 py-3 rounded-[11px] text-[13.5px] text-navy-900 outline-none"
-              [class.input-error]="sf['username'].touched && sf['username'].invalid">
-          </div>
-          <span class="field-error" *ngIf="signupFieldError('username')">
-            {{ signupFieldError('username') }}
-          </span>
-        </div>
-
-        <div class="mb-3">
-          <label class="block text-[11px] font-semibold text-[#2d4a7a] mb-1.5 tracking-[.05em] uppercase">
-            Password
-          </label>
-          <div class="relative">
-            <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b8ab5] pointer-events-none"
-              viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
-            </svg>
-            <input [type]="showSignupPassword ? 'text' : 'password'" placeholder="Min. 6 characters"
-              formControlName="password" autocomplete="new-password"
-              class="auth-input w-full pl-10 pr-10 py-3 rounded-[11px] text-[13.5px] text-navy-900 outline-none"
-              [class.input-error]="sf['password'].touched && sf['password'].invalid">
-            <button type="button" (click)="toggleSignupPassword()"
-              class="absolute right-3.5 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer p-0 flex items-center text-[#6b8ab5] hover:text-brand-500 transition-colors">
-              <svg *ngIf="!showSignupPassword" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
-              </svg>
-              <svg *ngIf="showSignupPassword" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27z" />
-              </svg>
-            </button>
-          </div>
-          <span class="field-error" *ngIf="signupFieldError('password')">
-            {{ signupFieldError('password') }}
-          </span>
-        </div>
-
-        <div class="mb-3">
-          <label class="block text-[11px] font-semibold text-[#2d4a7a] mb-1.5 tracking-[.05em] uppercase">
-            Confirm Password
-          </label>
-          <div class="relative">
-            <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b8ab5] pointer-events-none"
-              viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
-            </svg>
-            <input type="password" placeholder="Repeat password" formControlName="confirmPassword"
-              autocomplete="new-password"
-              class="auth-input w-full pl-10 pr-3.5 py-3 rounded-[11px] text-[13.5px] text-navy-900 outline-none"
-              [class.input-error]="sf['confirmPassword'].touched && passwordMismatch">
-          </div>
-          <span class="field-error" *ngIf="passwordMismatch">
-            Passwords do not match.
-          </span>
-        </div>
-
-        <div class="text-[13px] text-[#2d4a7a] my-4 leading-relaxed">
-          Already have an account?
-          <a class="font-bold underline cursor-pointer text-blue-900" (click)="switchTab('login')">Login</a>
-        </div>
-
-        <button (click)="onRegister()" [disabled]="isLoading"
-          class="btn-cta w-full py-3 border-none rounded-xl cursor-pointer font-display text-[14.5px] font-semibold text-white tracking-[.02em] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed">
-          <span *ngIf="!isLoading">Create My Account</span>
-          <span *ngIf="isLoading" class="flex items-center justify-center gap-2">
-            <span class="spin"></span> Creating account…
-          </span>
-        </button>
-      </div>
-
-    </div>
-  </aside>
-</div> -->
-
-<!-- Background layers -->
 <div class="bg-base"></div>
 <div class="bg-orb bg-orb-1"></div>
 <div class="bg-orb bg-orb-2"></div>
@@ -284,7 +7,6 @@
 
 <div class="relative z-10 grid grid-cols-2 h-screen overflow-hidden max-lg:grid-cols-1">
 
-  <!-- Left: Hero -->
   <app-hero />
 
   <!-- Right: Auth panel -->
@@ -318,34 +40,38 @@
       </div>
 
       <!-- Alerts -->
-      <div *ngIf="errorMessage"
-        class="px-4 py-2.5 rounded-xl text-[13px] font-medium mb-3 bg-red-600/[.09] text-red-600 border border-red-600/20">
+      @if (errorMessage) {
+      <div class="px-4 py-2.5 rounded-xl text-[13px] font-medium mb-3 bg-red-600/[.09] text-red-600 border border-red-600/20">
         {{ errorMessage }}
       </div>
-      <div *ngIf="successMessage"
-        class="px-4 py-2.5 rounded-xl text-[13px] font-medium mb-3 bg-emerald-600/[.09] text-emerald-600 border border-emerald-600/20">
+      }
+      @if (successMessage) {
+      <div class="px-4 py-2.5 rounded-xl text-[13px] font-medium mb-3 bg-emerald-600/[.09] text-emerald-600 border border-emerald-600/20">
         {{ successMessage }}
       </div>
+      }
 
       <!-- Login -->
+      @if (activeTab() === 'login') {
       <app-login
-        *ngIf="activeTab() === 'login'"
         [loginForm]="loginForm"
         [isLoading]="isLoading"
         [showPassword]="showLoginPassword"
         (loginSubmit)="onLogin()"
         (togglePassword)="showLoginPassword = !showLoginPassword"
         (switchToSignup)="switchTab('signup')" />
+      }
 
       <!-- Signup -->
+      @if (activeTab() === 'signup') {
       <app-signup
-        *ngIf="activeTab() === 'signup'"
         [signupForm]="signupForm"
         [isLoading]="isLoading"
         [showPassword]="showSignupPassword"
         (registerSubmit)="onRegister()"
         (togglePassword)="showSignupPassword = !showSignupPassword"
         (switchToLogin)="switchTab('login')" />
+      }
 
     </div>
   </aside>

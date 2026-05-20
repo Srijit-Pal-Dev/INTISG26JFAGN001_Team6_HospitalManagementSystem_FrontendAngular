@@ -19,4 +19,10 @@ export class LabResultService {
             )
             .pipe(map((r: any) => Array.isArray(r) ? r : (r.data ?? [])));
     }
+
+    getTestsByAppointment(appointmentId: number): Observable<any[]> {
+        return this.http
+            .get<any>(`${this.baseUrl}/appointment/tests/${appointmentId}`)
+            .pipe(map((r: any) => Array.isArray(r) ? r : (r.data ?? [])));
+    }
 }

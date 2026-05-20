@@ -62,7 +62,7 @@
                         <img src="./doctor-avatar.png" [alt]="doctor.fullName" class="w-full h-full object-cover" />
                     </div>
                     <div class="min-w-0 flex-1">
-                        <h3 class="font-semibold text-gray-900 text-sm leading-tight truncate"
+                        <h3 class="font-semibold text-gray-900 text-base leading-tight truncate"
                             [class.text-[#1a7fd4]]="isSelected(doctor)">
                             {{ doctor.fullName }}
                         </h3>
@@ -144,7 +144,7 @@
                 } @else {
                 <div class="grid grid-cols-3 gap-2 max-h-[220px] overflow-y-auto pr-1">
                     @for (slot of availableSlotsForDate(); track slot.id) {
-                    <button (click)="selectSlot(slot)" class="rounded-lg py-2.5 text-xs font-semibold transition-all"
+                    <button (click)="selectSlot(slot)" class="rounded-lg py-2.5 text-sm font-medium transition-all"
                         [class]="isSlotSelected(slot)
                     ? 'bg-[#1a7fd4] text-white shadow-sm'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'">

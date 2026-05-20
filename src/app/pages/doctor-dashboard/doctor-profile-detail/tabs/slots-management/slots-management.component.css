@@ -1,0 +1,377 @@
+.sm-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Stats */
+.sm-stats {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sm-stat {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 28px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  min-width: 120px;
+}
+
+.sm-stat-num {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.sm-stat-total  { color: #1565C0; }
+.sm-stat-available { color: #276749; }
+.sm-stat-booked { color: #c05621; }
+
+.sm-stat-label {
+  font-size: 12px;
+  color: #718096;
+  margin-top: 4px;
+}
+
+/* Section */
+.sm-section {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+}
+
+.sm-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.sm-section h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 16px;
+}
+
+.sm-section-header h3 { margin: 0; }
+
+/* Create Form — vertical stack */
+.sm-create-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+/* Row 2: Time + Availability side by side */
+.sm-sub-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Add Slot button full width of the form area */
+.sm-add-slot-btn {
+  width: fit-content;
+}
+
+.sm-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sm-form-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.sm-date-field {
+  width: 200px !important;
+}
+
+/* Hide extra subscript space Material adds */
+.sm-date-field .mat-mdc-form-field-subscript-wrapper {
+  display: none !important;
+}
+
+/* Match Material field height to native inputs */
+.sm-date-field .mat-mdc-text-field-wrapper {
+  padding-bottom: 0 !important;
+}
+
+.sm-date-field .mat-mdc-form-field-flex {
+  height: 42px;
+  align-items: center;
+}
+
+.sm-time-input {
+  padding: 10px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  width: 150px;
+  height: 42px;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.sm-time-input:focus { border-color: #1565C0; }
+
+.sm-select {
+  padding: 10px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+  width: 140px;
+  height: 42px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.sm-select:focus { border-color: #1565C0; }
+
+/* ── Availability Toggle ── */
+.sm-avail-toggle {
+  display: flex;
+  gap: 0;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.sm-avail-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: #f8fafc;
+  color: #718096;
+  transition: background 0.18s, color 0.18s;
+  white-space: nowrap;
+}
+
+.sm-avail-btn:first-child {
+  border-right: 1.5px solid #e2e8f0;
+}
+
+.sm-avail-btn--active.sm-avail-btn--available {
+  background: #f0fff4;
+  color: #276749;
+}
+
+.sm-avail-btn--active.sm-avail-btn--booked {
+  background: #fff5f5;
+  color: #c53030;
+}
+
+.sm-avail-btn:hover:not(.sm-avail-btn--active) {
+  background: #edf2f7;
+  color: #2d3748;
+}
+
+/* Buttons */
+.sm-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: #1565C0;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.sm-btn-primary:hover:not(:disabled) { background: #0d47a1; }
+.sm-btn-primary:disabled { opacity: 0.65; cursor: not-allowed; }
+
+.sm-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: transparent;
+  color: #1565C0;
+  border: 1.5px solid #1565C0;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sm-btn-outline:hover { background: #e8f0fe; }
+
+/* Bulk Section */
+.sm-bulk-section {
+  border: 1.5px dashed #bee3f8;
+  background: #f7fbff;
+}
+
+.sm-bulk-hint {
+  font-size: 13px;
+  color: #718096;
+  margin: -8px 0 16px;
+}
+
+.sm-bulk-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sm-bulk-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Messages */
+.sm-msg-error {
+  padding: 10px 14px;
+  background: #fff5f5;
+  color: #c53030;
+  border-radius: 8px;
+  font-size: 13px;
+  border: 1px solid #feb2b2;
+}
+
+.sm-msg-success {
+  padding: 10px 14px;
+  background: #f0fff4;
+  color: #276749;
+  border-radius: 8px;
+  font-size: 13px;
+  border: 1px solid #9ae6b4;
+}
+
+/* Loading */
+.sm-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 40px;
+  justify-content: center;
+  color: #718096;
+}
+
+.sm-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #1565C0;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Table */
+.sm-table-wrap {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.sm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.sm-table th {
+  background: #f7fafc;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.sm-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f7fafc;
+  color: #2d3748;
+}
+
+.sm-table tr:last-child td { border-bottom: none; }
+.sm-table tr:hover td { background: #f7fbff; }
+
+.sm-date-cell, .sm-time-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sm-status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sm-status--available {
+  background: #f0fff4;
+  color: #276749;
+  border: 1px solid #9ae6b4;
+}
+
+.sm-status--booked {
+  background: #fff5f0;
+  color: #c05621;
+  border: 1px solid #fbd38d;
+}
+
+.sm-del-btn {
+  background: transparent;
+  border: 1.5px solid #fed7d7;
+  border-radius: 8px;
+  color: #e53e3e;
+  cursor: pointer;
+  padding: 6px 10px;
+  display: inline-flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.sm-del-btn:hover:not(:disabled) { background: #fff5f5; }
+.sm-del-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Empty */
+.sm-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px;
+  color: #a0aec0;
+  font-size: 15px;
+  text-align: center;
+}

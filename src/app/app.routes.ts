@@ -148,6 +148,41 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'doctor-dashboard',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['DOCTOR'] },
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/doctor-dashboard/doctor-dashboard.component').then(m => m.DoctorDashboardComponent)
+      },
+      {
+        path: ':doctorId',
+        loadComponent: () =>
+          import('./pages/doctor-dashboard/doctor-profile-detail/doctor-profile-detail.component').then(m => m.DoctorProfileDetailComponent),
+        children: [
+          { path: '', redirectTo: 'slots', pathMatch: 'full' },
+          {
+            path: 'slots',
+            loadComponent: () =>
+              import('./pages/doctor-dashboard/doctor-profile-detail/tabs/slots-management/slots-management.component').then(m => m.SlotsManagementComponent)
+          },
+          {
+            path: 'appointments',
+            loadComponent: () =>
+              import('./pages/doctor-dashboard/doctor-profile-detail/tabs/doctor-appointments/doctor-appointments.component').then(m => m.DoctorAppointmentsComponent)
+          },
+          {
+            path: 'prescription/:appointmentId',
+            loadComponent: () =>
+              import('./pages/doctor-dashboard/doctor-profile-detail/tabs/create-prescription/create-prescription.component').then(m => m.CreatePrescriptionComponent)
+          }
+        ]
+      }
+    ]
+  },
+  {
     path: '**',
     redirectTo: ''
   }

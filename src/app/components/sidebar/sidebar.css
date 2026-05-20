@@ -5,6 +5,7 @@
   align-items: flex-start;
   height: 100vh;
   flex-shrink: 0;
+  background-color: #f0f6ff;
 }
 
 /* ── SIDEBAR ── */

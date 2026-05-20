@@ -1,5 +1,6 @@
 <div class="modal-bg" [class.show]="show && !!selectedUser" (click)="closed.emit()">
-  <div class="modal" (click)="$event.stopPropagation()" *ngIf="selectedUser as user">
+  @if (selectedUser; as user) {
+  <div class="modal" (click)="$event.stopPropagation()">
 
     <button class="absolute top-4 right-4 bg-none border-none cursor-pointer opacity-50 hover:opacity-100 transition-opacity"
       (click)="closed.emit()">
@@ -53,4 +54,5 @@
     </button>
 
   </div>
+  }
 </div>
