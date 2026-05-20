@@ -121,6 +121,7 @@
                 </div>
 
                 @if (appt.status === Status.COMPLETED) {
+
                 <!-- Toggle button -->
                 <button (click)="toggleExpanded(appt)"
                     class="w-full px-5 py-2.5 border-t border-gray-100 hover:bg-gray-50 text-[#1a7fd4] text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
@@ -130,6 +131,35 @@
                 </button>
 
                 @if (appt.expanded) {
+
+                <!-- UNPAID — locked message -->
+                @if (!isInvoicePaid(appt.id)) {
+                <div class="border-t border-gray-100 bg-gray-50 px-5 py-8 text-center">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <lucide-icon [img]="AlertIcon" class="w-6 h-6 text-yellow-600"></lucide-icon>
+                    </div>
+                    <p class="text-sm font-semibold text-gray-900 mb-1">Payment Required</p>
+                    <p class="text-xs text-gray-400 mb-4 max-w-xs mx-auto">
+                        Please complete your payment to access prescription, medicines, and lab report details.
+                    </p>
+                    @if (getInvoiceForAppointment(appt.id); as inv) {
+                    <div
+                        class="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-4 py-2 mb-4">
+                        <span class="text-xs text-gray-500">Invoice</span>
+                        <span class="text-xs font-bold text-gray-900">{{ inv.invoiceNumber }}</span>
+                        <span class="text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-0.5 rounded-full">
+                            {{ inv.invoiceStatus }}
+                        </span>
+                    </div>
+                    <br>
+                    <p class="text-sm font-black text-gray-900">₹{{ inv.totalAmount?.toFixed(2) }}</p>
+                    } @else {
+                    <p class="text-xs text-gray-400">Invoice not generated yet.</p>
+                    }
+                </div>
+
+                <!-- PAID — show full details -->
+                } @else {
                 <div class="border-t border-gray-100 bg-gray-50 px-5 py-4 space-y-4">
 
                     <!-- Prescription -->
@@ -223,6 +253,7 @@
                     </div>
 
                 </div>
+                }
                 }
                 }
 

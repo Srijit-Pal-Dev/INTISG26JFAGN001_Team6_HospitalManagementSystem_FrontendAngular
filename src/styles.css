@@ -259,3 +259,15 @@ body {
     margin: 0;
   }
 }
+
+.footer-bg {
+  background-color: #0a3a73;
+}
+
+@media (min-width: 1024px) {
+  .footer-bg {
+    background-image: url('/footer-curve.png');
+    background-size: cover;
+    background-position: center;
+  }
+}

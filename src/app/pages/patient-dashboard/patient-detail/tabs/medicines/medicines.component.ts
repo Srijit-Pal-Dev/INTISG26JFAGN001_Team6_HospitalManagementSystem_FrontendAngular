@@ -1,18 +1,18 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LucideAngularModule, Pill, Calendar, Search, FileText, ChevronDown, ChevronUp, IndianRupee } from 'lucide-angular';
+import { LucideAngularModule, Pill, Calendar, Search, FileText, ChevronDown, ChevronUp, IndianRupee, Lock } from 'lucide-angular';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { PatientService } from '../../../../../core/services/patient.service';
 import { MedicineService } from '../../../../../core/services/medicine.service';
 import { DoctorService } from '../../../../../core/services/doctor.service';
+import { InvoiceService } from '../../../../../core/services/invoice.service';
 import {
-    AppointmentDTO,
-    AppointmentStatus,
-    DispenseRequestResponse,
-    DoctorDTO
+    AppointmentDTO, AppointmentStatus,
+    DispenseRequestResponse, DoctorDTO,
+    InvoiceDTO, InvoiceStatus
 } from '../../../../../core/models/index';
 
 interface AppointmentWithMedicines {
@@ -36,19 +36,21 @@ export class MedicinesComponent implements OnInit {
     readonly ChevronDownIcon = ChevronDown;
     readonly ChevronUpIcon = ChevronUp;
     readonly RupeeIcon = IndianRupee;
+    readonly LockIcon = Lock;
+
+    readonly InvoiceStatus = InvoiceStatus;
 
     patientId = signal<number | null>(null);
-
     groupedMedicines = signal<AppointmentWithMedicines[]>([]);
     isLoading = signal(true);
     errorMessage = signal('');
     searchQuery = signal('');
+    invoiceMap = signal<Map<number, InvoiceDTO>>(new Map());
 
     filteredGroups = computed(() => {
         const q = this.searchQuery().toLowerCase().trim();
         const groups = this.groupedMedicines();
         if (!q) return groups;
-
         return groups.filter(g =>
             g.medicines.some(m => m.medicineName.toLowerCase().includes(q)) ||
             g.doctor?.fullName.toLowerCase().includes(q) ||
@@ -63,6 +65,7 @@ export class MedicinesComponent implements OnInit {
     private patientService = inject(PatientService);
     private medicineService = inject(MedicineService);
     private doctorService = inject(DoctorService);
+    private invoiceService = inject(InvoiceService);
     private route = inject(ActivatedRoute);
     private router = inject(Router);
 
@@ -72,8 +75,28 @@ export class MedicinesComponent implements OnInit {
             if (!isNaN(id)) {
                 this.patientId.set(id);
                 this.loadMedicines(id);
+                this.loadInvoices(id);
             }
         });
+    }
+
+    loadInvoices(patientId: number) {
+        this.invoiceService.getInvoicesByPatient(patientId).subscribe({
+            next: (invoices) => {
+                const map = new Map<number, InvoiceDTO>();
+                invoices.forEach(inv => { if (inv.appointmentId) map.set(inv.appointmentId, inv); });
+                this.invoiceMap.set(map);
+            },
+            error: () => { }
+        });
+    }
+
+    isInvoicePaid(appointmentId: number): boolean {
+        return this.invoiceMap().get(appointmentId)?.invoiceStatus === InvoiceStatus.PAID;
+    }
+
+    getInvoice(appointmentId: number): InvoiceDTO | undefined {
+        return this.invoiceMap().get(appointmentId);
     }
 
     loadMedicines(patientId: number) {
@@ -83,7 +106,6 @@ export class MedicinesComponent implements OnInit {
         this.patientService.getAppointmentsByPatient(patientId).subscribe({
             next: (appointments) => {
                 const completed = appointments.filter(a => a.status === AppointmentStatus.COMPLETED);
-
                 if (completed.length === 0) {
                     this.groupedMedicines.set([]);
                     this.isLoading.set(false);
@@ -94,7 +116,6 @@ export class MedicinesComponent implements OnInit {
                 const doctorRequests = uniqueDoctorIds.map(id =>
                     this.doctorService.getDoctorById(id).pipe(catchError(() => of(null)))
                 );
-
                 const medicineRequests = completed.map(a =>
                     this.medicineService.getMedicinesByAppointment(a.id).pipe(catchError(() => of([])))
                 );
@@ -128,9 +149,7 @@ export class MedicinesComponent implements OnInit {
                 if (err?.status === 404) {
                     this.groupedMedicines.set([]);
                 } else {
-                    this.errorMessage.set(
-                        err?.error?.message || `Error ${err?.status}: ${err?.statusText || 'Failed to load medicines'}`
-                    );
+                    this.errorMessage.set(err?.error?.message || 'Failed to load medicines');
                 }
                 this.isLoading.set(false);
             }
@@ -151,9 +170,7 @@ export class MedicinesComponent implements OnInit {
 
     toggleExpanded(appointmentId: number) {
         this.groupedMedicines.update(list =>
-            list.map(g =>
-                g.appointment.id === appointmentId ? { ...g, expanded: !g.expanded } : g
-            )
+            list.map(g => g.appointment.id === appointmentId ? { ...g, expanded: !g.expanded } : g)
         );
     }
 

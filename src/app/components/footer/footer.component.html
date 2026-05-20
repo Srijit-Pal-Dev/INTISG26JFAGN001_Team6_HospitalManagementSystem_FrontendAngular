@@ -1,29 +1,32 @@
-<footer class="relative bg-white pt-36 pb-8 font-poppins" style="background-image: url('footer-curve.png');">
+<footer class="relative bg-[#023C6E] sm:bg-white pt-24 sm:pt-36 pb-8 font-poppins"
+    style="background-image: url('footer-curve.png');">
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 pb-10">
 
-            <div class="lg:col-span-5">
+            <!-- Newsletter -->
+            <div class="lg:col-span-5 text-center lg:text-left">
                 <h3 class="text-white font-bold text-2xl mb-3">Stay Updated</h3>
-                <p class="text-white/80 text-sm leading-relaxed mb-5 max-w-sm">
-                    Join our Newsletter to stay up-to-date on<br>News and releases.
+                <p class="text-white/80 text-sm leading-relaxed mb-5 max-w-sm mx-auto lg:mx-0">
+                    Join our Newsletter to stay up-to-date on News and releases.
                 </p>
 
-                <div class="flex items-center bg-transparent border border-white/40 rounded-full p-1 max-w-md mb-4">
+                <div
+                    class="flex items-center bg-transparent border border-white/40 rounded-full p-1 max-w-md mb-4 mx-auto lg:mx-0">
                     <input type="email" [(ngModel)]="email" placeholder="Enter your email"
-                        class="flex-1 bg-transparent text-white placeholder-white/60 text-sm px-5 py-2 focus:outline-none" />
+                        class="flex-1 bg-transparent text-white placeholder-white/60 text-sm px-5 py-2 focus:outline-none min-w-0" />
                     <button
-                        class="bg-white text-[#0a3a73] font-semibold text-sm px-6 py-2 rounded-full hover:bg-gray-100 transition-colors">
+                        class="bg-white text-[#0a3a73] font-semibold text-sm px-6 py-2 rounded-full hover:bg-gray-100 transition-colors shrink-0">
                         Subscribe
                     </button>
                 </div>
 
-                <p class="text-white/60 text-xs leading-relaxed mb-6 max-w-sm">
-                    By subscribing you agree with our Privacy<br>Policy and provide consent to receive updates.
+                <p class="text-white/60 text-xs leading-relaxed mb-6 max-w-sm mx-auto lg:mx-0">
+                    By subscribing you agree with our Privacy Policy and provide consent to receive updates.
                 </p>
 
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-3 justify-center lg:justify-start">
                     @for (social of socialLinks; track social.label) {
                     <a href="#" [attr.aria-label]="social.label"
                         class="w-9 h-9 bg-white rounded-full flex items-center justify-center hover:bg-blue-100 transition-colors">
@@ -35,31 +38,42 @@
 
             <div class="hidden lg:block lg:col-span-1"></div>
 
-            <div class="lg:col-span-2">
-                <h4 class="text-white font-semibold text-base mb-5">For Patients</h4>
-                <ul class="space-y-3">
-                    @for (link of patientLinks; track link) {
-                    <li><a href="#" class="text-white/70 text-sm hover:text-white transition-colors">{{ link }}</a></li>
-                    }
-                </ul>
-            </div>
+            <!-- Mobile: 3-col, Desktop: individual cols -->
+            <div class="grid grid-cols-3 gap-4 lg:contents">
 
-            <div class="lg:col-span-2">
-                <h4 class="text-white font-semibold text-base mb-5">Health Library</h4>
-                <ul class="space-y-3">
-                    @for (link of libraryLinks; track link) {
-                    <li><a href="#" class="text-white/70 text-sm hover:text-white transition-colors">{{ link }}</a></li>
-                    }
-                </ul>
-            </div>
+                <div class="lg:col-span-2">
+                    <h4 class="text-white font-semibold text-sm mb-4 whitespace-nowrap">For Patients</h4>
+                    <ul class="space-y-2.5">
+                        @for (link of patientLinks; track link) {
+                        <li><a href="#"
+                                class="text-white/70 text-xs hover:text-white transition-colors leading-snug block">{{
+                                link }}</a></li>
+                        }
+                    </ul>
+                </div>
 
-            <div class="lg:col-span-2">
-                <h4 class="text-white font-semibold text-base mb-5">Our Company</h4>
-                <ul class="space-y-3">
-                    @for (link of companyLinks; track link) {
-                    <li><a href="#" class="text-white/70 text-sm hover:text-white transition-colors">{{ link }}</a></li>
-                    }
-                </ul>
+                <div class="lg:col-span-2">
+                    <h4 class="text-white font-semibold text-sm mb-4 whitespace-nowrap">Health Library</h4>
+                    <ul class="space-y-2.5">
+                        @for (link of libraryLinks; track link) {
+                        <li><a href="#"
+                                class="text-white/70 text-xs hover:text-white transition-colors leading-snug block">{{
+                                link }}</a></li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <h4 class="text-white font-semibold text-sm mb-4 whitespace-nowrap">Our Company</h4>
+                    <ul class="space-y-2.5">
+                        @for (link of companyLinks; track link) {
+                        <li><a href="#"
+                                class="text-white/70 text-xs hover:text-white transition-colors leading-snug block">{{
+                                link }}</a></li>
+                        }
+                    </ul>
+                </div>
+
             </div>
 
         </div>
@@ -73,7 +87,7 @@
                     </svg>
                     2026 Pulse Point. | All Rights Reserved.
                 </p>
-                <div class="flex items-center gap-6 flex-wrap justify-center">
+                <div class="flex items-center gap-4 flex-wrap justify-center">
                     <a href="#" class="text-white/60 hover:text-white text-xs transition-colors">Privacy Policy</a>
                     <a href="#" class="text-white/60 hover:text-white text-xs transition-colors">Terms of Service</a>
                     <a href="#" class="text-white/60 hover:text-white text-xs transition-colors">Cookies Settings</a>

@@ -1,0 +1,68 @@
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
+    <div>
+        <div class="inline-block border border-[#0276C9] px-3 py-1 rounded-full mb-4">
+            <p class="text-xs text-[#0276C9] font-medium">Patient Dashboard</p>
+        </div>
+        <h1 class="text-3xl font-semibold text-gray-900 leading-tight">Manage Your Patients</h1>
+        <p class="text-gray-500 text-sm mt-2">
+            Add, edit, and manage profiles for yourself and your family members.
+        </p>
+    </div>
+    @if (patients.length > 0) {
+    <button (click)="addPatient.emit()"
+        class="bg-light hover:bg-[#0276C9] text-white text-sm font-semibold px-5 py-3 rounded-full shadow-md flex items-center gap-2 transition-colors shrink-0">
+        <lucide-icon [img]="PlusIcon" class="w-4 h-4"></lucide-icon>
+        Add New Patient
+    </button>
+    }
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
+    @for (patient of patients; track patient.id) {
+    <div (click)="openDashboard.emit(patient)"
+        class="group bg-white rounded-2xl border border-gray-200 p-5 cursor-pointer hover:shadow-lg hover:border-[#1a7fd4]/40 transition-all">
+
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-12 h-12 rounded-full bg-gradient-to-br from-[#1a7fd4] to-[#0276C9] flex items-center justify-center text-white font-bold text-base">
+                    {{ patient.fullName.charAt(0).toUpperCase() }}
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-900 text-base group-hover:text-[#1a7fd4] transition-colors">
+                        {{ patient.fullName }}
+                    </h3>
+                    <p class="text-xs text-gray-400">MRN: {{ patient.mrn }}</p>
+                </div>
+            </div>
+            <button (click)="editPatient.emit({ patient, event: $event }); $event.stopPropagation()"
+                class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-[#1a7fd4] transition-colors">
+                <lucide-icon [img]="PencilIcon" class="w-4 h-4"></lucide-icon>
+            </button>
+        </div>
+
+        <div class="space-y-2 mb-5">
+            <div class="flex items-center gap-2 text-xs text-gray-500">
+                <lucide-icon [img]="CakeIcon" class="w-3.5 h-3.5"></lucide-icon>
+                <span>{{ patient.age }} years • {{ patient.gender }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-500">
+                <lucide-icon [img]="DropletIcon" class="w-3.5 h-3.5"></lucide-icon>
+                <span>Blood Group: <span class="font-semibold text-gray-700">{{ patient.bloodGroup }}</span></span>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-500">
+                <lucide-icon [img]="PhoneIcon" class="w-3.5 h-3.5"></lucide-icon>
+                <span>{{ patient.phoneNo }}</span>
+            </div>
+        </div>
+
+        <div
+            class="pt-3 border-t border-gray-100 flex items-center justify-between text-[#1a7fd4] text-xs font-semibold">
+            <span>Open Dashboard</span>
+            <lucide-icon [img]="ArrowRightIcon"
+                class="w-4 h-4 group-hover:translate-x-1 transition-transform"></lucide-icon>
+        </div>
+
+    </div>
+    }
+</div>

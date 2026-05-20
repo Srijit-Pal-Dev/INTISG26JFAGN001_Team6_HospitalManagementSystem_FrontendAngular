@@ -1,0 +1,256 @@
+<!-- Header -->
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+        <div class="flex items-center gap-2 mb-1">
+            <lucide-icon [img]="ReceiptIcon" class="w-5 h-5 text-[#1a7fd4]"></lucide-icon>
+            <h2 class="text-2xl font-semibold text-gray-900">Billing & Payments</h2>
+        </div>
+        <p class="text-gray-500 text-sm">View and pay invoices for all your patients.</p>
+    </div>
+
+    @if (!invoicesLoading && allInvoices.length > 0) {
+    <div class="flex items-center gap-2">
+        @if (pendingInvoices.length > 0) {
+        <span
+            class="inline-flex items-center gap-1.5 bg-yellow-100 text-yellow-700 text-xs font-bold px-3 py-1.5 rounded-full">
+            <lucide-icon [img]="AlertIcon" class="w-3 h-3"></lucide-icon>
+            {{ pendingInvoices.length }} pending
+        </span>
+        }
+        @if (paidInvoices.length > 0) {
+        <span
+            class="inline-flex items-center gap-1.5 bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full">
+            <lucide-icon [img]="PaidIcon" class="w-3 h-3"></lucide-icon>
+            {{ paidInvoices.length }} paid
+        </span>
+        }
+    </div>
+    }
+</div>
+
+<!-- Tab Toggle -->
+<div class="bg-gray-100 p-1 rounded-full inline-flex mb-8">
+    <button (click)="tabChange.emit('pending')" class="px-5 py-2 text-sm font-semibold rounded-full transition-all"
+        [class]="billingTab === 'pending' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'">
+        Pending Bills
+        @if (pendingInvoices.length > 0) {
+        <span class="ml-1.5 bg-yellow-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+            {{ pendingInvoices.length }}
+        </span>
+        }
+    </button>
+    <button (click)="tabChange.emit('paid')" class="px-5 py-2 text-sm font-semibold rounded-full transition-all"
+        [class]="billingTab === 'paid' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'">
+        Paid Bills
+    </button>
+</div>
+
+<!-- Loading -->
+@if (invoicesLoading) {
+<div class="bg-white rounded-2xl border border-gray-100 flex flex-col items-center justify-center py-16">
+    <div class="w-7 h-7 border-4 border-gray-200 border-t-[#1a7fd4] rounded-full animate-spin mb-3"></div>
+    <p class="text-sm text-gray-500">Loading invoices...</p>
+</div>
+
+<!-- Pending -->
+} @else if (billingTab === 'pending') {
+@if (pendingInvoices.length === 0) {
+<div class="bg-white rounded-2xl border border-gray-100 p-10 text-center">
+    <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <lucide-icon [img]="PaidIcon" class="w-7 h-7 text-green-600"></lucide-icon>
+    </div>
+    <h3 class="font-bold text-gray-900 mb-1">All Clear!</h3>
+    <p class="text-gray-500 text-sm">No pending bills. You're all caught up.</p>
+</div>
+} @else {
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    @for (invoice of pendingInvoices; track invoice.id) {
+    <div
+        class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col">
+
+        <div class="h-1 w-full"
+            [class]="invoice.invoiceStatus === InvoiceStatus.READY ? 'bg-[#1a7fd4]' : 'bg-yellow-400'">
+        </div>
+
+        <div class="p-4 flex flex-col flex-1">
+
+            <div class="flex items-start justify-between gap-2 mb-2">
+                <div>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Invoice</p>
+                    <p class="font-black text-gray-900 text-base leading-tight">{{ invoice.invoiceNumber }}</p>
+                    <p class="text-[11px] text-gray-400 mt-0.5">{{ formatDate(invoice.createdAt) }}</p>
+                </div>
+                @if (invoice.invoiceStatus === InvoiceStatus.READY) {
+                <span
+                    class="inline-flex items-center gap-1 bg-blue-100 text-[#1a7fd4] text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#1a7fd4] animate-pulse"></span>
+                    READY
+                </span>
+                } @else {
+                <span
+                    class="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></span>
+                    PENDING
+                </span>
+                }
+            </div>
+
+            @if (invoice.doctor) {
+            <div class="grid grid-cols-2 gap-3 mb-2 p-2 bg-gray-50 rounded-xl">
+                <div class="min-w-0">
+                    <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Doctor</p>
+                    <p class="text-xs font-bold text-gray-900 truncate">{{ invoice.doctor.fullName }}</p>
+                    <p class="text-[10px] text-[#1a7fd4] font-medium truncate">{{ invoice.doctor.specialty }}</p>
+                </div>
+            </div>
+            }
+
+            <div class="space-y-1 mb-3">
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <span>Consultation</span>
+                    <span class="font-medium text-gray-700">₹{{ formatAmount(invoice.consultationFee) }}</span>
+                </div>
+                @if ((invoice.medicineFee ?? 0) > 0) {
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <span>Medicines</span>
+                    <span class="font-medium text-gray-700">₹{{ formatAmount(invoice.medicineFee) }}</span>
+                </div>
+                }
+                @if ((invoice.labFee ?? 0) > 0) {
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <span>Lab Tests</span>
+                    <span class="font-medium text-gray-700">₹{{ formatAmount(invoice.labFee) }}</span>
+                </div>
+                }
+                <div class="flex items-center justify-between pt-2 border-t border-dashed border-gray-200">
+                    <span class="text-sm font-bold text-gray-900">Total</span>
+                    <span class="text-xl font-black text-gray-900">₹{{ formatAmount(invoice.totalAmount) }}</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 mt-auto">
+                <button (click)="openInvoice.emit({ invoice, event: $event })"
+                    class="flex-1 text-xs font-semibold text-gray-600 hover:text-[#1a7fd4] border border-gray-200 hover:border-[#1a7fd4] px-3 py-2 rounded-xl transition-colors text-center">
+                    View Invoice
+                </button>
+                @if (invoice.invoiceStatus === InvoiceStatus.PENDING || invoice.invoiceStatus === InvoiceStatus.READY) {
+                <button (click)="openInvoice.emit({ invoice, event: $event })"
+                    class="flex-1 text-xs font-bold text-white bg-light hover:bg-[#0276C9] px-3 py-2 rounded-xl transition-colors flex items-center justify-center gap-1.5">
+                    Pay Now
+                    <lucide-icon [img]="ArrowRightIcon" class="w-3.5 h-3.5"></lucide-icon>
+                </button>
+                }
+            </div>
+
+        </div>
+    </div>
+    }
+</div>
+}
+
+<!-- Paid -->
+} @else {
+@if (paidInvoices.length === 0) {
+<div class="bg-white rounded-2xl border border-gray-200 p-10 text-center">
+    <div class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <lucide-icon [img]="ReceiptIcon" class="w-7 h-7 text-gray-400"></lucide-icon>
+    </div>
+    <h3 class="font-bold text-gray-900 mb-1">No Paid Bills Yet</h3>
+    <p class="text-gray-500 text-sm">Paid invoices will appear here.</p>
+</div>
+} @else {
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    @for (invoice of paidInvoices; track invoice.id) {
+    <div
+        class="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col">
+
+        <div class="p-4 flex flex-col flex-1">
+
+            <div class="flex items-start justify-between gap-2 mb-2">
+                <div>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Invoice</p>
+                    <p class="font-semibold text-gray-900 text-base leading-tight">{{ invoice.invoiceNumber }}</p>
+                    <p class="text-[11px] text-gray-400 mt-0.5">{{ formatDate(invoice.createdAt) }}</p>
+                </div>
+                <span
+                    class="inline-flex items-center gap-1 bg-green-100 text-green-700 text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0">
+                    <lucide-icon [img]="PaidIcon" class="w-3 h-3"></lucide-icon>
+                    PAID
+                </span>
+            </div>
+
+            @if (invoice.doctor) {
+            <div class="grid grid-cols-2 gap-3 mb-2 p-2 bg-gray-50 rounded-xl">
+                <div class="min-w-0">
+                    <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Doctor</p>
+                    <p class="text-xs font-semibold text-gray-900 truncate">{{ invoice.doctor.fullName }}</p>
+                    <p class="text-[10px] text-[#1a7fd4] font-medium truncate">{{ invoice.doctor.specialty }}</p>
+                </div>
+            </div>
+            }
+
+            <div class="space-y-1 mb-2">
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <span>Consultation</span>
+                    <span class="font-medium text-gray-700">₹{{ formatAmount(invoice.consultationFee) }}</span>
+                </div>
+                @if ((invoice.medicineFee ?? 0) > 0) {
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <span>Medicines</span>
+                    <span class="font-medium text-gray-700">₹{{ formatAmount(invoice.medicineFee) }}</span>
+                </div>
+                }
+                @if ((invoice.labFee ?? 0) > 0) {
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <span>Lab Tests</span>
+                    <span class="font-medium text-gray-700">₹{{ formatAmount(invoice.labFee) }}</span>
+                </div>
+                }
+                <div class="flex items-center justify-between pt-2 border-t border-dashed border-gray-200">
+                    <span class="text-sm font-bold text-gray-900">Total Paid</span>
+                    <span class="text-xl font-bold text-green-600">₹{{ formatAmount(invoice.totalAmount) }}</span>
+                </div>
+            </div>
+
+            @if (invoice.payment) {
+            <div class="px-2 py-1.5 mb-1 flex items-center justify-between">
+                <span class="text-[11px] text-gray-500">Paid via</span>
+                <span class="text-[11px] font-bold text-green-700">{{ invoice.payment.paymentMethod }}</span>
+            </div>
+            }
+
+            @if (getMediclaimForInvoice(invoice.id); as mc) {
+            <div class="px-2 py-1.5 mb-1 flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                    <lucide-icon [img]="ShieldIcon" class="w-3 h-3"
+                        [class]="getMediclaimBadgeStyle(mc.status).text"></lucide-icon>
+                    <span class="text-[10px] font-bold" [class]="getMediclaimBadgeStyle(mc.status).text">
+                        Mediclaim: {{ mc.status }}
+                    </span>
+                </div>
+                @if (mc.refundAmount) {
+                <span class="text-[10px] font-bold text-green-600">₹{{ mc.refundAmount }}</span>
+                }
+            </div>
+            }
+
+            <div class="mt-auto flex flex-col gap-2 pt-2">
+                <button (click)="openInvoice.emit({ invoice, event: $event })"
+                    class="w-full text-xs font-semibold text-gray-600 hover:text-[#1a7fd4] border border-gray-200 hover:border-[#1a7fd4] px-3 py-2 rounded-xl transition-colors text-center">
+                    View Receipt
+                </button>
+                @if (!getMediclaimForInvoice(invoice.id)) {
+                <button (click)="openMediclaim.emit({ invoice, event: $event })"
+                    class="w-full text-xs font-semibold text-[#1a7fd4] hover:text-white border border-[#1a7fd4] hover:bg-light px-3 py-2 rounded-xl transition-colors flex items-center justify-center gap-1.5">
+                    <lucide-icon [img]="ShieldIcon" class="w-3.5 h-3.5"></lucide-icon>
+                    Apply Mediclaim
+                </button>
+                }
+            </div>
+
+        </div>
+    </div>
+    }
+</div>
+}
+}

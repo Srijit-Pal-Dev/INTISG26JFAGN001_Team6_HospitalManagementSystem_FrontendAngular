@@ -17,6 +17,8 @@ import {
     DispenseRequestResponse, LabResultResponse, PrescriptionResponse
 } from '../../../../../core/models/index';
 import { PrescriptionModalComponent } from '../../../../doctor-dashboard/doctor-profile-detail/tabs/prescription-modal/prescription-modal.component';
+import { InvoiceService } from '../../../../../core/services/invoice.service';
+import { InvoiceDTO, InvoiceStatus } from '../../../../../core/models/index';
 
 interface AppointmentWithDoctor extends AppointmentDTO {
     doctor?: DoctorDTO;
@@ -52,6 +54,10 @@ export class MyAppointmentsComponent implements OnInit {
     readonly Status = AppointmentStatus;
 
     patientId = signal<number | null>(null);
+
+    private invoiceService = inject(InvoiceService);
+    invoiceMap = signal<Map<number, InvoiceDTO>>(new Map()); // appointmentId → invoice
+    readonly InvoiceStatus = InvoiceStatus;
 
     appointments = signal<AppointmentWithDoctor[]>([]);
     allLabResults = signal<LabResultResponse[]>([]);
@@ -94,6 +100,7 @@ export class MyAppointmentsComponent implements OnInit {
                 this.patientId.set(id);
                 this.loadAppointments(id);
                 this.loadAllLabResults(id);
+                this.loadInvoicesForPatient(id);
             }
         });
     }
@@ -309,5 +316,25 @@ export class MyAppointmentsComponent implements OnInit {
 
     groupTotal(meds: DispenseRequestResponse[]): number {
         return meds.reduce((sum, m) => sum + (m.totalPrice || 0), 0);
+    }
+    loadInvoicesForPatient(patientId: number) {
+        this.invoiceService.getInvoicesByPatient(patientId).subscribe({
+            next: (invoices) => {
+                const map = new Map<number, InvoiceDTO>();
+                invoices.forEach(inv => {
+                    if (inv.appointmentId) map.set(inv.appointmentId, inv);
+                });
+                this.invoiceMap.set(map);
+            },
+            error: () => { }
+        });
+    }
+
+    isInvoicePaid(appointmentId: number): boolean {
+        return this.invoiceMap().get(appointmentId)?.invoiceStatus === InvoiceStatus.PAID;
+    }
+
+    getInvoiceForAppointment(appointmentId: number): InvoiceDTO | undefined {
+        return this.invoiceMap().get(appointmentId);
     }
 }

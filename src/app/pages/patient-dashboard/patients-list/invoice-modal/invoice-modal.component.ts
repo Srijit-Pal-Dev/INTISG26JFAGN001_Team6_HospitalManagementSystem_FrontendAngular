@@ -2,22 +2,21 @@ import { Component, Input, Output, EventEmitter, signal, inject, OnChanges } fro
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
-    LucideAngularModule, X, Printer, CreditCard, Smartphone,
-    Banknote, CheckCircle, Clock, XCircle, FileText, ShieldCheck
+    LucideAngularModule, X, Printer, CheckCircle,
+    Clock, XCircle, FileText, ShieldCheck
 } from 'lucide-angular';
 import {
-    InvoiceDTO, PaymentMethod, PaymentDTO,
-    InvoiceStatus, PaymentStatus, MediclaimDTO
+    InvoiceDTO, InvoiceStatus, MediclaimDTO
 } from '../../../../core/models/index';
-import { InvoiceService } from '../../../../core/services/invoice.service';
 import { MediclaimModalComponent } from '../../patient-detail/mediclaim-modal/mediclaim-modal.component';
+import { PaymentCheckoutComponent } from './payment-checkout/payment-checkout.component';
 
-type ModalStep = 'invoice' | 'payment-method' | 'success';
+type ModalStep = 'invoice' | 'checkout';
 
 @Component({
     selector: 'app-invoice-modal',
     standalone: true,
-    imports: [CommonModule, FormsModule, LucideAngularModule, MediclaimModalComponent],
+    imports: [CommonModule, FormsModule, LucideAngularModule, MediclaimModalComponent, PaymentCheckoutComponent],
     templateUrl: './invoice-modal.component.html'
 })
 export class InvoiceModalComponent implements OnChanges {
@@ -29,9 +28,6 @@ export class InvoiceModalComponent implements OnChanges {
 
     readonly XIcon = X;
     readonly PrinterIcon = Printer;
-    readonly CardIcon = CreditCard;
-    readonly UpiIcon = Smartphone;
-    readonly CashIcon = Banknote;
     readonly SuccessIcon = CheckCircle;
     readonly PendingIcon = Clock;
     readonly CancelIcon = XCircle;
@@ -39,22 +35,9 @@ export class InvoiceModalComponent implements OnChanges {
     readonly ShieldIcon = ShieldCheck;
 
     readonly InvoiceStatus = InvoiceStatus;
-    readonly PaymentStatus = PaymentStatus;
-    readonly PaymentMethod = PaymentMethod;
 
     step = signal<ModalStep>('invoice');
-    selectedMethod = signal<PaymentMethod | null>(null);
-    isProcessing = signal(false);
-    errorMessage = signal('');
-    completedPayment = signal<PaymentDTO | null>(null);
     showMediclaimModal = signal(false);
-
-    paymentMethods = [
-        { method: PaymentMethod.CARD, label: 'Credit / Debit Card', icon: 'CardIcon', desc: 'Visa, Mastercard, RuPay' },
-        { method: PaymentMethod.UPI, label: 'UPI', icon: 'UpiIcon', desc: 'GPay, PhonePe, Paytm' },
-    ];
-
-    private invoiceService = inject(InvoiceService);
 
     ngOnChanges() {
         this.step.set('invoice');
@@ -78,24 +61,12 @@ export class InvoiceModalComponent implements OnChanges {
         return !!this.mediclaim;
     }
 
-    getMediclaimStatusStyle(): { bg: string; text: string; border: string; label: string } {
+    getMediclaimStatusStyle(): { text: string; label: string } {
         switch (this.mediclaim?.status) {
-            case 'APPROVED':
-                return { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200', label: 'Approved' };
-            case 'REJECTED':
-                return { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200', label: 'Rejected' };
-            default:
-                return { bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200', label: 'Pending Review' };
+            case 'APPROVED': return { text: 'text-green-600', label: 'Approved' };
+            case 'REJECTED': return { text: 'text-red-500', label: 'Rejected' };
+            default: return { text: 'text-yellow-600', label: 'Pending Review' };
         }
-    }
-
-    getIcon(key: string) {
-        const map: Record<string, any> = {
-            CardIcon: this.CardIcon,
-            UpiIcon: this.UpiIcon,
-            CashIcon: this.CashIcon
-        };
-        return map[key];
     }
 
     formatDate(dateStr: string): string {
@@ -110,65 +81,19 @@ export class InvoiceModalComponent implements OnChanges {
         return amount?.toFixed(2) ?? '0.00';
     }
 
-    proceedToPayment() {
-        this.step.set('payment-method');
-        this.selectedMethod.set(null);
-        this.errorMessage.set('');
-    }
-
-    confirmPayment() {
-        const method = this.selectedMethod();
-        if (!method) {
-            this.errorMessage.set('Please select a payment method');
-            return;
-        }
-
-        this.isProcessing.set(true);
-        this.errorMessage.set('');
-
-        this.invoiceService.initiatePayment(this.invoice.id).subscribe({
-            next: (payment) => {
-                this.invoiceService.completePayment(payment.id, method).subscribe({
-                    next: (completed) => {
-                        this.completedPayment.set(completed);
-                        this.isProcessing.set(false);
-                        this.step.set('success');
-                    },
-                    error: (err) => {
-                        this.isProcessing.set(false);
-                        this.errorMessage.set(err?.error?.message || 'Payment failed. Please try again.');
-                    }
-                });
-            },
-            error: (err) => {
-                this.isProcessing.set(false);
-                this.errorMessage.set(err?.error?.message || 'Could not initiate payment. Please try again.');
-            }
-        });
-    }
-
-    onPaymentSuccess() {
-        this.paymentCompleted.emit(this.invoice.id);
+    onPaymentCompleted(invoiceId: number) {
+        this.paymentCompleted.emit(invoiceId);
         this.closed.emit();
     }
 
-    openMediclaimModal() {
-        this.showMediclaimModal.set(true);
-    }
-
-    onMediclaimModalClosed() {
-        this.showMediclaimModal.set(false);
-    }
+    openMediclaimModal() { this.showMediclaimModal.set(true); }
+    onMediclaimModalClosed() { this.showMediclaimModal.set(false); }
 
     onMediclaimSubmitted(mediclaim: MediclaimDTO) {
         this.showMediclaimModal.set(false);
         this.mediclaimSubmitted.emit(mediclaim);
     }
 
-    printInvoice() {
-        window.print();
-    }
-    onClose() {
-        this.closed.emit();
-    }
+    printInvoice() { window.print(); }
+    onClose() { this.closed.emit(); }
 }
