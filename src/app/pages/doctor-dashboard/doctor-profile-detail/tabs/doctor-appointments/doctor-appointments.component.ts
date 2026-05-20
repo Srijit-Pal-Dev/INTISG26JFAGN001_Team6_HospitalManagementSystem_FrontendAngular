@@ -222,9 +222,13 @@ export class DoctorAppointmentsComponent implements OnInit {
 
     checkPrescriptions(appointments: AppointmentDTO[]): void {
         const completed = appointments.filter(a => a.status === AppointmentStatus.COMPLETED);
+        console.log('Checking prescriptions for:', completed.map(a => a.id));
+
         completed.forEach(appt => {
             this.prescriptionService.hasPrescription(appt.id).subscribe(exists => {
+                console.log(`Appointment ${appt.id} hasPrescription:`, exists);
                 if (exists) {
+                    // Create a NEW Set to trigger signal reactivity
                     this.prescriptionAppointmentIds.update(ids => {
                         const newSet = new Set(ids);
                         newSet.add(appt.id);

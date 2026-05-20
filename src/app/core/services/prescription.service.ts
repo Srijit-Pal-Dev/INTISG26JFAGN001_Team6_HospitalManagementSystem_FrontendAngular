@@ -33,8 +33,14 @@ export class PrescriptionService {
 
     hasPrescription(appointmentId: number): Observable<boolean> {
         return this.getPrescriptionByAppointment(appointmentId).pipe(
-            map(() => true),
-            catchError(() => of(false))
+            map(result => !!result),
+            catchError((err) => {
+                // 404 = no prescription, 500 = also treat as no prescription
+                if (err?.status === 404 || err?.status === 500) {
+                    return of(false);
+                }
+                return of(false);
+            })
         );
     }
 

@@ -11,10 +11,12 @@ import { PatientService } from '../../../../../core/services/patient.service';
 import { DoctorService } from '../../../../../core/services/doctor.service';
 import { MedicineService } from '../../../../../core/services/medicine.service';
 import { LabResultService } from '../../../../../core/services/lab-result.service';
+import { PrescriptionService } from '../../../../../core/services/prescription.service';
 import {
     AppointmentDTO, AppointmentStatus, DoctorDTO,
-    DispenseRequestResponse, LabResultResponse
+    DispenseRequestResponse, LabResultResponse, PrescriptionResponse
 } from '../../../../../core/models/index';
+import { PrescriptionModalComponent } from '../../../../doctor-dashboard/doctor-profile-detail/tabs/prescription-modal/prescription-modal.component';
 
 interface AppointmentWithDoctor extends AppointmentDTO {
     doctor?: DoctorDTO;
@@ -23,12 +25,14 @@ interface AppointmentWithDoctor extends AppointmentDTO {
     medicines?: DispenseRequestResponse[];
     labLoaded?: boolean;
     labResults?: LabResultResponse[];
+    hasPrescription?: boolean;
+    prescriptionChecked?: boolean;
 }
 
 @Component({
     selector: 'app-my-appointments',
     standalone: true,
-    imports: [CommonModule, LucideAngularModule],
+    imports: [CommonModule, LucideAngularModule, PrescriptionModalComponent],
     templateUrl: './my-appointments.component.html'
 })
 export class MyAppointmentsComponent implements OnInit {
@@ -43,6 +47,7 @@ export class MyAppointmentsComponent implements OnInit {
     readonly DoctorIcon = Stethoscope;
     readonly PillIcon = Pill;
     readonly FlaskIcon = FlaskConical;
+    readonly PrescriptionIcon = FileText;
 
     readonly Status = AppointmentStatus;
 
@@ -55,6 +60,10 @@ export class MyAppointmentsComponent implements OnInit {
 
     cancellingId = signal<number | null>(null);
     showCancelConfirm = signal<number | null>(null);
+
+    selectedPrescription = signal<PrescriptionResponse | null>(null);
+    showPrescriptionModal = signal(false);
+    isLoadingPrescription = signal(false);
 
     upcomingAppointments = computed(() =>
         this.appointments()
@@ -74,6 +83,7 @@ export class MyAppointmentsComponent implements OnInit {
     private doctorService = inject(DoctorService);
     private medicineService = inject(MedicineService);
     private labService = inject(LabResultService);
+    private prescriptionService = inject(PrescriptionService);
     private route = inject(ActivatedRoute);
     private router = inject(Router);
 
@@ -117,11 +127,16 @@ export class MyAppointmentsComponent implements OnInit {
                             medicinesLoaded: false,
                             medicines: [],
                             labLoaded: false,
-                            labResults: []
+                            labResults: [],
+                            hasPrescription: false,
+                            prescriptionChecked: false
                         }));
 
                         this.appointments.set(enriched);
                         this.isLoading.set(false);
+
+                        // Check prescriptions for completed appointments
+                        this.checkPrescriptions(enriched);
                     },
                     error: () => {
                         this.appointments.set(list.map(a => ({ ...a, expanded: false })));
@@ -134,12 +149,46 @@ export class MyAppointmentsComponent implements OnInit {
                     this.appointments.set([]);
                 } else {
                     this.errorMessage.set(
-                        err?.error?.message || `Error ${err?.status}: ${err?.statusText || 'Failed to load appointments'}`
+                        err?.error?.message || `Error ${err?.status}: Failed to load appointments`
                     );
                 }
                 this.isLoading.set(false);
             }
         });
+    }
+
+    checkPrescriptions(appointments: AppointmentWithDoctor[]) {
+        const completed = appointments.filter(a => a.status === AppointmentStatus.COMPLETED);
+        completed.forEach(appt => {
+            this.prescriptionService.hasPrescription(appt.id).subscribe(exists => {
+                this.appointments.update(list =>
+                    list.map(a => a.id === appt.id
+                        ? { ...a, hasPrescription: exists, prescriptionChecked: true }
+                        : a)
+                );
+            });
+        });
+    }
+
+    viewPrescription(appt: AppointmentWithDoctor, event: MouseEvent) {
+        event.stopPropagation();
+        this.isLoadingPrescription.set(true);
+        this.showPrescriptionModal.set(true);
+        this.prescriptionService.getPrescriptionByAppointment(appt.id).subscribe({
+            next: (p) => {
+                this.selectedPrescription.set(p);
+                this.isLoadingPrescription.set(false);
+            },
+            error: () => {
+                this.isLoadingPrescription.set(false);
+                this.showPrescriptionModal.set(false);
+            }
+        });
+    }
+
+    closePrescriptionModal() {
+        this.showPrescriptionModal.set(false);
+        this.selectedPrescription.set(null);
     }
 
     loadAllLabResults(patientId: number) {
@@ -181,17 +230,11 @@ export class MyAppointmentsComponent implements OnInit {
 
     toggleExpanded(appt: AppointmentWithDoctor) {
         const willExpand = !appt.expanded;
-
         this.appointments.update(list =>
             list.map(a => a.id === appt.id ? { ...a, expanded: willExpand } : a)
         );
-
-        if (willExpand && !appt.medicinesLoaded) {
-            this.loadMedicinesForAppointment(appt.id);
-        }
-        if (willExpand && !appt.labLoaded) {
-            this.assignLabResultsToAppointment(appt);
-        }
+        if (willExpand && !appt.medicinesLoaded) this.loadMedicinesForAppointment(appt.id);
+        if (willExpand && !appt.labLoaded) this.assignLabResultsToAppointment(appt);
     }
 
     loadMedicinesForAppointment(appointmentId: number) {
@@ -213,22 +256,6 @@ export class MyAppointmentsComponent implements OnInit {
         });
     }
 
-    // assignLabResultsToAppointment(appt: AppointmentWithDoctor) {
-    //     const apptDate = this.parseDate(appt.appointmentDate, appt.appointmentTime);
-    //     const dayStart = new Date(apptDate); dayStart.setHours(0, 0, 0, 0);
-    //     const dayEnd = new Date(apptDate); dayEnd.setHours(23, 59, 59, 999);
-
-    //     const matched = this.allLabResults().filter(r => {
-    //         const recorded = new Date(r.recordedAt);
-    //         return recorded >= dayStart && recorded <= dayEnd;
-    //     });
-
-    //     this.appointments.update(list =>
-    //         list.map(a => a.id === appt.id
-    //             ? { ...a, labResults: matched, labLoaded: true }
-    //             : a)
-    //     );
-    // }
     assignLabResultsToAppointment(appt: AppointmentWithDoctor) {
         this.labService.getTestsByAppointment(appt.id).subscribe({
             next: (tests) => {
