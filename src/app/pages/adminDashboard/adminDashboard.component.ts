@@ -262,5 +262,12 @@ export class DashboardComponent implements OnInit {
     setTimeout(() => this.showToast = false, 3000);
   }
 
+  onNavClicked(route: string): void {
+    if (route === 'mediclaims') {
+      const el = document.getElementById('mediclaim-section');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
   logout() { this.authService.logout(); }
 }

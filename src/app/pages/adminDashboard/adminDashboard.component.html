@@ -2,8 +2,12 @@
 
 <div class="relative z-10 flex h-screen overflow-hidden">
 
-  <app-sidebar [unreadCount]="unreadCount" [activeRoute]="'user-management'"
-    (notifClicked)="showNotifModal = true" (logoutClicked)="logout()">
+  <app-sidebar 
+    [unreadCount]="unreadCount" 
+    [activeRoute]="'user-management'"
+    (notifClicked)="showNotifModal = true" 
+    (navClicked)="onNavClicked($event)"
+    (logoutClicked)="logout()">
   </app-sidebar>
 
   <main class="flex flex-col flex-1 overflow-hidden min-w-0">
@@ -144,7 +148,10 @@
 
       <app-charts [users]="users()" />
 
-      <app-mediclaim />
+      <!-- <app-mediclaim /> -->
+      <div id="mediclaim-section">
+        <app-mediclaim />
+      </div>
 
     </div>
   </main>
