@@ -25,7 +25,7 @@ export class SidebarComponent implements OnInit {
 
   readonly NAV_ITEMS: Record<string, { label: string; route: string; icon: string }[]> = {
     ADMIN: [
-      { label: 'User Management', route: 'user-management', icon: 'users'    },
+      { label: 'Dashboard',       route: 'user-management', icon: 'users'    },
       { label: 'Mediclaims',      route: 'mediclaims',      icon: 'shield'   },
       { label: 'Notifications',   route: 'notifications',   icon: 'bell'     },
     ],

@@ -4,8 +4,8 @@
 
   <app-sidebar 
     [unreadCount]="unreadCount" 
-    [activeRoute]="'user-management'"
-    (notifClicked)="showNotifModal = true" 
+    [activeRoute]="activeRoute()"
+    (notifClicked)="showNotifModal = true; activeRoute.set('notifications')" 
     (navClicked)="onNavClicked($event)"
     (logoutClicked)="logout()">
   </app-sidebar>
@@ -31,7 +31,7 @@
             [(ngModel)]="searchQuery" (input)="onSearch()">
         </div>
         <button class="icon-btn w-[38px] h-[38px] rounded-xl border border-white/88 flex items-center justify-center bg-white backdrop-blur-md transition-all duration-200 hover:bg-white/88 relative"
-          (click)="showNotifModal = true">
+          (click)="showNotifModal = true; activeRoute.set('notifications')">
           <svg class="w-[17px] h-[17px] fill-[#2d4a7a]" viewBox="0 0 24 24">
             <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
           </svg>
@@ -48,7 +48,7 @@
       </div>
     </div>
 
-    <div class="flex-1 overflow-y-auto px-8 py-5 pb-8 scrollbar-thin">
+    <div class="flex-1 overflow-y-auto px-8 py-5 pb-8 scrollbar-thin" id="dashboard-section">
 
       <div class="grid grid-cols-4 gap-3.5 mb-5 max-[1200px]:grid-cols-2 max-[900px]:grid-cols-2">
         <div class="stat-card flex flex-col gap-2.5 p-5 rounded-[18px] border border-white/88 transition-all duration-200 hover:-translate-y-0.5">

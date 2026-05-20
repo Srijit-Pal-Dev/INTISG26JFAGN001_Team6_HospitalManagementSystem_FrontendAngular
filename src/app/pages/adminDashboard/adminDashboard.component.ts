@@ -31,6 +31,7 @@ export class DashboardComponent implements OnInit {
   users           = signal<UserResponse[]>([]);
   notifications   = signal<NotificationResponse[]>([]);
   filteredUsers   = signal<UserResponse[]>([]);
+  activeRoute     = signal('user-management');
 
   isLoadingUsers  = false;
   isLoadingNotifs = false;
@@ -263,9 +264,14 @@ export class DashboardComponent implements OnInit {
   }
 
   onNavClicked(route: string): void {
+    this.activeRoute.set(route);
     if (route === 'mediclaims') {
       const el = document.getElementById('mediclaim-section');
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    if (route === 'user-management') {
+      const el = document.getElementById('dashboard-section');
+      if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
