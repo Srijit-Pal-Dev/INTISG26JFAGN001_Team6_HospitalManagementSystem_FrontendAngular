@@ -1,8 +1,8 @@
 <!-- Background -->
 <div class="bg-base"></div>
-<!-- <div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-1"></div>
 <div class="bg-orb bg-orb-2"></div>
-<div class="bg-grid"></div> -->
+<div class="bg-grid"></div>
 
 <div class="app">
 
@@ -14,18 +14,12 @@
     (logoutClicked)="logout()">
   </app-sidebar>
 
-  <!-- ═══════════════════════════════
-       MAIN
-  ═══════════════════════════════ -->
   <main class="main">
-
-    <!-- ── HEADER ── -->
     <header class="pg-header">
       <div class="pg-title-block">
-        <div class="pg-eyebrow">PulseLab · {{today | date:'EEEE, d MMM yyyy'}}</div>
-        <h1 class="pg-title" *ngIf="currentView === 'dashboard'">Dashboard <span>Overview</span></h1>
+        <div class="pg-eyebrow">PulsePoint · {{today | date:'EEEE, d MMM yyyy'}}</div>
+        <h1 class="pg-title" *ngIf="currentView === 'dashboard'">Lab <span>Dashboard</span></h1>
         <h1 class="pg-title" *ngIf="currentView === 'queue'">Test <span>Queue</span></h1>
-        <h1 class="pg-title" *ngIf="currentView === 'settings'">Lab <span>Settings</span></h1>
       </div>
       <div class="header-right">
         <div class="search-bar">
@@ -37,55 +31,106 @@
 
     <div class="content">
 
-      <!-- ══════════════
-           DASHBOARD VIEW
-      ══════════════ -->
+      <!-- ══ DASHBOARD ══ -->
       <ng-container *ngIf="currentView === 'dashboard'">
 
         <!-- Stat Cards -->
         <div class="stats-row">
-          <div class="stat-card stat-pending">
-            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
+          <div class="stat-card stat-pending" (click)="goToFilter('PENDING')">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+            </div>
             <div class="stat-body">
               <div class="stat-num">{{getByStatus('PENDING').length}}</div>
-              <div class="stat-label">Pending Tests</div>
+              <div class="stat-label">Pending</div>
             </div>
-            <div class="stat-trend up">▲ Awaiting</div>
+            <div class="stat-arrow">→</div>
           </div>
-          <div class="stat-card stat-inprog">
-            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
-            <div class="stat-body">
-              <div class="stat-num">{{getByStatus('IN_PROGRESS').length}}</div>
-              <div class="stat-label">In Progress</div>
+          <div class="stat-card stat-collected" (click)="goToFilter('SAMPLE_COLLECTED')">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24"><path d="M9 3v11.5a3.5 3.5 0 007 0V3h-2v8H11V3H9z"/></svg>
             </div>
-            <div class="stat-trend neutral">● Running</div>
-          </div>
-          <div class="stat-card stat-collected">
-            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg></div>
             <div class="stat-body">
               <div class="stat-num">{{getByStatus('SAMPLE_COLLECTED').length}}</div>
               <div class="stat-label">Sample Collected</div>
             </div>
-            <div class="stat-trend neutral">● Ready</div>
+            <div class="stat-arrow">→</div>
           </div>
-          <div class="stat-card stat-done">
-            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
+          <div class="stat-card stat-inprog" (click)="goToFilter('IN_PROGRESS')">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+            </div>
+            <div class="stat-body">
+              <div class="stat-num">{{getByStatus('IN_PROGRESS').length}}</div>
+              <div class="stat-label">In Progress</div>
+            </div>
+            <div class="stat-arrow">→</div>
+          </div>
+          <div class="stat-card stat-done" (click)="goToFilter('COMPLETED')">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </div>
             <div class="stat-body">
               <div class="stat-num">{{getByStatus('COMPLETED').length}}</div>
-              <div class="stat-label">Completed Today</div>
+              <div class="stat-label">Completed</div>
             </div>
-            <div class="stat-trend down">✓ Done</div>
+            <div class="stat-arrow">→</div>
           </div>
         </div>
 
-        <!-- Progress bar -->
-        <div class="progress-banner">
-          <div class="pb-label">
-            <span>Today's Completion Rate</span>
-            <strong>{{completionRate()}}%</strong>
+        <!-- Charts Row -->
+        <div class="charts-row">
+          <!-- Donut Chart -->
+          <div class="chart-card">
+            <div class="chart-title">Status Breakdown</div>
+            <div class="donut-wrap">
+              <svg class="donut-svg" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="48" fill="none" stroke="#f0f4ff" stroke-width="18"/>
+                <!-- Pending -->
+                <circle cx="60" cy="60" r="48" fill="none" stroke="#f59e0b" stroke-width="18"
+                        [attr.stroke-dasharray]="getDonutDash('PENDING')"
+                        [attr.stroke-dashoffset]="getDonutOffset('PENDING')"
+                        stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                <!-- Sample Collected -->
+                <circle cx="60" cy="60" r="48" fill="none" stroke="#2563c8" stroke-width="18"
+                        [attr.stroke-dasharray]="getDonutDash('SAMPLE_COLLECTED')"
+                        [attr.stroke-dashoffset]="getDonutOffset('SAMPLE_COLLECTED')"
+                        stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                <!-- In Progress -->
+                <circle cx="60" cy="60" r="48" fill="none" stroke="#8b5cf6" stroke-width="18"
+                        [attr.stroke-dasharray]="getDonutDash('IN_PROGRESS')"
+                        [attr.stroke-dashoffset]="getDonutOffset('IN_PROGRESS')"
+                        stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                <!-- Completed -->
+                <circle cx="60" cy="60" r="48" fill="none" stroke="#10b981" stroke-width="18"
+                        [attr.stroke-dasharray]="getDonutDash('COMPLETED')"
+                        [attr.stroke-dashoffset]="getDonutOffset('COMPLETED')"
+                        stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                <text x="60" y="56" text-anchor="middle" class="donut-center-num">{{tests.length}}</text>
+                <text x="60" y="68" text-anchor="middle" class="donut-center-label">Total</text>
+              </svg>
+              <div class="donut-legend">
+                <div class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span>Pending</div>
+                <div class="legend-item"><span class="legend-dot" style="background:#2563c8"></span>Collected</div>
+                <div class="legend-item"><span class="legend-dot" style="background:#8b5cf6"></span>In Progress</div>
+                <div class="legend-item"><span class="legend-dot" style="background:#10b981"></span>Completed</div>
+              </div>
+            </div>
           </div>
-          <div class="pb-track">
-            <div class="pb-fill" [style.width]="completionRate() + '%'"></div>
+
+          <!-- Bar Chart - Tests by name -->
+          <div class="chart-card chart-bar-card">
+            <div class="chart-title">Tests by Type</div>
+            <div class="bar-chart">
+              <div class="bar-row" *ngFor="let item of testTypeCounts()">
+                <div class="bar-label">{{item.name}}</div>
+                <div class="bar-track">
+                  <div class="bar-fill" [style.width]="barWidth(item.count) + '%'"></div>
+                </div>
+                <div class="bar-count">{{item.count}}</div>
+              </div>
+              <div class="bar-empty" *ngIf="testTypeCounts().length === 0">No data yet</div>
+            </div>
           </div>
         </div>
 
@@ -98,20 +143,21 @@
           <table>
             <thead><tr><th>Patient</th><th>Test</th><th>Status</th><th>Assigned To</th></tr></thead>
             <tbody>
-            <tr *ngFor="let t of dashboardTests()" (click)="openPatient(t)" class="clickable-row">
+            <tr *ngFor="let t of dashboardTests()" (click)="openPatientModal(t)" class="clickable-row">
               <td><div class="patient-cell"><div class="p-avatar">{{t.patientId?.toString().slice(-2)}}</div><div>PID <strong>#{{t.patientId}}</strong></div></div></td>
               <td>{{t.testName}}</td>
               <td><span class="badge" [ngClass]="'badge-'+t.status">{{formatStatus(t.status)}}</span></td>
               <td class="muted">{{t.assignedTo || '—'}}</td>
+            </tr>
+            <tr *ngIf="tests.length === 0">
+              <td colspan="4" class="empty-state">No tests loaded yet</td>
             </tr>
             </tbody>
           </table>
         </div>
       </ng-container>
 
-      <!-- ══════════════
-           QUEUE VIEW
-      ══════════════ -->
+      <!-- ══ QUEUE ══ -->
       <ng-container *ngIf="currentView === 'queue'">
         <div class="filter-pills">
           <button class="fpill" [class.active]="activeFilter === 'all'" (click)="activeFilter = 'all'">All <span class="pill-count">{{tests.length}}</span></button>
@@ -120,20 +166,13 @@
           <button class="fpill" [class.active]="activeFilter === 'IN_PROGRESS'" (click)="activeFilter = 'IN_PROGRESS'">In Progress <span class="pill-count">{{getByStatus('IN_PROGRESS').length}}</span></button>
           <button class="fpill" [class.active]="activeFilter === 'COMPLETED'" (click)="activeFilter = 'COMPLETED'">Completed <span class="pill-count">{{getByStatus('COMPLETED').length}}</span></button>
         </div>
-
         <div class="table-wrap">
           <table>
             <thead>
-            <tr>
-              <th>Patient</th>
-              <th>Test Name</th>
-              <th>Status</th>
-              <th>Assigned To</th>
-              <th>Action</th>
-            </tr>
+            <tr><th>Patient</th><th>Test Name</th><th>Status</th><th>Assigned To</th><th>Fee</th></tr>
             </thead>
             <tbody>
-            <tr *ngFor="let t of filteredTests()" (click)="openPatient(t)" class="clickable-row">
+            <tr *ngFor="let t of filteredTests()" (click)="openPatientModal(t)" class="clickable-row">
               <td>
                 <div class="patient-cell">
                   <div class="p-avatar">{{t.patientId?.toString().slice(-2)}}</div>
@@ -146,9 +185,7 @@
               <td><strong>{{t.testName}}</strong></td>
               <td><span class="badge" [ngClass]="'badge-'+t.status">{{formatStatus(t.status)}}</span></td>
               <td class="muted">{{t.assignedTo || '—'}}</td>
-              <td (click)="$event.stopPropagation()">
-                <span class="row-hint">Click row →</span>
-              </td>
+              <td class="muted">₹{{t.fee}}</td>
             </tr>
             <tr *ngIf="filteredTests().length === 0">
               <td colspan="5" class="empty-state">No tests found</td>
@@ -158,151 +195,210 @@
         </div>
       </ng-container>
 
-      <!-- ══════════════
-           SETTINGS VIEW
-      ══════════════ -->
-      <ng-container *ngIf="currentView === 'settings'">
-        <div class="settings-placeholder">
-          <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-          <p>Settings panel coming soon</p>
-        </div>
-      </ng-container>
-
-    </div><!-- /content -->
+    </div>
   </main>
 
   <!-- ═══════════════════════════════
-       PATIENT DETAIL DRAWER
+       NOTIFICATIONS PANEL
   ═══════════════════════════════ -->
-  <div class="drawer-backdrop" [class.show]="selectedTest" (click)="closeDrawer()"></div>
-  <div class="drawer" [class.open]="selectedTest">
-    <ng-container *ngIf="selectedTest">
-
-      <div class="drawer-header">
-        <div class="drawer-close" (click)="closeDrawer()">
+  <div class="notif-backdrop" [class.show]="showNotifPanel" (click)="closeNotifPanel()"></div>
+  <div class="notif-panel" [class.open]="showNotifPanel">
+    <div class="notif-header">
+      <span>Notifications</span>
+      <div class="notif-header-actions">
+        <button class="link-btn" (click)="markAllRead()" *ngIf="unreadCount > 0">Mark all read</button>
+        <div class="notif-close" (click)="closeNotifPanel()">
           <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </div>
-        <div class="drawer-patient-hero">
-          <div class="drawer-avatar">{{selectedTest.patientId?.toString().slice(-2)}}</div>
-          <div>
-            <div class="drawer-patient-name">Patient #{{selectedTest.patientId}}</div>
-            <div class="drawer-patient-sub">Test ID: {{selectedTest.id}}</div>
-          </div>
-        </div>
       </div>
-
-      <!-- Status Pipeline -->
-      <div class="status-pipeline">
-        <div class="sp-step" [class.done]="isStepDone('PENDING')" [class.active]="selectedTest.status === 'PENDING'">
-          <div class="sp-dot"></div>
-          <div class="sp-label">Pending</div>
+    </div>
+    <div class="notif-empty" *ngIf="notifications.length === 0">
+      <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+      <p>No notifications yet</p>
+      <small>Actions like collecting samples or uploading results will appear here</small>
+    </div>
+    <div class="notif-list">
+      <div class="notif-item" *ngFor="let n of notifications"
+           [class.unread]="!n.read"
+           (click)="markNotifRead(n)">
+        <div class="notif-dot"
+             [class.notif-dot-warn]="n.type === NotificationType.BILLING || n.type === NotificationType.GENERAL"
+             [class.notif-dot-ok]="n.type === NotificationType.LAB"
+             [class.notif-dot-read]="n.read"></div>
+        <div class="notif-body">
+          <div class="notif-title" [class.notif-title-read]="n.read">{{n.title}}</div>
+          <div class="notif-msg">{{n.message}}</div>
+          <div class="notif-time">{{n.createdAt | date:'d MMM, h:mm a'}}</div>
         </div>
-        <div class="sp-line"></div>
-        <div class="sp-step" [class.done]="isStepDone('SAMPLE_COLLECTED')" [class.active]="selectedTest.status === 'SAMPLE_COLLECTED'">
-          <div class="sp-dot"></div>
-          <div class="sp-label">Sample</div>
-        </div>
-        <div class="sp-line"></div>
-        <div class="sp-step" [class.done]="isStepDone('IN_PROGRESS')" [class.active]="selectedTest.status === 'IN_PROGRESS'">
-          <div class="sp-dot"></div>
-          <div class="sp-label">In Progress</div>
-        </div>
-        <div class="sp-line"></div>
-        <div class="sp-step" [class.done]="isStepDone('COMPLETED')" [class.active]="selectedTest.status === 'COMPLETED'">
-          <div class="sp-dot"></div>
-          <div class="sp-label">Completed</div>
-        </div>
+        <div class="notif-read-tick" *ngIf="n.read">✓</div>
       </div>
+    </div>
+  </div>
 
-      <!-- Detail Fields -->
-      <div class="drawer-section-title">Test Details</div>
+</div>
+
+<!-- ═══════════════════════════════
+     PATIENT / TEST MODAL
+     Replaces the side drawer entirely
+═══════════════════════════════ -->
+<div class="modal-overlay" [class.show]="selectedTest" (click)="closeModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()" *ngIf="selectedTest">
+
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="modal-patient-hero">
+        <div class="modal-avatar">{{selectedTest.patientId?.toString().slice(-2)}}</div>
+        <div>
+          <div class="modal-patient-name">Patient #{{selectedTest.patientId}}</div>
+          <div class="modal-patient-sub">{{selectedTest.testName}} · Test ID: {{selectedTest.id}}</div>
+        </div>
+        <span class="badge modal-status-badge" [ngClass]="'badge-'+selectedTest.status">{{formatStatus(selectedTest.status)}}</span>
+      </div>
+      <div class="modal-close" (click)="closeModal()">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </div>
+    </div>
+
+    <!-- Status Pipeline -->
+    <div class="status-pipeline">
+      <div class="sp-step" [class.done]="isStepDone('PENDING')" [class.active]="selectedTest.status === 'PENDING'">
+        <div class="sp-dot"></div><div class="sp-label">Pending</div>
+      </div>
+      <div class="sp-line" [class.sp-line-done]="isStepDone('SAMPLE_COLLECTED')"></div>
+      <div class="sp-step" [class.done]="isStepDone('SAMPLE_COLLECTED')" [class.active]="selectedTest.status === 'SAMPLE_COLLECTED'">
+        <div class="sp-dot"></div><div class="sp-label">Sample</div>
+      </div>
+      <div class="sp-line" [class.sp-line-done]="isStepDone('IN_PROGRESS')"></div>
+      <div class="sp-step" [class.done]="isStepDone('IN_PROGRESS')" [class.active]="selectedTest.status === 'IN_PROGRESS'">
+        <div class="sp-dot"></div><div class="sp-label">In Progress</div>
+      </div>
+      <div class="sp-line" [class.sp-line-done]="selectedTest.status === 'COMPLETED'"></div>
+      <div class="sp-step" [class.done]="false" [class.active]="selectedTest.status === 'COMPLETED'">
+        <div class="sp-dot"></div><div class="sp-label">Completed</div>
+      </div>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- Test Info Grid -->
       <div class="detail-grid">
         <div class="detail-item">
           <div class="detail-key">Test Name</div>
           <div class="detail-val">{{selectedTest.testName}}</div>
         </div>
         <div class="detail-item">
-          <div class="detail-key">Status</div>
-          <div class="detail-val"><span class="badge" [ngClass]="'badge-'+selectedTest.status">{{formatStatus(selectedTest.status)}}</span></div>
-        </div>
-        <div class="detail-item">
           <div class="detail-key">Patient ID</div>
           <div class="detail-val">#{{selectedTest.patientId}}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-key">Appointment ID</div>
+          <div class="detail-val">#{{selectedTest.appointmentId || '—'}}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-key">Fee</div>
+          <div class="detail-val">₹{{selectedTest.fee}}</div>
         </div>
         <div class="detail-item">
           <div class="detail-key">Assigned To</div>
           <div class="detail-val">{{selectedTest.assignedTo || 'Unassigned'}}</div>
         </div>
-        <div class="detail-item" *ngIf="selectedTest.resultValue">
-          <div class="detail-key">Result Value</div>
-          <div class="detail-val result-highlight">{{selectedTest.resultValue}}</div>
-        </div>
-        <div class="detail-item" *ngIf="selectedTest.remarks">
-          <div class="detail-key">Remarks</div>
-          <div class="detail-val">{{selectedTest.remarks}}</div>
+        <div class="detail-item">
+          <div class="detail-key">Created</div>
+          <div class="detail-val">{{selectedTest.createdAt | date:'d MMM, h:mm a'}}</div>
         </div>
       </div>
 
-      <!-- Result entry form (only when IN_PROGRESS) -->
-      <ng-container *ngIf="selectedTest.status === 'IN_PROGRESS' && !showResultForm">
-        <!-- shown below via action button -->
+      <!-- Result Upload Form — shown only for IN_PROGRESS -->
+      <ng-container *ngIf="selectedTest.status === 'IN_PROGRESS' && showResultForm">
+        <div class="result-form-title">Upload Result</div>
+        <div class="result-form-grid">
+          <div class="form-field">
+            <label>Result Value <span class="req">*</span></label>
+            <input class="form-input" type="text" [(ngModel)]="resultForm.resultValue" placeholder="e.g. 5.4">
+          </div>
+          <div class="form-field">
+            <label>Unit</label>
+            <input class="form-input" type="text" [(ngModel)]="resultForm.unit" placeholder="e.g. mmol/L, mg/dL">
+          </div>
+          <div class="form-field">
+            <label>Reference Range</label>
+            <input class="form-input" type="text" [(ngModel)]="resultForm.referenceRange" placeholder="e.g. 3.9 - 6.1">
+          </div>
+          <div class="form-field">
+            <label>Recorded By</label>
+            <input class="form-input" type="text" [(ngModel)]="resultForm.recordedBy" placeholder="Technician name">
+          </div>
+          <div class="form-field form-field-full">
+            <label>Notes</label>
+            <textarea class="form-input" [(ngModel)]="resultForm.notes" placeholder="Any additional notes…" rows="2"></textarea>
+          </div>
+          <div class="form-field form-field-full">
+            <label class="toggle-label">
+              <span>Mark as Abnormal</span>
+              <div class="toggle-wrap">
+                <input type="checkbox" [(ngModel)]="resultForm.isAbnormal" class="toggle-input">
+                <div class="toggle-track" [class.toggle-on]="resultForm.isAbnormal">
+                  <div class="toggle-thumb"></div>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
       </ng-container>
-      <div class="result-form" *ngIf="showResultForm">
-        <div class="drawer-section-title">Upload Result</div>
-        <input class="drawer-input" type="text" [(ngModel)]="resultValue" placeholder="Result value (e.g. 5.4 mmol/L)">
-        <textarea class="drawer-input" [(ngModel)]="remarks" placeholder="Remarks or notes…" rows="3"></textarea>
-        <div class="form-actions">
-          <button class="btn btn-ghost" (click)="showResultForm = false">Cancel</button>
-          <button class="btn btn-success" (click)="uploadResult(selectedTest)">Submit Result</button>
-        </div>
-      </div>
 
-      <!-- ACTION BUTTONS -->
-      <div class="drawer-actions" *ngIf="!showResultForm">
-        <button class="action-btn action-collect" *ngIf="selectedTest.status === 'PENDING'" (click)="collectSample(selectedTest)">
-          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6z"/></svg>
-          Collect Sample
-        </button>
-        <button class="action-btn action-start" *ngIf="selectedTest.status === 'SAMPLE_COLLECTED'" (click)="startTest(selectedTest)">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          Start Test
-        </button>
-        <button class="action-btn action-result" *ngIf="selectedTest.status === 'IN_PROGRESS'" (click)="showResultForm = true">
-          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+      <!-- Completed result display -->
+      <ng-container *ngIf="selectedTest.status === 'COMPLETED' && selectedTest.resultValue">
+        <div class="result-form-title">Result</div>
+        <div class="result-display">
+          <div class="result-value-big" [class.result-abnormal]="selectedTest.isAbnormal">
+            {{selectedTest.resultValue}} <span class="result-unit">{{selectedTest.unit || ''}}</span>
+          </div>
+          <div class="result-ref" *ngIf="selectedTest.referenceRange">Ref: {{selectedTest.referenceRange}}</div>
+          <div class="result-abnormal-tag" *ngIf="selectedTest.isAbnormal">⚠ Abnormal</div>
+        </div>
+      </ng-container>
+
+    </div>
+
+    <!-- Modal Footer Actions -->
+    <div class="modal-footer">
+      <button class="btn btn-ghost" (click)="closeModal()">Close</button>
+
+      <button class="action-btn action-collect"
+              *ngIf="selectedTest.status === 'PENDING'"
+              (click)="collectSample(selectedTest)">
+        <svg viewBox="0 0 24 24"><path d="M9 3v11.5a3.5 3.5 0 007 0V3h-2v8H11V3H9z"/></svg>
+        Collect Sample
+      </button>
+
+      <button class="action-btn action-start"
+              *ngIf="selectedTest.status === 'SAMPLE_COLLECTED'"
+              (click)="startTest(selectedTest)">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        Start Test
+      </button>
+
+      <ng-container *ngIf="selectedTest.status === 'IN_PROGRESS'">
+        <button class="action-btn action-result"
+                *ngIf="!showResultForm"
+                (click)="showResultForm = true">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>
           Enter Result
         </button>
-        <div class="completed-badge" *ngIf="selectedTest.status === 'COMPLETED'">
-          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-          Test Completed
-        </div>
-      </div>
+        <ng-container *ngIf="showResultForm">
+          <button class="btn btn-ghost" (click)="showResultForm = false">Cancel</button>
+          <button class="action-btn action-submit" (click)="uploadResult(selectedTest)">
+            <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+            Submit Result
+          </button>
+        </ng-container>
+      </ng-container>
 
-    </ng-container>
-  </div>
-
-  <!-- ═══════════════════════════════
-       NOTIFICATIONS PANEL
-  ═══════════════════════════════ -->
-  <div class="drawer-backdrop" [class.show]="showNotifPanel" (click)="showNotifPanel = false"></div>
-  <div class="notif-panel" [class.open]="showNotifPanel">
-    <div class="notif-header">
-      <span>Notifications</span>
-      <button class="link-btn" (click)="markAllRead()" *ngIf="unreadCount > 0">Mark all read</button>
-    </div>
-    <div class="notif-empty" *ngIf="notifications.length === 0">
-      <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-      <p>All caught up!</p>
-    </div>
-    <div class="notif-list">
-      <div class="notif-item" *ngFor="let n of notifications" [class.unread]="!n.read" (click)="n.read = true; recalcUnread()">
-        <div class="notif-dot" [class.notif-dot-warn]="n.type === 'warning'" [class.notif-dot-ok]="n.type === 'success'"></div>
-        <div class="notif-body">
-          <div class="notif-title">{{n.title}}</div>
-          <div class="notif-msg">{{n.message}}</div>
-          <div class="notif-time">{{n.time | date:'h:mm a'}}</div>
-        </div>
+      <div class="completed-badge" *ngIf="selectedTest.status === 'COMPLETED'">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        Test Completed
       </div>
     </div>
-  </div>
 
+  </div>
 </div>
