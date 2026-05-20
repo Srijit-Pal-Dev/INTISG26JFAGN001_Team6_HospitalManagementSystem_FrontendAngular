@@ -181,7 +181,7 @@ import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 
 export function passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
-  const password        = group.get('password')?.value;
+  const password = group.get('password')?.value;
   const confirmPassword = group.get('confirmPassword')?.value;
   return password === confirmPassword ? null : { passwordMismatch: true };
 }
@@ -200,25 +200,25 @@ export class AuthComponent implements OnInit {
   loginForm!: FormGroup;
   signupForm!: FormGroup;
 
-  isLoading      = false;
-  errorMessage   = '';
+  isLoading = false;
+  errorMessage = '';
   successMessage = '';
-  showLoginPassword  = false;
+  showLoginPassword = false;
   showSignupPassword = false;
 
   private readonly ROLE_REDIRECT_MAP: Record<string, string> = {
-    'ADMIN':          '/dashboard',
-    'DOCTOR':         '/doctor-dashboard',
-    'PHARMACIST':     '/pharmacy-dashboard',
+    'ADMIN': '/dashboard',
+    'DOCTOR': '/doctor-dashboard',
+    'PHARMACIST': '/pharmacy-dashboard',
     'LAB_TECHNICIAN': '/lab-dashboard',
-    'USER':           '/patient-dashboard'
+    'USER': '/patient-dashboard'
   };
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -227,10 +227,10 @@ export class AuthComponent implements OnInit {
     });
 
     this.signupForm = this.fb.group({
-      fullName:        ['', [Validators.required, Validators.minLength(4)]],
-      username:        ['', [Validators.required, Validators.email]],
-      password:        ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['',  Validators.required]
+      fullName: ['', [Validators.required, Validators.minLength(4)]],
+      username: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', Validators.required]
     }, { validators: passwordMatchValidator });
 
     if (this.authService.isLoggedIn()) {
@@ -240,18 +240,18 @@ export class AuthComponent implements OnInit {
 
   switchTab(tab: 'login' | 'signup') {
     this.activeTab.set(tab);
-    this.errorMessage   = '';
+    this.errorMessage = '';
     this.successMessage = '';
     this.loginForm.reset();
     this.signupForm.reset();
   }
 
   goHome() {
-    this.router.navigate(['']);
+    this.router.navigate(['/home']);
   }
 
   onLogin() {
-    this.errorMessage   = '';
+    this.errorMessage = '';
     this.successMessage = '';
     this.loginForm.markAllAsTouched();
     if (this.loginForm.invalid) return;
@@ -276,7 +276,7 @@ export class AuthComponent implements OnInit {
   }
 
   onRegister() {
-    this.errorMessage   = '';
+    this.errorMessage = '';
     this.successMessage = '';
     this.signupForm.markAllAsTouched();
     if (this.signupForm.invalid) return;

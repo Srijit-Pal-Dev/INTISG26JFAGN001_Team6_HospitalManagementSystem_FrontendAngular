@@ -93,6 +93,7 @@ export class PatientService {
             }));
     }
 
+
     completeAppointment(id: number): Observable<AppointmentDTO> {
         return this.http
             .put<ApiResponse<AppointmentDTO> | AppointmentDTO>(`${this.baseUrl}/appointment/complete/${id}`, {})
