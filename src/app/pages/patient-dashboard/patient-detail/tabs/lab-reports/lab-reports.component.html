@@ -5,7 +5,7 @@
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
 
             <div>
-                <h2 class="text-xl font-bold text-gray-900">Lab Reports</h2>
+                <h2 class="text-xl font-semibold text-gray-900">Lab Reports</h2>
                 <div class="flex items-center gap-3 mt-1.5 text-xs">
                     <span class="text-gray-500">{{ results().length }} total</span>
                     <span class="text-gray-300">•</span>
@@ -42,7 +42,7 @@
 
                 <div class="relative w-full sm:w-60">
                     <lucide-icon [img]="SearchIcon"
-                        class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2"></lucide-icon>
+                        class="w-4 h-4 text-gray-400 absolute left-2 top-1/2 -translate-y-1/2"></lucide-icon>
                     <input type="text" [ngModel]="searchQuery()" (input)="searchQuery.set(($any($event.target)).value)"
                         placeholder="Search results..."
                         class="w-full bg-gray-50 border border-gray-200 rounded-full text-xs py-2 pl-9 pr-3 focus:outline-none focus:border-[#1a7fd4] focus:bg-white" />
@@ -92,8 +92,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         @for (result of filteredResults(); track result.id) {
         <div (click)="openDetail(result)"
-            class="bg-white rounded-2xl shadow-sm border-l-4 border border-gray-100 p-5 cursor-pointer hover:shadow-md transition-all group"
-            [class.border-l-red-400]="result.isAbnormal" [class.border-l-green-400]="!result.isAbnormal">
+            class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 cursor-pointer hover:shadow-md transition-all group">
 
             <div class="flex items-start gap-4">
 

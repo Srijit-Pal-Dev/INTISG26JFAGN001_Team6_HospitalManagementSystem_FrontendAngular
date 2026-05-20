@@ -4,7 +4,6 @@
 
     <div (click)="$event.stopPropagation()"
         class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto print:shadow-none print:max-w-none print:max-h-none print:rounded-none">
-
         <div
             class="bg-gradient-to-r from-[#1a7fd4] to-[#0276C9] px-6 py-5 flex items-center justify-between print:bg-white print:border-b-2 print:border-gray-300">
             <div class="flex items-center gap-3">
@@ -30,9 +29,20 @@
         </div>
 
         <div class="p-6 space-y-5">
+            <div>
+                <div class="flex items-center gap-2 mb-3">
+                    <img src="./logo.png" alt="logo" draggable="false" class="w-40 h-10" />
+                </div>
+                <div class="text-xs text-gray-500 space-y-0.5 ml-1">
+                    <p>123 Medical Center Road, Mumbai</p>
+                    <p>Maharashtra, India - 400001</p>
+                    <p class="text-[#1a7fd4]">billing&#64;pulsepoint.in</p>
+                    <p>+91 98765 43210</p>
+                </div>
+            </div>
 
             @if (patient) {
-            <div class="bg-blue-50 border border-blue-100 rounded-xl p-4">
+            <div class="p-4">
                 <p class="text-[10px] uppercase tracking-wider font-semibold text-[#1a7fd4] mb-2">Patient Information
                 </p>
                 <div class="grid grid-cols-2 gap-3 text-sm">
@@ -59,40 +69,38 @@
             <div>
                 <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-3">Test Result</p>
 
-                <div class="border rounded-xl overflow-hidden" [class.border-red-200]="result.isAbnormal"
-                    [class.bg-red-50]="result.isAbnormal" [class.border-green-200]="!result.isAbnormal"
-                    [class.bg-green-50]="!result.isAbnormal">
 
-                    <div class="px-5 py-4 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs text-gray-600 mb-1">Test #{{ result.labTestId }}</p>
-                            <div class="flex items-baseline gap-1.5">
-                                <span class="text-3xl font-bold"
-                                    [class]="result.isAbnormal ? 'text-red-700' : 'text-green-700'">
-                                    {{ result.resultValue }}
-                                </span>
-                                <span class="text-sm text-gray-600 font-medium">{{ result.unit }}</span>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">Reference range: {{ result.referenceRange }}</p>
-                        </div>
 
-                        <div class="text-right">
-                            @if (result.isAbnormal) {
-                            <span
-                                class="inline-flex items-center gap-1.5 bg-red-100 text-red-700 text-xs font-bold px-3 py-1.5 rounded-full">
-                                <lucide-icon [img]="AlertIcon" class="w-3.5 h-3.5"></lucide-icon>
-                                Abnormal
+                <div class="px-5 py-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-gray-600 mb-1">Test #{{ result.labTestId }}</p>
+                        <div class="flex items-baseline gap-1.5">
+                            <span class="text-3xl font-bold"
+                                [class]="result.isAbnormal ? 'text-red-700' : 'text-green-700'">
+                                {{ result.resultValue }}
                             </span>
-                            } @else {
-                            <span
-                                class="inline-flex items-center gap-1.5 bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full">
-                                <lucide-icon [img]="CheckIcon" class="w-3.5 h-3.5"></lucide-icon>
-                                Normal
-                            </span>
-                            }
+                            <span class="text-sm text-gray-600 font-medium">{{ result.unit }}</span>
                         </div>
+                        <p class="text-xs text-gray-500 mt-1">Reference range: {{ result.referenceRange }}</p>
+                    </div>
+
+                    <div class="text-right">
+                        @if (result.isAbnormal) {
+                        <span
+                            class="inline-flex items-center gap-1.5 bg-red-100 text-red-700 text-xs font-bold px-3 py-1.5 rounded-full">
+                            <lucide-icon [img]="AlertIcon" class="w-3.5 h-3.5"></lucide-icon>
+                            Abnormal
+                        </span>
+                        } @else {
+                        <span
+                            class="inline-flex items-center gap-1.5 bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full">
+                            <lucide-icon [img]="CheckIcon" class="w-3.5 h-3.5"></lucide-icon>
+                            Normal
+                        </span>
+                        }
                     </div>
                 </div>
+
             </div>
 
             @if (result.notes) {

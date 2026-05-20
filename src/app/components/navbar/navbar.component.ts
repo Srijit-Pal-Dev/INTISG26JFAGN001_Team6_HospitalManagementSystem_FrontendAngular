@@ -135,7 +135,7 @@ export class NavbarComponent implements OnInit {
         this.userId.set(null);
         this.userMenuOpen.set(false);
         this.notifications.set([]);
-        this.router.navigate(['/']).then(() => window.location.reload());
+        this.router.navigate(['/home']).then(() => window.location.reload());
     }
 
     goToDashboard() {

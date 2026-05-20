@@ -52,7 +52,6 @@ export class InvoiceModalComponent implements OnChanges {
     paymentMethods = [
         { method: PaymentMethod.CARD, label: 'Credit / Debit Card', icon: 'CardIcon', desc: 'Visa, Mastercard, RuPay' },
         { method: PaymentMethod.UPI, label: 'UPI', icon: 'UpiIcon', desc: 'GPay, PhonePe, Paytm' },
-        { method: PaymentMethod.CASH, label: 'Cash', icon: 'CashIcon', desc: 'Pay at counter' }
     ];
 
     private invoiceService = inject(InvoiceService);
