@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, map, catchError, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
     CreatePrescriptionRequest,
@@ -30,4 +30,12 @@ export class PrescriptionService {
             .get<ApiResponse<PrescriptionResponse> | PrescriptionResponse>(`${this.baseUrl}/appointment/${appointmentId}`)
             .pipe(map((r: any) => r.data ?? r));
     }
+
+    hasPrescription(appointmentId: number): Observable<boolean> {
+        return this.getPrescriptionByAppointment(appointmentId).pipe(
+            map(() => true),
+            catchError(() => of(false))
+        );
+    }
+
 }

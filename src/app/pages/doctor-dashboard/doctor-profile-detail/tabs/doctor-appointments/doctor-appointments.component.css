@@ -251,3 +251,13 @@
   font-size: 15px;
   text-align: center;
 }
+
+.da-btn-view-prescription {
+    background: rgba(5, 150, 105, .1);
+    color: #059669;
+    border: 1px solid rgba(5, 150, 105, .25);
+}
+.da-btn-view-prescription:hover {
+    background: rgba(5, 150, 105, .18);
+}
+

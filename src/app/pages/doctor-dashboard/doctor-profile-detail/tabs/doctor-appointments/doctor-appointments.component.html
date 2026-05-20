@@ -55,8 +55,7 @@
         </div>
       </div>
 
-      <div class="da-card-actions">
-        <!-- Mark Complete -->
+      <!-- <div class="da-card-actions">
         <button
           class="da-action-btn da-btn-complete"
           *ngIf="appt.status === AppointmentStatus.SCHEDULED"
@@ -66,7 +65,6 @@
           {{ completingId() === appt.id ? 'Completing...' : 'Mark Complete' }}
         </button>
 
-        <!-- Create Prescription -->
         <button
           class="da-action-btn da-btn-prescription"
           *ngIf="appt.status === AppointmentStatus.COMPLETED"
@@ -75,6 +73,31 @@
           Create Prescription
         </button>
       </div>
+    </div> -->
+    <div class="da-card-actions">
+      @if (appt.status === AppointmentStatus.SCHEDULED) {
+      <button class="da-action-btn da-btn-complete"
+        (click)="markComplete(appt)"
+        [disabled]="completingId() === appt.id">
+        <lucide-icon [img]="CheckIcon" size="15"></lucide-icon>
+        {{ completingId() === appt.id ? 'Completing...' : 'Mark Complete' }}
+      </button>
+      }
+      @if (appt.status === AppointmentStatus.COMPLETED) {
+        @if (hasPrescription(appt.id)) {
+        <button class="da-action-btn da-btn-view-prescription"
+          (click)="viewPrescription(appt)">
+          <lucide-icon [img]="PrescriptionIcon" size="15"></lucide-icon>
+          View Prescription
+        </button>
+        } @else {
+        <button class="da-action-btn da-btn-prescription"
+          (click)="createPrescription(appt)">
+          <lucide-icon [img]="PrescriptionIcon" size="15"></lucide-icon>
+          Create Prescription
+        </button>
+        }
+      }
     </div>
 
     <!-- Empty state -->
@@ -83,5 +106,20 @@
       <p>No appointments found{{ filterStatus() !== 'ALL' ? ' for this filter' : '' }}.</p>
     </div>
   </div>
+
+  @if (showPrescriptionModal()) {
+    @if (isLoadingPrescription()) {
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center">
+      <div class="bg-white rounded-2xl p-8 flex items-center gap-3">
+        <div class="da-spinner"></div>
+        <span class="text-sm text-gray-500">Loading prescription...</span>
+      </div>
+    </div>
+    } @else if (selectedPrescription()) {
+    <app-prescription-modal
+      [prescription]="selectedPrescription()!"
+      (closed)="closePrescriptionModal()" />
+    }
+  }
 
 </div>
