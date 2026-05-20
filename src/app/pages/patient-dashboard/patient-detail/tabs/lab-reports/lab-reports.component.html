@@ -1,11 +1,11 @@
 <div class="font-poppins">
 
-    @if (!isLoading() && results().length > 0) {
+    @if (!isLoading() && invoicesLoaded() && hasAnyPaidResult() && paidFilteredResults().length > 0) {
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
         <div>
             <h2 class="text-xl font-semibold text-gray-900">Lab Reports</h2>
             <div class="flex items-center gap-2 mt-1 text-xs text-gray-400">
-                <span>{{ results().length }} total</span>
+                <span>{{ paidFilteredResults().length }} total</span>
                 <span>•</span>
                 <span class="text-green-600 font-medium">{{ normalCount() }} normal</span>
                 <span>•</span>
@@ -36,13 +36,13 @@
                     class="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></lucide-icon>
                 <input type="text" [ngModel]="searchQuery()" (input)="searchQuery.set(($any($event.target)).value)"
                     placeholder="Search..."
-                    class="w-full bg-white border border-gray-200 rounded-full text-xs py-2 pl-9 pr-3 focus:outline-none focus:border-[#1a7fd4] transition-colors" />
+                    class="w-full bg-white border border-gray-200 rounded-full text-xs py-2 pl-10 pr-3 focus:outline-none focus:border-[#1a7fd4] transition-colors" />
             </div>
         </div>
     </div>
     }
 
-    @if (isLoading()) {
+    @if (isLoading() || !invoicesLoaded()) {
     <div class="flex flex-col items-center justify-center py-20">
         <div class="w-7 h-7 border-4 border-gray-200 border-t-[#1a7fd4] rounded-full animate-spin mb-3"></div>
         <p class="text-sm text-gray-400">Loading lab reports...</p>
@@ -70,84 +70,131 @@
         </button>
     </div>
 
-    } @else if (filteredResults().length === 0) {
-    <div class="bg-white rounded-2xl border border-gray-100 p-8 text-center">
-        <p class="text-gray-400 text-sm mb-2">No results match your filters</p>
-        <button (click)="searchQuery.set(''); setFilter('all')" class="text-[#1a7fd4] text-sm font-semibold">Reset
-            filters</button>
-    </div>
-
     } @else {
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        @for (result of filteredResults(); track result.id) {
-        <div (click)="openDetail(result)"
-            class="bg-white rounded-2xl border border-gray-300 overflow-hidden cursor-pointer hover:shadow-md transition-all group flex flex-col">
+    <div class="space-y-6">
 
-            <div class="p-5 flex flex-col flex-1">
+        <!-- PAID results -->
+        @if (paidFilteredResults().length > 0) {
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (result of paidFilteredResults(); track result.id) {
+            <div (click)="openDetail(result)"
+                class="bg-white rounded-2xl border border-gray-200 overflow-hidden cursor-pointer hover:shadow-md transition-all group flex flex-col">
 
-                <!-- Name + Badge -->
-                <div class="flex items-start justify-between gap-2 mb-4">
-                    <div class="min-w-0">
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-0.5">
-                            Test #{{ result.labTestId }}
-                        </p>
-                        <h3 class="text-sm font-bold text-gray-900 leading-tight">
-                            {{ result.testName ?? 'Lab Test' }}
-                        </h3>
-                    </div>
-                    @if (result.isAbnormal) {
-                    <span
-                        class="text-[10px] font-bold bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded-full shrink-0">
-                        Abnormal
-                    </span>
-                    } @else {
-                    <span
-                        class="text-[10px] font-bold bg-green-50 text-green-600 border border-green-200 px-2 py-0.5 rounded-full shrink-0">
-                        Normal
-                    </span>
-                    }
-                </div>
-
-                <!-- Result Value — hero number -->
-                <div class="mb-4 pb-4 border-b border-gray-100">
-                    <div class="flex items-baseline gap-1.5">
-                        <span class="text-3xl font-bold" [class]="result.isAbnormal ? 'text-red-600' : 'text-gray-900'">
-                            {{ result.resultValue }}
+                <div class="p-5 flex flex-col flex-1">
+                    <div class="flex items-start justify-between gap-2 mb-4">
+                        <div class="min-w-0">
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-0.5">
+                                Test #{{ result.labTestId }}
+                            </p>
+                            <h3 class="text-sm font-bold text-gray-900 leading-tight">
+                                {{ result.testName ?? 'Lab Test' }}
+                            </h3>
+                        </div>
+                        @if (result.isAbnormal) {
+                        <span
+                            class="text-[10px] font-bold bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded-full shrink-0">
+                            Abnormal
                         </span>
-                        <span class="text-sm text-gray-400 font-medium">{{ result.unit }}</span>
+                        } @else {
+                        <span
+                            class="text-[10px] font-bold bg-green-50 text-green-600 border border-green-200 px-2 py-0.5 rounded-full shrink-0">
+                            Normal
+                        </span>
+                        }
                     </div>
-                    <p class="text-[11px] text-gray-400 mt-1">
-                        Range: {{ result.referenceRange }}
-                    </p>
-                </div>
 
-                <!-- Meta -->
-                <div class="space-y-1.5 mt-auto">
-                    <div class="flex items-center gap-1.5 text-[11px] text-gray-400">
-                        <lucide-icon [img]="CalendarIcon" class="w-3 h-3 shrink-0"></lucide-icon>
-                        <span>{{ formatDate(result.recordedAt) }}</span>
+                    <div class="mb-4 pb-4 border-b border-gray-100">
+                        <div class="flex items-baseline gap-1.5">
+                            <span class="text-3xl font-black"
+                                [class]="result.isAbnormal ? 'text-red-600' : 'text-gray-900'">
+                                {{ result.resultValue }}
+                            </span>
+                            <span class="text-sm text-gray-400 font-medium">{{ result.unit }}</span>
+                        </div>
+                        <p class="text-[11px] text-gray-400 mt-1">Range: {{ result.referenceRange }}</p>
                     </div>
-                    <div class="flex items-center gap-1.5 text-[11px] text-gray-400">
-                        <lucide-icon [img]="EyeIcon" class="w-3 h-3 shrink-0"></lucide-icon>
-                        <span class="truncate">{{ result.recordedBy || '—' }}</span>
-                    </div>
-                </div>
 
-                <!-- Footer -->
-                <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
-                    <span class="text-[11px] text-gray-400">
-                        Fee: <span class="font-semibold text-gray-700">₹{{ result.fee }}</span>
-                    </span>
-                    <span
-                        class="text-[11px] font-semibold text-[#1a7fd4] flex items-center gap-1 group-hover:gap-1.5 transition-all">
-                        <lucide-icon [img]="EyeIcon" class="w-3 h-3"></lucide-icon>
-                        View Report
-                    </span>
+                    <div class="space-y-1.5 mt-auto">
+                        <div class="flex items-center gap-1.5 text-[11px] text-gray-400">
+                            <lucide-icon [img]="CalendarIcon" class="w-3 h-3 shrink-0"></lucide-icon>
+                            <span>{{ formatDate(result.recordedAt) }}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 text-[11px] text-gray-400">
+                            <lucide-icon [img]="EyeIcon" class="w-3 h-3 shrink-0"></lucide-icon>
+                            <span class="truncate">{{ result.recordedBy || '—' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-[11px] text-gray-400">
+                            Fee: <span class="font-semibold text-gray-700">₹{{ result.fee }}</span>
+                        </span>
+                        <span
+                            class="text-[11px] font-semibold text-[#1a7fd4] flex items-center gap-1 group-hover:gap-1.5 transition-all">
+                            <lucide-icon [img]="EyeIcon" class="w-3 h-3"></lucide-icon>
+                            View Report
+                        </span>
+                    </div>
                 </div>
 
             </div>
+            }
         </div>
         }
+
+        <!-- LOCKED results -->
+        @if (lockedResults().length > 0) {
+        <div>
+            @if (paidFilteredResults().length > 0) {
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                Pending Payment
+            </p>
+            }
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                @for (result of lockedResults(); track result.id) {
+                <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden flex flex-col opacity-60">
+                    <div class="p-5 flex flex-col flex-1">
+                        <div class="flex items-start justify-between gap-2 mb-4">
+                            <div class="min-w-0">
+                                <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-0.5">
+                                    Test #{{ result.labTestId }}
+                                </p>
+                                <h3 class="text-sm font-bold text-gray-900 leading-tight">
+                                    {{ result.testName ?? 'Lab Test' }}
+                                </h3>
+                            </div>
+                            <div class="w-7 h-7 bg-yellow-100 rounded-full flex items-center justify-center shrink-0">
+                                <lucide-icon [img]="LockIcon" class="w-3.5 h-3.5 text-yellow-600"></lucide-icon>
+                            </div>
+                        </div>
+
+                        <!-- Blurred value -->
+                        <div class="mb-4 pb-4 border-b border-gray-100">
+                            <div class="flex items-baseline gap-1.5 blur-sm select-none">
+                                <span class="text-3xl font-black text-gray-400">{{ result.resultValue }}</span>
+                                <span class="text-sm text-gray-400">{{ result.unit }}</span>
+                            </div>
+                            <p class="text-[11px] text-gray-400 mt-1">Range: {{ result.referenceRange }}</p>
+                        </div>
+
+                        <div class="mt-auto pt-3 border-t border-gray-100 text-center">
+                            <p class="text-xs font-semibold text-yellow-600">Pay invoice to unlock</p>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+        }
+
+        @if (paidFilteredResults().length === 0 && lockedResults().length === 0) {
+        <div class="bg-white rounded-2xl border border-gray-100 p-8 text-center">
+            <p class="text-gray-400 text-sm mb-2">No results match your filters</p>
+            <button (click)="searchQuery.set(''); setFilter('all')" class="text-[#1a7fd4] text-sm font-semibold">Reset
+                filters</button>
+        </div>
+        }
+
     </div>
     }
 

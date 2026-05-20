@@ -1,7 +1,9 @@
 <div (click)="onClose()" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] overflow-y-auto font-poppins">
     <div class="flex min-h-full items-center justify-center p-4 print:block print:p-0">
         <div (click)="$event.stopPropagation()"
-            class="bg-white w-full max-w-3xl my-8 shadow-2xl overflow-hidden print:max-w-none print:shadow-none print:my-0">
+            class="bg-white w-full my-8 shadow-2xl overflow-hidden print:shadow-none print:my-0"
+            [class]="step() === 'invoice' ? 'max-w-3xl' : 'max-w-xl'">
+
             @if (step() === 'invoice') {
 
             <!-- Action Bar -->
@@ -23,11 +25,9 @@
             <!-- Invoice Document -->
             <div class="p-8 sm:p-10" id="invoice-print-area">
 
-                <!-- Header: Hospital Info + Invoice Title -->
+                <!-- Header -->
                 <div
                     class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 mb-10 pb-8 border-b-2 border-gray-100">
-
-                    <!-- Left: Hospital Branding -->
                     <div>
                         <div class="flex items-center gap-2 mb-3">
                             <img src="./logo.png" alt="logo" draggable="false" class="w-40 h-10" />
@@ -39,8 +39,6 @@
                             <p>+91 98765 43210</p>
                         </div>
                     </div>
-
-                    <!-- Right: Invoice Details -->
                     <div class="text-left sm:text-right">
                         <h1 class="text-3xl font-semibold text-gray-900 mb-3">INVOICE</h1>
                         <div class="space-y-1 text-sm">
@@ -88,7 +86,7 @@
                     </div>
                 </div>
 
-                <!-- Patient + Doctor Info -->
+                <!-- Patient + Doctor -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Bill To (Patient)
@@ -108,7 +106,6 @@
                         <p class="text-xs text-gray-400 italic">Patient info unavailable</p>
                         }
                     </div>
-
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Consulting Doctor
                         </p>
@@ -131,7 +128,7 @@
                     </div>
                 </div>
 
-                <!-- Line Items Table -->
+                <!-- Line Items -->
                 <div class="mb-8">
                     <table class="w-full text-sm">
                         <thead>
@@ -151,9 +148,8 @@
                                     <p class="text-xs text-gray-500 mt-0.5">Doctor visit • {{ invoice.doctor?.specialty
                                         ?? 'General' }}</p>
                                 </td>
-                                <td class="py-3.5 text-right font-semibold text-gray-900">
-                                    ₹{{ formatAmount(invoice.consultationFee) }}
-                                </td>
+                                <td class="py-3.5 text-right font-semibold text-gray-900">₹{{
+                                    formatAmount(invoice.consultationFee) }}</td>
                             </tr>
                             @if ((invoice.medicineFee ?? 0) > 0) {
                             <tr>
@@ -162,9 +158,8 @@
                                     <p class="text-xs text-gray-500 mt-0.5">Prescribed medicines dispensed by pharmacy
                                     </p>
                                 </td>
-                                <td class="py-3.5 text-right font-semibold text-gray-900">
-                                    ₹{{ formatAmount(invoice.medicineFee) }}
-                                </td>
+                                <td class="py-3.5 text-right font-semibold text-gray-900">₹{{
+                                    formatAmount(invoice.medicineFee) }}</td>
                             </tr>
                             }
                             @if ((invoice.labFee ?? 0) > 0) {
@@ -173,9 +168,8 @@
                                     <p class="font-semibold text-gray-900">Laboratory Tests</p>
                                     <p class="text-xs text-gray-500 mt-0.5">Diagnostic tests and reports</p>
                                 </td>
-                                <td class="py-3.5 text-right font-semibold text-gray-900">
-                                    ₹{{ formatAmount(invoice.labFee) }}
-                                </td>
+                                <td class="py-3.5 text-right font-semibold text-gray-900">₹{{
+                                    formatAmount(invoice.labFee) }}</td>
                             </tr>
                             }
                         </tbody>
@@ -191,14 +185,14 @@
                             </tr>
                             <tr class="border-t-2 border-gray-900">
                                 <td class="pt-4 pb-2 font-bold text-gray-900 text-lg">TOTAL</td>
-                                <td class="pt-4 pb-2 text-right font-bold text-[#1a7fd4] text-2xl">
-                                    ₹{{ formatAmount(invoice.totalAmount) }}
-                                </td>
+                                <td class="pt-4 pb-2 text-right font-bold text-[#1a7fd4] text-2xl">₹{{
+                                    formatAmount(invoice.totalAmount) }}</td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
 
+                <!-- Payment Details -->
                 @if (invoice.invoiceStatus === InvoiceStatus.PAID && invoice.payment) {
                 <div class="border-t border-gray-100 pt-5 mb-6">
                     <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Payment Details</p>
@@ -222,7 +216,7 @@
                 </div>
                 }
 
-                <!-- Appointment Reason -->
+                <!-- Reason -->
                 @if (invoice.appointment?.reason) {
                 <div class="bg-gray-50 rounded-xl p-4 mb-6">
                     <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Reason for Visit</p>
@@ -230,22 +224,18 @@
                 </div>
                 }
 
+                <!-- Mediclaim -->
                 @if (hasMediclaim && mediclaim) {
                 <div class="border-t border-gray-100 pt-5 mb-6">
                     <div class="flex items-start justify-between gap-3">
                         <div class="flex items-center gap-2 min-w-0">
                             <lucide-icon [img]="ShieldIcon" class="w-4 h-4 shrink-0" [class]="mediclaim.status === 'APPROVED' ? 'text-green-600'
-                 : mediclaim.status === 'REJECTED' ? 'text-red-500'
-                 : 'text-yellow-500'"></lucide-icon>
+                           : mediclaim.status === 'REJECTED' ? 'text-red-500' : 'text-yellow-500'"></lucide-icon>
                             <div class="min-w-0">
                                 <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-0.5">
                                     Mediclaim</p>
-                                <p class="text-xs font-bold" [class]="mediclaim.status === 'APPROVED' ? 'text-green-600'
-                   : mediclaim.status === 'REJECTED' ? 'text-red-500'
-                   : 'text-yellow-600'">
-                                    {{ mediclaim.status === 'APPROVED' ? 'Approved'
-                                    : mediclaim.status === 'REJECTED' ? 'Rejected'
-                                    : 'Pending Review' }}
+                                <p class="text-xs font-bold" [class]="getMediclaimStatusStyle().text">
+                                    {{ getMediclaimStatusStyle().label }}
                                 </p>
                                 <p class="text-[11px] text-gray-500 mt-0.5 truncate">
                                     {{ mediclaim.insurerName }} • {{ mediclaim.coveragePercentage }}% coverage
@@ -265,7 +255,7 @@
                 </div>
                 }
 
-                <!-- Footer Note -->
+                <!-- Footer -->
                 <div class="border-t border-gray-100 pt-6 mt-4">
                     <p class="text-xs text-gray-400 leading-relaxed">
                         This is a computer-generated invoice and does not require a physical signature.
@@ -283,7 +273,7 @@
                     Close
                 </button>
                 @if (canPay) {
-                <button (click)="proceedToPayment()"
+                <button (click)="step.set('checkout')"
                     class="flex-1 px-4 py-2.5 rounded-xl bg-light hover:bg-[#0276C9] text-white text-sm font-semibold transition-colors">
                     Pay Now - ₹{{ formatAmount(invoice.totalAmount) }}
                 </button>
@@ -305,112 +295,9 @@
             </div>
             }
 
-            @if (step() === 'payment-method') {
-            <div class="bg-gradient-to-r from-[#023C6E] to-[#1a7fd4] px-6 py-5 flex items-center justify-between">
-                <div>
-                    <h3 class="text-white font-bold text-lg">Choose Payment Method</h3>
-                    <p class="text-white/70 text-xs">Amount to pay: ₹{{ formatAmount(invoice.totalAmount) }}</p>
-                </div>
-                <button (click)="step.set('invoice')"
-                    class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white">
-                    <lucide-icon [img]="XIcon" class="w-4 h-4"></lucide-icon>
-                </button>
-            </div>
-
-            <div class="p-6 space-y-4">
-                <div class="space-y-3">
-                    @for (pm of paymentMethods; track pm.method) {
-                    <button (click)="selectedMethod.set(pm.method)"
-                        class="w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all text-left"
-                        [class]="selectedMethod() === pm.method
-                  ? 'border-[#1a7fd4] bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'">
-                        <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                            [class]="selectedMethod() === pm.method ? 'bg-[#1a7fd4]' : 'bg-gray-100'">
-                            <lucide-icon [img]="getIcon(pm.icon)" class="w-6 h-6"
-                                [class]="selectedMethod() === pm.method ? 'text-white' : 'text-gray-500'"></lucide-icon>
-                        </div>
-                        <div class="flex-1">
-                            <p class="font-semibold text-gray-900 text-sm">{{ pm.label }}</p>
-                            <p class="text-xs text-gray-500">{{ pm.desc }}</p>
-                        </div>
-                        @if (selectedMethod() === pm.method) {
-                        <div class="w-5 h-5 rounded-full bg-[#1a7fd4] flex items-center justify-center shrink-0">
-                            <lucide-icon [img]="SuccessIcon" class="w-3.5 h-3.5 text-white"></lucide-icon>
-                        </div>
-                        }
-                    </button>
-                    }
-                </div>
-
-                @if (errorMessage()) {
-                <div class="bg-red-50 border border-red-200 rounded-xl p-3">
-                    <p class="text-red-600 text-xs">{{ errorMessage() }}</p>
-                </div>
-                }
-
-                <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-between">
-                    <p class="text-sm font-semibold text-gray-700">Total Payable</p>
-                    <p class="text-xl font-bold text-[#1a7fd4]">₹{{ formatAmount(invoice.totalAmount) }}</p>
-                </div>
-
-                <div class="flex gap-3">
-                    <button (click)="step.set('invoice')" [disabled]="isProcessing()"
-                        class="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50">
-                        Back
-                    </button>
-                    <button (click)="confirmPayment()" [disabled]="!selectedMethod() || isProcessing()"
-                        class="flex-1 px-4 py-2.5 rounded-xl bg-light hover:bg-[#0276C9] disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-semibold transition-colors flex items-center justify-center gap-2">
-                        @if (isProcessing()) {
-                        <div class="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
-                        Processing...
-                        } @else {
-                        Confirm Payment
-                        }
-                    </button>
-                </div>
-            </div>
-            }
-
-            @if (step() === 'success') {
-            <div class="bg-gradient-to-br from-green-500 to-emerald-600 px-6 py-8 text-center">
-                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <lucide-icon [img]="SuccessIcon" class="w-8 h-8 text-white"></lucide-icon>
-                </div>
-                <h3 class="text-white font-bold text-xl">Payment Successful!</h3>
-                <p class="text-white/80 text-sm mt-1">Your invoice has been paid</p>
-            </div>
-
-            <div class="p-6 space-y-4">
-                <div class="bg-gray-50 rounded-xl p-4 space-y-3">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Invoice</span>
-                        <span class="font-semibold text-gray-900">{{ invoice.invoiceNumber }}</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Amount Paid</span>
-                        <span class="font-bold text-green-600">₹{{ formatAmount(invoice.totalAmount) }}</span>
-                    </div>
-                    @if (completedPayment()) {
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Method</span>
-                        <span class="font-semibold text-gray-900">{{ completedPayment()!.paymentMethod }}</span>
-                    </div>
-                    @if (completedPayment()!.transactionId) {
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Transaction ID</span>
-                        <span class="font-semibold text-gray-900 text-xs break-all">{{ completedPayment()!.transactionId
-                            }}</span>
-                    </div>
-                    }
-                    }
-                </div>
-
-                <button (click)="onPaymentSuccess()"
-                    class="w-full px-4 py-3 rounded-xl bg-light hover:bg-[#0276C9] text-white text-sm font-semibold transition-colors">
-                    Done
-                </button>
-            </div>
+            @if (step() === 'checkout') {
+            <app-payment-checkout [invoice]="invoice" (back)="step.set('invoice')"
+                (completed)="onPaymentCompleted($event)" />
             }
 
         </div>

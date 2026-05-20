@@ -1,514 +1,612 @@
-# PulsePoint
+# PulsePoint — Hospital Management System (Frontend)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.8.
+> **Team Project** | Angular 21 | Tailwind CSS v3 | Spring Boot Microservices
 
-## Development server
-
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
-
-# PulsePoint — Frontend Team Documentation
-
-> **Angular 21 | Standalone Components | TypeScript**  
-> **API Gateway:** `http://localhost:8090`
+A full-featured hospital management frontend built with Angular 21 standalone components, Signals, and Tailwind CSS. The application serves three distinct user roles — **Patient**, **Doctor**, and **Admin** — each with their own dedicated dashboard and feature set.
 
 ---
 
 ## Table of Contents
 
-1. [Tech Stack and Prerequisites](#1-tech-stack-and-prerequisites)
-2. [Project Structure](#2-project-structure)
-3. [What Is Already Built](#3-what-is-already-built)
-4. [How Authentication Works](#4-how-authentication-works)
-5. [Adding Your Dashboard — Step by Step](#5-adding-your-dashboard--step-by-step)
-6. [Calling Your Backend APIs](#6-calling-your-backend-apis)
-7. [Getting Current User Information](#7-getting-current-user-information)
-8. [Navbar — Dashboard Navigation](#8-navbar--dashboard-navigation)
-9. [Environment Configuration](#9-environment-configuration)
-10. [Quick Checklist](#10-quick-checklist)
-11. [Important Rules](#11-important-rules)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Environment Configuration](#environment-configuration)
+- [Application Roles & Routes](#application-roles--routes)
+- [Feature Overview](#feature-overview)
+  - [Public Pages](#public-pages)
+  - [Patient Dashboard](#patient-dashboard)
+  - [Doctor Dashboard](#doctor-dashboard)
+  - [Admin Dashboard](#admin-dashboard)
+- [Architecture Decisions](#architecture-decisions)
+- [Core Services](#core-services)
+- [Data Models](#data-models)
+- [Authentication & Guards](#authentication--guards)
+- [Component Breakdown](#component-breakdown)
+- [Backend Integration](#backend-integration)
+- [Team Responsibilities](#team-responsibilities)
 
 ---
 
-## 1. Tech Stack and Prerequisites
+## Tech Stack
 
-| Technology | Version / Detail | Purpose |
+| Technology | Version | Purpose |
 |---|---|---|
-| Angular | 21 | Frontend framework |
-| TypeScript | Latest | Programming language |
-| Node.js | 18+ | Required to run Angular CLI |
-| Angular CLI | 21 | Project scaffolding and build |
-| CSS | Vanilla | Styling (no external framework) |
-| API Gateway | http://localhost:8090 | Single entry point for all APIs |
-
-> ⚠️ **All API calls go through the gateway at `http://localhost:8090`. Never call individual microservices directly from the frontend.**
-
----
-
-## 2. Project Structure
-
-```
-PulsePoint/
-└── src/
-    └── app/
-        ├── core/                            
-        │   ├── models/                      ← all TypeScript interfaces and enums
-        │   │   ├── auth.model.ts
-        │   │   ├── user.model.ts
-        │   │   ├── notification.model.ts
-        │   │   ├── role-name.enum.ts
-        │   │   ├── notification-type.enum.ts
-        │   │   └── index.ts                 ← import EVERYTHING from here
-        │   ├── services/                    ← HTTP API services
-        │   │   ├── auth.service.ts
-        │   │   ├── user.service.ts
-        │   │   └── notification.service.ts
-        │   ├── guards/
-        │   │   ├── auth.guard.ts            ← checks if user is logged in
-        │   │   └── role.guard.ts            ← checks if user has correct role
-        │   └── interceptors/
-        │       └── auth.interceptor.ts      ← auto-attaches Bearer token to every request
-        ├── auth/                            ← login and signup page (built)
-        │   ├── auth.component.ts            ← ADD your role to route mapping here
-        │   ├── auth.component.html
-        │   └── auth.component.css
-        ├── adminDashboard/                  ← admin dashboard (built)
-        │   ├── adminDashboard.component.ts
-        │   ├── adminDashboard.component.html
-        │   └── adminDashboard.component.css
-        ├── your-feature/                    ← ADD YOUR COMPONENT HERE
-        ├── app.component.ts
-        ├── app.routes.ts                    ← ADD YOUR ROUTE HERE
-        └── app.config.ts
-
-    environments/
-    └── environment.ts                       ← API gateway URL lives here
-```
-
-> **Core Folder Rule:** The `core/` folder is shared infrastructure. Do not modify existing files inside it. Adding new model files or service files inside `core/` for your own feature is perfectly fine.
+| Angular | 21.2.x | Frontend framework |
+| TypeScript | 5.9.x | Language |
+| Tailwind CSS | 3.4.x | Utility-first styling |
+| Angular Material | 21.2.x | UI components (datepicker, etc.) |
+| Angular CDK | 21.2.x | Overlay, accessibility primitives |
+| Lucide Angular | 1.0.0 | Icon library |
+| RxJS | 7.8.x | Reactive programming |
+| ApexCharts | 5.x | Charts (admin dashboard) |
+| Zone.js | 0.16.x | Change detection |
 
 ---
 
-## 3. What Is Already Built
-
-| Feature | File Location | Status |
-|---|---|---|
-| Login page | `src/app/auth/` | ✅ Done |
-| Signup page | `src/app/auth/` | ✅ Done |
-| Admin dashboard | `src/app/adminDashboard/` | ✅ Done |
-| Auth service | `core/services/auth.service.ts` | ✅ Done |
-| User service | `core/services/user.service.ts` | ✅ Done |
-| Notification service | `core/services/notification.service.ts` | ✅ Done |
-| HTTP Interceptor | `core/interceptors/auth.interceptor.ts` | ✅ Done |
-| Auth Guard | `core/guards/auth.guard.ts` | ✅ Done |
-| Role Guard | `core/guards/role.guard.ts` | ✅ Done |
-| JWT token handling | `core/services/auth.service.ts` | ✅ Done |
-| All models and enums | `core/models/` | ✅ Done |
-
----
-
-## 4. How Authentication Works
-
-### 4.1 Login Flow
+## Project Structure
 
 ```
-User fills username and password
-        ↓
-auth.component.ts calls authService.login()
-        ↓
-POST http://localhost:8090/auth/login
-        ↓
-Gateway skips JWT check for /auth/* routes
-        ↓
-User Service validates credentials and returns:
-  { accessToken, refreshToken, id, username, fullName, roles }
-        ↓
-Tokens stored in localStorage automatically by AuthService
-        ↓
-Role decoded from token → ROLE_REDIRECT_MAP → navigate to dashboard
-```
-
-### 4.2 Every API Request Flow
-
-```
-Any HTTP call made in Angular
-        ↓
-authInterceptor runs automatically (no action needed from you)
-        ↓
-Reads accessToken from localStorage
-        ↓
-Clones the request and adds:  Authorization: Bearer <token>
-        ↓
-Request goes to API Gateway at localhost:8090
-        ↓
-Gateway validates JWT signature
-        ↓
-Gateway decodes token and adds: X-User-Id and X-User-Role headers
-        ↓
-Forwards request to your microservice
-        ↓
-Service reads headers for authorisation and returns data
-```
-
-> ✅ **You never need to add `Authorization`, `X-User-Role`, or `X-User-Id` headers in your services. The interceptor and gateway handle everything automatically. Just write clean HTTP calls with a URL only.**
-
-### 4.3 Route Protection Flow
-
-```
-User visits /your-dashboard
-        ↓
-AuthGuard checks: token exists and not expired?
-  YES → pass through
-  NO  → redirect to /login
-        ↓
-RoleGuard checks: role decoded from token
-  role is in allowedRoles for this route?
-  YES → allow access
-  NO  → redirect to /login
-        ↓
-Your dashboard loads successfully
-```
-
-### 4.4 Auto Logout on 401
-
-```
-Token expires during active session
-        ↓
-Any API call returns 401 Unauthorized
-        ↓
-authInterceptor catches the error automatically
-        ↓
-Clears localStorage and redirects to /login
+src/
+├── app/
+│   ├── components/                  # Shared UI components
+│   │   ├── navbar/
+│   │   ├── footer/
+│   │   ├── hero/
+│   │   ├── sidebar/
+│   │   ├── solutions/
+│   │   ├── doctor/
+│   │   ├── reviews/
+│   │   ├── working/
+│   │   ├── blog/
+│   │   ├── faq/
+│   │   └── cta-banner/
+│   │
+│   ├── core/
+│   │   ├── models/                  # TypeScript interfaces & enums
+│   │   │   ├── patient.model.ts
+│   │   │   ├── appointment.model.ts
+│   │   │   ├── doctor.model.ts
+│   │   │   ├── invoice.model.ts
+│   │   │   ├── medicine.model.ts
+│   │   │   ├── lab-result.model.ts
+│   │   │   ├── prescription.model.ts
+│   │   │   └── notification-type.enum.ts
+│   │   │
+│   │   └── services/                # API service layer
+│   │       ├── auth.service.ts
+│   │       ├── patient.service.ts
+│   │       ├── doctor.service.ts
+│   │       ├── invoice.service.ts
+│   │       ├── mediclaim.service.ts
+│   │       ├── medicine.service.ts
+│   │       ├── lab-result.service.ts
+│   │       ├── prescription.service.ts
+│   │       └── notification.service.ts
+│   │
+│   ├── pages/
+│   │   ├── home/
+│   │   ├── services-page/
+│   │   ├── doctors-page/
+│   │   ├── lab-page/
+│   │   ├── about-page/
+│   │   │
+│   │   ├── patient-dashboard/
+│   │   │   ├── patients-list/           # Multi-patient management + billing
+│   │   │   │   ├── patient-cards/
+│   │   │   │   ├── billing-section/
+│   │   │   │   ├── patient-form-modal/
+│   │   │   │   ├── invoice-modal/
+│   │   │   │   │   └── payment-checkout/
+│   │   │   │   └── mediclaim-modal/
+│   │   │   │
+│   │   │   └── patient-detail/          # Per-patient detail view
+│   │   │       ├── tabs/
+│   │   │       │   ├── book-appointment/
+│   │   │       │   ├── my-appointments/
+│   │   │       │   ├── medicines/
+│   │   │       │   └── lab-reports/
+│   │   │       │       └── lab-result-detail-modal/
+│   │   │       ├── prescription-modal/
+│   │   │       └── mediclaim-modal/
+│   │   │
+│   │   ├── doctor-dashboard/
+│   │   │   └── tabs/
+│   │   │       └── doctor-appointments/
+│   │   │           └── prescription-modal/
+│   │   │
+│   │   └── adminDashboard/
+│   │
+│   ├── guards/                      # Route guards
+│   ├── interceptors/                # HTTP interceptors
+│   ├── app.routes.ts
+│   ├── app.config.ts
+│   └── app.component.ts
+│
+├── environments/
+│   ├── environment.ts               # Development config
+│   └── environment.prod.ts          # Production config
+│
+└── styles.css                       # Global styles + Tailwind directives
 ```
 
 ---
 
-## 5. Adding Your Dashboard — Step by Step
+## Getting Started
 
-### Step 1 — Generate your component
+### Prerequisites
 
-Run this command from the `PulsePoint` root directory:
+- Node.js `>= 20.x`
+- npm `>= 11.x`
+- Angular CLI `>= 21.x`
+- All backend microservices running (see [Backend Integration](#backend-integration))
+
+### Installation
 
 ```bash
-ng g c your-feature-name --standalone --skip-tests
+# Clone the repository
+git clone <repository-url>
+cd INTISG26JFAGN001_Team6_HospitalManagementSystem_FrontendAngular
+
+# Install dependencies
+npm install
+
+# Start development server
+ng serve
 ```
 
-Example for doctor dashboard:
+The application will be available at `http://localhost:4200`.
+
+### Build
 
 ```bash
-ng g c doctor --standalone --skip-tests
-```
+# Development build
+ng build
 
-This creates:
+# Production build
+ng build --configuration production
 
-```
-src/app/doctor/
-├── doctor.component.ts
-├── doctor.component.html
-└── doctor.component.css
-```
-
----
-
-### Step 2 — Add your route in `app.routes.ts`
-
-Open `src/app/app.routes.ts` and add your route inside the routes array:
-
-```typescript
-import { authGuard } from './core/guards/auth.guard';
-import { roleGuard } from './core/guards/role.guard';
-
-export const routes: Routes = [
-  // ... existing routes ...
-
-  // ADD YOUR ROUTE HERE
-  {
-    path: 'doctor-dashboard',
-    loadComponent: () =>
-      import('./doctor/doctor.component').then(m => m.DoctorComponent),
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['DOCTOR'] }   // ← your role here
-  },
-];
-```
-
-> ⚠️ **Role names must match exactly (case-sensitive):**
-> `ADMIN` | `DOCTOR` | `PHARMACIST` | `LAB_TECHNICIAN` | `USER`
-
----
-
-### Step 3 — Add your role to the redirect map
-
-Open `src/app/auth/auth.component.ts` and find `ROLE_REDIRECT_MAP`:
-
-```typescript
-private readonly ROLE_REDIRECT_MAP: Record<string, string> = {
-  'ADMIN':          '/adminDashboard',
-  'DOCTOR':         '/doctor-dashboard',    // ← add your entry
-  'PHARMACIST':     '/pharmacy-dashboard',  // ← add your entry
-  'LAB_TECHNICIAN': '/lab-dashboard',       // ← add your entry
-  'USER':           '/patient-dashboard'    // ← add your entry
-};
-```
-
-> After this step, when a user with your role logs in they will be automatically redirected to your dashboard.
-
----
-
-## 6. Calling Your Backend APIs
-
-### 6.1 Add your models
-
-Create a new file in `src/app/core/models/` for your feature's DTOs:
-
-```typescript
-// src/app/core/models/appointment.model.ts  (example)
-
-export interface AppointmentResponse {
-  id: number;
-  patientId: number;
-  doctorId: number;
-  date: string;
-  status: string;
-}
-
-export interface CreateAppointmentRequest {
-  patientId: number;
-  doctorId: number;
-  date: string;
-}
-```
-
-Then export it from `src/app/core/models/index.ts`:
-
-```typescript
-// Add this one line to index.ts
-export * from './appointment.model';
+# Watch mode
+ng build --watch --configuration development
 ```
 
 ---
 
-### 6.2 Create your service
-
-Create a new file in `src/app/core/services/`:
+## Environment Configuration
 
 ```typescript
-// src/app/core/services/appointment.service.ts  (example)
-
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { AppointmentResponse, CreateAppointmentRequest } from '../models/index';
-
-@Injectable({ providedIn: 'root' })
-export class AppointmentService {
-
-  // Your service base path — no prefix needed
-  private baseUrl = `${environment.apiGatewayUrl}/appointments`;
-
-  constructor(private http: HttpClient) {}
-
-  // GET all
-  getAll(): Observable<AppointmentResponse[]> {
-    return this.http.get<AppointmentResponse[]>(`${this.baseUrl}/all`);
-  }
-
-  // GET by ID
-  getById(id: number): Observable<AppointmentResponse> {
-    return this.http.get<AppointmentResponse>(`${this.baseUrl}/${id}`);
-  }
-
-  // POST create
-  create(request: CreateAppointmentRequest): Observable<AppointmentResponse> {
-    return this.http.post<AppointmentResponse>(
-      `${this.baseUrl}/create`,
-      request
-    );
-  }
-
-  // DELETE
-  delete(id: number): Observable<string> {
-    return this.http.delete<string>(
-      `${this.baseUrl}/delete/${id}`,
-      { responseType: 'text' as 'json' }
-    );
-  }
-}
-```
-
-> ✅ **Never add `Authorization`, `X-User-Role`, or `X-User-Id` headers to your service. Write only the URL and HTTP method. The interceptor handles the rest.**
-
----
-
-### 6.3 Use the service in your component
-
-```typescript
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AppointmentService } from '../core/services/appointment.service';
-import { AppointmentResponse } from '../core/models/index';
-
-@Component({
-  selector: 'app-doctor',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './doctor.component.html',
-  styleUrls: ['./doctor.component.css']
-})
-export class DoctorComponent implements OnInit {
-
-  appointments: AppointmentResponse[] = [];
-  isLoading = false;
-  errorMessage = '';
-
-  constructor(private appointmentService: AppointmentService) {}
-
-  ngOnInit() {
-    this.loadAppointments();
-  }
-
-  loadAppointments() {
-    this.isLoading = true;
-    this.appointmentService.getAll().subscribe({
-      next: (data) => {
-        this.appointments = data;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.errorMessage = err?.error?.message || 'Failed to load.';
-        this.isLoading = false;
-      }
-    });
-  }
-}
-```
-
----
-
-## 7. Getting Current User Information
-
-Inject `AuthService` in your component to read user data decoded directly from the JWT token:
-
-```typescript
-import { AuthService } from '../core/services/auth.service';
-
-constructor(private authService: AuthService) {}
-
-// Get current user ID
-const userId = this.authService.getUserId();
-// returns: number | null
-
-// Get current user role
-const role = this.authService.getRole();
-// returns: 'ADMIN' | 'DOCTOR' | 'PHARMACIST' | 'LAB_TECHNICIAN' | 'USER' | null
-
-// Get current username
-const username = this.authService.getUsername();
-// returns: string | null
-
-// Check if logged in — also validates token expiry
-const loggedIn = this.authService.isLoggedIn();
-// returns: boolean
-
-// Logout — clears localStorage and redirects to /login
-this.authService.logout();
-```
-
-> All methods decode information directly from the signed JWT token stored in `localStorage`. The token is verified by the API gateway on every request so the data is always trustworthy.
-
----
-
-## 8. Environment Configuration
-
-**File:** `src/environments/environment.ts`
-
-```typescript
+// src/environments/environment.ts
 export const environment = {
   production: false,
   apiGatewayUrl: 'http://localhost:8090'
 };
 ```
 
-Use it in every service like this:
+All HTTP requests are routed through the API Gateway at port `8090`. Change `apiGatewayUrl` to point to a different gateway if needed.
+
+---
+
+## Application Roles & Routes
+
+| Route | Component | Access |
+|---|---|---|
+| `/` | `HomeComponent` | Public |
+| `/services` | `ServicesPageComponent` | Public |
+| `/doctors` | `DoctorsPageComponent` | Public |
+| `/lab` | `LabPageComponent` | Public |
+| `/about` | `AboutPageComponent` | Public |
+| `/login` | `AuthComponent` | Public |
+| `/patient-dashboard` | `PatientsListComponent` | USER |
+| `/patient-dashboard/:patientId` | `PatientDetailComponent` | USER |
+| `/patient-dashboard/:patientId/book` | `BookAppointmentComponent` | USER |
+| `/patient-dashboard/:patientId/appointments` | `MyAppointmentsComponent` | USER |
+| `/patient-dashboard/:patientId/medicines` | `MedicinesComponent` | USER |
+| `/patient-dashboard/:patientId/lab-reports` | `LabReportsComponent` | USER |
+| `/doctor-dashboard/:doctorId` | `DoctorDashboardComponent` | DOCTOR |
+| `/dashboard` | `AdminDashboardComponent` | ADMIN |
+
+After login, users are automatically redirected based on role:
+- `USER` → `/patient-dashboard`
+- `DOCTOR` → `/doctor-dashboard`
+- `ADMIN` → `/dashboard`
+
+---
+
+## Feature Overview
+
+### Public Pages
+
+#### Home (`/`)
+- Hero section with animated doctor illustration
+- Solutions overview, working process, doctor showcase
+- Patient reviews, blog section, FAQ, CTA banner
+
+#### Services (`/services`)
+- Hospital services grid with icons
+- How-it-works process section
+- Statistics strip
+
+#### Doctors (`/doctors`)
+- Doctor listing fetched from `/doctors/all`
+- Search and specialty filter
+- Doctor profile cards with consultation fee
+
+#### Lab (`/lab`)
+- Lab test categories
+- 3-step process explainer
+- Benefits grid, FAQ
+
+#### About (`/about`)
+- Mission and values
+- Team section
+- Reviews
+
+---
+
+### Patient Dashboard
+
+#### Patients List (`/patient-dashboard`)
+
+Displays all patient profiles associated with the logged-in user account. Supports managing multiple family members under one account.
+
+**Features:**
+- Add / edit patient profiles (name, DOB, blood group, phone, address)
+- Navigate to any patient's individual dashboard
+- **Billing & Payments section** — view all invoices across all patients
+
+**Billing Section:**
+- Pending Bills tab — invoices with `PENDING` or `READY` status
+- Paid Bills tab — invoices with `PAID` status
+- Per-card fee breakdown (consultation, medicines, lab)
+- **Pay Now flow** — secure checkout with 3-step processing animation (Verifying → Processing → Confirming)
+- Payment methods: Credit/Debit Card, UPI, Net Banking
+- **Mediclaim** — apply for insurance reimbursement on paid invoices; track status (PENDING / APPROVED / REJECTED)
+
+---
+
+#### Patient Detail (`/patient-dashboard/:patientId`)
+
+Tabbed interface for a specific patient's medical data.
+
+**Tab 1 — Book Appointment**
+- Browse doctors with search (name, specialty, qualification)
+- Select appointment date via Angular Material Datepicker
+- View available time slots fetched per doctor
+- Submit appointment booking
+
+**Tab 2 — My Appointments**
+- Upcoming appointments (SCHEDULED) with cancel option
+- Past appointments (COMPLETED, CANCELLED, NO_SHOW)
+- Expandable detail view per completed appointment:
+  - **Payment gate** — details locked until invoice is paid
+  - View Prescription (if exists)
+  - Medicine breakdown with quantities and pricing
+  - Lab report results with normal/abnormal indicators
+
+**Tab 3 — Medicines**
+- Grouped by appointment (doctor + date)
+- Expandable medicine tables with unit price, quantity, total
+- **Payment gate** — medicine details locked until invoice is paid
+- Search across all prescriptions
+
+**Tab 4 — Lab Reports**
+- 3-column card grid
+- Filter by All / Abnormal / Normal
+- Search by result value, unit, technician
+- **Per-result payment gate** — results locked unless corresponding appointment invoice is paid
+- Locked results shown with blurred value and "Pay to unlock" indicator
+- Click card → Lab Result Detail Modal (full report with print/PDF)
+
+---
+
+### Doctor Dashboard
+
+- Appointment list with status filter (ALL / SCHEDULED / COMPLETED / CANCELLED / NO_SHOW)
+- Mark appointment as complete
+- Create prescription for completed appointments
+- View existing prescriptions
+- Prescription modal — diagnosis, medicines table, lab tests table, print support
+
+---
+
+### Admin Dashboard
+
+- System overview (handled by teammate)
+- Appointment and patient management
+
+---
+
+## Architecture Decisions
+
+### Standalone Components
+All components use `standalone: true` — no NgModules. Imports are declared per-component.
+
+### Angular Signals
+State management uses Angular Signals (`signal`, `computed`) throughout instead of traditional `@Input`/`@Output` chains or NgRx. This keeps components reactive with minimal boilerplate.
 
 ```typescript
-import { environment } from '../../../environments/environment';
-
-// In your service class
-private baseUrl = `${environment.apiGatewayUrl}/your-service-path`;
+// Example
+patients = signal<PatientDTO[]>([]);
+pendingInvoices = computed(() =>
+  this.allInvoices().filter(i => i.invoiceStatus === InvoiceStatus.PENDING)
+);
 ```
 
-> ⚠️ **Never hardcode `http://localhost:8090` directly in your service files. Always use `environment.apiGatewayUrl` so that changing the gateway URL in future only requires editing one file.**
+### Component Splitting Strategy
+Large page components are split into focused sub-components to keep files under ~150 lines:
+
+```
+patients-list/
+├── patients-list.component        (~60 lines HTML)
+├── patient-cards/                 (~70 lines HTML)
+├── billing-section/               (~160 lines HTML)
+└── invoice-modal/
+    ├── invoice-modal.component    (~180 lines HTML)
+    └── payment-checkout/          (~130 lines HTML)
+```
+
+### HTTP Interceptor
+JWT token is automatically attached to every outgoing request via `authInterceptor`:
+
+```typescript
+// Attaches: Authorization: Bearer <token>
+provideHttpClient(withInterceptors([authInterceptor]))
+```
+
+### Scroll Restoration
+```typescript
+provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'top' }))
+```
 
 ---
 
-## 9. Quick Checklist — Adding a New Feature
+## Core Services
 
+| Service | Endpoints Used | Purpose |
+|---|---|---|
+| `AuthService` | `/auth/login`, `/auth/register`, `/auth/refresh` | JWT auth, role detection |
+| `PatientService` | `/patient/*`, `/patient/appointment/*` | Patient CRUD, appointments |
+| `DoctorService` | `/doctors/*`, `/doctor-slot/*` | Doctor listing, slot availability |
+| `InvoiceService` | `/invoice/*`, `/payment/*` | Invoice fetching, payment initiation/completion |
+| `MediclaimService` | `/mediclaim/*` | Mediclaim creation and status tracking |
+| `MedicineService` | `/patient/medicines/*` | Dispensed medicines per appointment |
+| `LabResultService` | `/lab-tests/*` | Lab results per patient/appointment |
+| `PrescriptionService` | `/prescriptions/*` | Prescription CRUD, existence check |
+| `NotificationService` | `/notifications/*` | Real-time notification feed |
+
+All services follow the same response unwrapping pattern:
+
+```typescript
+.pipe(map((r: any) => r.data ?? r))
 ```
-[ ] Run: ng g c your-feature-name --standalone --skip-tests
-[ ] Create model interfaces in core/models/your-feature.model.ts
-[ ] Export your model from core/models/index.ts
-[ ] Create your service in core/services/your-feature.service.ts
-[ ] Add route in app.routes.ts with canActivate: [authGuard, roleGuard]
-    and data: { roles: ['YOUR_ROLE'] }
-[ ] Add your role to route mapping in auth.component.ts ROLE_REDIRECT_MAP
-[ ] Add your role to route mapping in the shared navbar component when built
-[ ] Build your component by injecting your service in the constructor
-[ ] Handle loading state with an isLoading boolean
-[ ] Handle errors in the error callback of subscribe()
+
+This handles both wrapped `{ statusCode, message, data }` and raw array responses from the backend.
+
+---
+
+## Data Models
+
+### Core Interfaces
+
+```typescript
+// Patient
+interface PatientDTO {
+  id: number;
+  userId: number;
+  mrn: string;
+  fullName: string;
+  age: number;
+  gender: string;
+  bloodGroup: string;
+  phoneNo: string;
+  address?: string;
+}
+
+// Appointment
+interface AppointmentDTO {
+  id: number;
+  patientId: number;
+  doctorId: number;
+  slotId: number;
+  reason: string;
+  status: AppointmentStatus;   // SCHEDULED | COMPLETED | CANCELLED | NO_SHOW
+  appointmentDate: string;     // dd-MM-yyyy
+  appointmentTime: string;     // HH:mm
+}
+
+// Invoice
+interface InvoiceDTO {
+  id: number;
+  invoiceNumber: string;
+  patientId: number;
+  appointmentId: number;
+  consultationFee: number;
+  medicineFee: number;
+  labFee: number;
+  totalAmount: number;
+  invoiceStatus: InvoiceStatus; // PENDING | READY | PAID | CANCELLED
+  payment?: PaymentDTO;
+  patient?: PatientDTO;
+  doctor?: DoctorDTO;
+}
+
+// Mediclaim
+interface MediclaimDTO {
+  id?: number;
+  patientId: number;
+  invoiceId: number;
+  paymentId?: number;
+  policyNumber: string;
+  insurerName: string;
+  coveragePercentage: number;
+  refundAmount?: number;
+  status?: 'PENDING' | 'APPROVED' | 'REJECTED';
+}
+```
+
+### Notification Types
+
+```typescript
+enum NotificationType {
+  APPOINTMENT = 'APPOINTMENT',
+  PRESCRIPTION = 'PRESCRIPTION',
+  LAB = 'LAB',
+  BILLING = 'BILLING',
+  MEDICLAIM = 'MEDICLAIM',
+  GENERAL = 'GENERAL'
+}
 ```
 
 ---
 
+## Authentication & Guards
+
+JWT tokens are stored in `localStorage`:
+
+```
+localStorage.accessToken   — Bearer token for API requests
+localStorage.refreshToken  — Token for session refresh
+```
+
+`AuthService` exposes:
+
+```typescript
+isLoggedIn(): boolean
+getRole(): string        // 'USER' | 'DOCTOR' | 'ADMIN'
+getUserId(): number
+getUsername(): string
+```
+
+Route guards protect dashboards:
+- `authGuard` - allows only authenticaled user
+- `roleGuard` - allows only user with valid role
+
+---
+
+## Component Breakdown
+
+### Shared Components
+
+| Component | Description |
+|---|---|
+| `NavbarComponent` | Fixed top nav with role-aware links, notification bell, user menu, contact modal. Hides on scroll down, shows on scroll up. |
+| `FooterComponent` | Newsletter signup, social links, sitemap links |
+| `HeroComponent` | Landing page hero with animated floating badges |
+| `CtaBannerComponent` | Call-to-action section used across public pages |
+| `SidebarComponent` | Doctor/Admin dashboard navigation |
+
+### Patient Dashboard Components
+
+| Component | Description |
+|---|---|
+| `PatientCardsComponent` | Grid of patient profile cards |
+| `BillingSectionComponent` | Pending/paid invoice cards with tab toggle |
+| `PatientFormModalComponent` | Add/edit patient profile modal |
+| `InvoiceModalComponent` | Full invoice document preview |
+| `PaymentCheckoutComponent` | Secure checkout with 3-step payment animation |
+| `MediclaimModalComponent` | Mediclaim application form and status viewer |
+| `BookAppointmentComponent` | Doctor search + slot booking interface |
+| `MyAppointmentsComponent` | Appointment history with expandable details |
+| `MedicinesComponent` | Grouped medicine prescriptions per appointment |
+| `LabReportsComponent` | Lab result cards with payment gating |
+| `LabResultDetailModalComponent` | Detailed lab report with print support |
+| `PrescriptionModalComponent` | Prescription document with medicines and lab tests |
+
+---
+
+## Backend Integration
+
+The frontend connects to a Spring Boot microservices architecture through a single API Gateway.
+
+### Gateway
+```
+http://localhost:8090
+```
+
+### Key Endpoint Groups
+
+```
+Auth          POST /auth/login
+              POST /auth/register
+
+Patients      GET  /patient/user/:userId
+              POST /patient/create
+              PUT  /patient/update/:id
+
+Appointments  GET  /patient/appointment/patient/:patientId
+              POST /patient/appointment/create
+              DELETE /patient/appointment/delete/:id
+
+Doctors       GET  /doctors/all
+              GET  /doctors/check/:id
+              GET  /doctor-slot/doctor/:doctorId
+
+Invoices      GET  /invoice/patient/:patientId
+              POST /payment/initiate/:invoiceId
+              PUT  /payment/complete/:paymentId?paymentMethod=X
+
+Mediclaim     POST /mediclaim/process
+              GET  /mediclaim/patient/:patientId
+
+Lab           GET  /lab-tests/patient/:patientId/results
+              GET  /lab-tests/appointment/tests/:appointmentId
+
+Medicines     GET  /patient/medicines/appointment/:appointmentId
+
+Prescriptions GET  /prescriptions/appointment/:appointmentId
+
+Notifications GET  /notifications/:userId/allMessages
+```
+
+### Required Backend Services
+
+All of the following must be running for full functionality:
+
+| Service | Default Port |
+|---|---|
+| Eureka Server | 8761 |
+| API Gateway | 8090 |
+| User Service | 8081 |
+| Patient Service | 8082 |
+| Doctor Service | 8083 |
+| Billing Service | 8091 |
+| Lab Service | 8084 |
+| Notification Service | 8085 |
+
+---
+
+## Team Responsibilities
+
+| Area | Owner |
+|---|---|
+| Public pages (Home, Services, Doctors, Lab, About) | Frontend Team |
+| Patient Dashboard (all tabs, billing, mediclaim) | Frontend Team |
+| Navbar, Footer, shared components | Frontend Team |
+| Doctor Dashboard | Doctor Team Member |
+| Admin Dashboard | Admin Team Member |
+| Auth (Login/Register) | Shared |
+| All microservices (backend) | Backend Team |
+
+---
+
+## Known Constraints
+
+- All data is fetched fresh on each page load — no client-side caching layer
+- JWT tokens are stored in `localStorage` (not `httpOnly` cookies)
+- Backend microservices must be running locally — no mock/stub support
+- IP address changes (e.g. switching networks) require restarting all backend services to re-register with Eureka
+
+---
+
+## Scripts Reference
+
+```bash
+npm start          # ng serve - starts dev server at localhost:4200
+npm run build      # ng build - production build
+npm run watch      # ng build --watch — rebuild on file changes
+npm test           # ng test - run unit tests via Karma
+```
+
+---
+
+*PulsePoint Hospital Management System - Team 6 | INTISG26JFAGN001*

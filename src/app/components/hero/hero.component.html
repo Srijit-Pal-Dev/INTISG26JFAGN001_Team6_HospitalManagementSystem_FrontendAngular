@@ -1,10 +1,11 @@
 <section class="relative w-full min-h-screen bg-white font-poppins"
     style="background-image: url('hero-bg.png'); background-size: cover; background-position: center;">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20 -mt-6 ">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20 -mt-6">
         <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-12 min-h-[calc(100vh-88px)]">
 
-            <div class="flex-1 max-w-2xl">
+            <!-- Text Content -->
+            <div class="flex-1 max-w-2xl pt-10 lg:pt-0 text-center lg:text-left">
 
                 <h1
                     class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-gray-900 leading-tight mb-5 tracking-tight">
@@ -12,16 +13,22 @@
                     <span class="whitespace-nowrap">Healthcare Management</span>
                 </h1>
 
-                <p class="text-lg tracking-[0.3em] text-gray-500 uppercase mb-4">
+                <p class="text-base sm:text-lg tracking-[0.3em] text-gray-500 uppercase mb-4">
                     Care. Innovation. Trust
                 </p>
 
-                <p class="text-gray-500 text-sm leading-relaxed mb-10 max-w-[400px]">
+                <p class="text-gray-500 text-sm leading-relaxed mb-8 max-w-[400px] mx-auto lg:mx-0">
                     Empowering hospitals with seamless systems, expert care, and smarter decisions for healthier
                     communities.
                 </p>
 
-                <div class="flex items-center gap-4 mb-12 flex-wrap">
+                <!-- Mobile hero image — only on small screens -->
+                <div class="flex lg:hidden justify-center my-6">
+                    <img src="hero-doctor.png" alt="Pulse Point Doctors" draggable="false"
+                        class="w-[260px] sm:w-[320px] h-auto object-contain" />
+                </div>
+
+                <div class="flex items-center justify-center lg:justify-start gap-4 mb-10 flex-wrap">
                     <button (click)="handleBookAppointment()"
                         class="bg-light hover:bg-[#0276C9] text-white px-7 py-3 rounded-full text-sm font-semibold transition-colors shadow-md shadow-blue-200">
                         Book Appointment
@@ -32,17 +39,20 @@
                     </button>
                 </div>
 
-                <div class="flex items-center gap-3">
+                <div class="flex items-center justify-center lg:justify-start gap-3">
                     <img src="avatar.png" alt="Connected doctors" class="h-10 object-contain" />
-                    <p class="text-gray-500 text-xs leading-snug">
+                    <p class="text-gray-500 text-xs leading-snug text-left">
                         <span class="font-bold text-gray-700">100+ doctors</span> already<br>
                         connected with Pulse Point.
                     </p>
                 </div>
+
+
+
             </div>
 
+            <!-- Desktop hero image — unchanged -->
             <div class="hidden lg:flex flex-1 items-center justify-center relative">
-
                 <img src="hero-doctor.png" alt="Pulse Point Doctors" draggable="false"
                     class="w-full max-w-[480px] h-auto object-contain" />
                 <div

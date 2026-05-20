@@ -4,7 +4,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20 py-3">
         <div class="flex items-center justify-between h-16">
 
-            <div class="flex items-center flex-shrink-0">
+            <div class="flex items-center flex-shrink-0" routerLink="/home">
                 <img src="logo.png" alt="Pulse Point" class="w-[150px] h-[40px] object-contain" />
             </div>
 
@@ -167,7 +167,7 @@
             } @else {
             <button (click)="goToDashboard(); toggleMenu()"
                 class="mt-3 w-full bg-[#023C6E] text-white text-sm font-semibold px-4 py-2 rounded-full">
-                Hi! {{ username() }} — Dashboard
+                Hi! {{ username() }} - Dashboard
             </button>
             <button (click)="logout(); toggleMenu()"
                 class="mt-2 w-full text-red-600 text-sm font-medium px-4 py-2 rounded-full border border-red-200">

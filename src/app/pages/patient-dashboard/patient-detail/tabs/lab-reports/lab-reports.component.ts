@@ -2,13 +2,19 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import {
-    LucideAngularModule, FlaskConical, Search, AlertCircle, CheckCircle,
-    Calendar, Eye, IndianRupee
+    LucideAngularModule, FlaskConical, Search, AlertCircle,
+    CheckCircle, Calendar, Eye, IndianRupee, Lock
 } from 'lucide-angular';
 import { PatientService } from '../../../../../core/services/patient.service';
 import { LabResultService } from '../../../../../core/services/lab-result.service';
-import { LabResultResponse, PatientDTO } from '../../../../../core/models/index';
+import { InvoiceService } from '../../../../../core/services/invoice.service';
+import {
+    LabResultResponse, PatientDTO,
+    InvoiceDTO, InvoiceStatus, AppointmentStatus
+} from '../../../../../core/models/index';
 import { LabResultDetailModalComponent } from './lab-result-detail-modal/lab-result-detail-modal.component';
 
 type FilterMode = 'all' | 'abnormal' | 'normal';
@@ -27,6 +33,9 @@ export class LabReportsComponent implements OnInit {
     readonly CalendarIcon = Calendar;
     readonly EyeIcon = Eye;
     readonly RupeeIcon = IndianRupee;
+    readonly LockIcon = Lock;
+
+    readonly InvoiceStatus = InvoiceStatus;
 
     patientId = signal<number | null>(null);
     patient = signal<PatientDTO | null>(null);
@@ -34,15 +43,17 @@ export class LabReportsComponent implements OnInit {
     results = signal<LabResultResponse[]>([]);
     isLoading = signal(true);
     errorMessage = signal('');
-
     searchQuery = signal('');
     filterMode = signal<FilterMode>('all');
     selectedResult = signal<LabResultResponse | null>(null);
 
+    // labTestId → paid or not
+    paidLabTestIds = signal<Set<number>>(new Set());
+    invoicesLoaded = signal(false);
+
     filteredResults = computed(() => {
         const q = this.searchQuery().toLowerCase().trim();
         const mode = this.filterMode();
-
         return this.results().filter(r => {
             if (mode === 'abnormal' && !r.isAbnormal) return false;
             if (mode === 'normal' && r.isAbnormal) return false;
@@ -54,11 +65,26 @@ export class LabReportsComponent implements OnInit {
         });
     });
 
-    abnormalCount = computed(() => this.results().filter(r => r.isAbnormal).length);
-    normalCount = computed(() => this.results().filter(r => !r.isAbnormal).length);
+    // Only show results that are paid
+    paidFilteredResults = computed(() =>
+        this.filteredResults().filter(r => this.isLabResultPaid(r))
+    );
+
+    // Results that exist but are locked
+    lockedResults = computed(() =>
+        this.filteredResults().filter(r => !this.isLabResultPaid(r))
+    );
+
+    abnormalCount = computed(() =>
+        this.paidFilteredResults().filter(r => r.isAbnormal).length
+    );
+    normalCount = computed(() =>
+        this.paidFilteredResults().filter(r => !r.isAbnormal).length
+    );
 
     private patientService = inject(PatientService);
     private labService = inject(LabResultService);
+    private invoiceService = inject(InvoiceService);
     private route = inject(ActivatedRoute);
     private router = inject(Router);
 
@@ -69,6 +95,7 @@ export class LabReportsComponent implements OnInit {
                 this.patientId.set(id);
                 this.loadPatient(id);
                 this.loadResults(id);
+                this.loadPaidLabTestIds(id);
             }
         });
     }
@@ -78,6 +105,58 @@ export class LabReportsComponent implements OnInit {
             next: (p) => this.patient.set(p),
             error: () => this.patient.set(null)
         });
+    }
+
+    loadPaidLabTestIds(patientId: number) {
+        // Step 1: get all invoices for patient
+        this.invoiceService.getInvoicesByPatient(patientId).subscribe({
+            next: (invoices) => {
+                // Step 2: filter only PAID invoices
+                const paidInvoices = invoices.filter(
+                    inv => inv.invoiceStatus === InvoiceStatus.PAID && inv.appointmentId
+                );
+
+                if (paidInvoices.length === 0) {
+                    this.paidLabTestIds.set(new Set());
+                    this.invoicesLoaded.set(true);
+                    return;
+                }
+
+                // Step 3: for each paid invoice fetch lab tests of that appointment
+                const labTestRequests = paidInvoices.map(inv =>
+                    this.labService.getTestsByAppointment(inv.appointmentId).pipe(
+                        catchError(() => of([]))
+                    )
+                );
+
+                forkJoin(labTestRequests).subscribe({
+                    next: (testGroups) => {
+                        const paidIds = new Set<number>();
+                        testGroups.flat().forEach((test: any) => {
+                            if (test?.id) paidIds.add(test.id);
+                        });
+                        this.paidLabTestIds.set(paidIds);
+                        this.invoicesLoaded.set(true);
+                    },
+                    error: () => {
+                        this.paidLabTestIds.set(new Set());
+                        this.invoicesLoaded.set(true);
+                    }
+                });
+            },
+            error: () => {
+                this.paidLabTestIds.set(new Set());
+                this.invoicesLoaded.set(true);
+            }
+        });
+    }
+
+    isLabResultPaid(result: LabResultResponse): boolean {
+        return this.paidLabTestIds().has(result.labTestId);
+    }
+
+    hasAnyPaidResult(): boolean {
+        return this.results().some(r => this.isLabResultPaid(r));
     }
 
     loadResults(patientId: number) {
@@ -96,9 +175,7 @@ export class LabReportsComponent implements OnInit {
                 if (err?.status === 404) {
                     this.results.set([]);
                 } else {
-                    this.errorMessage.set(
-                        err?.error?.message || `Error ${err?.status}: ${err?.statusText || 'Failed to load lab reports'}`
-                    );
+                    this.errorMessage.set(err?.error?.message || 'Failed to load lab reports');
                 }
                 this.isLoading.set(false);
             }
@@ -111,23 +188,9 @@ export class LabReportsComponent implements OnInit {
         });
     }
 
-    formatTime(iso: string): string {
-        return new Date(iso).toLocaleTimeString('en-GB', {
-            hour: '2-digit', minute: '2-digit'
-        });
-    }
-
-    setFilter(mode: FilterMode) {
-        this.filterMode.set(mode);
-    }
-
-    openDetail(result: LabResultResponse) {
-        this.selectedResult.set(result);
-    }
-
-    closeDetail() {
-        this.selectedResult.set(null);
-    }
+    setFilter(mode: FilterMode) { this.filterMode.set(mode); }
+    openDetail(result: LabResultResponse) { this.selectedResult.set(result); }
+    closeDetail() { this.selectedResult.set(null); }
 
     goToBook() {
         const id = this.patientId();
