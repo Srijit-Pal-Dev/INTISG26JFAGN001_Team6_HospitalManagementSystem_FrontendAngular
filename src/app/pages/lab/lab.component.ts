@@ -56,11 +56,11 @@ export class LabComponent implements OnInit {
     private authService: AuthService,
     private notifService: NotificationService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.currentUser   = this.authService.getUsername() || 'Lab Tech';
-    this.currentUserId = this.authService.getUserId()   || 0;
+    this.currentUser = this.authService.getUsername() || 'Lab Tech';
+    this.currentUserId = this.authService.getUserId() || 0;
     this.loadTests();
     this.loadNotifications();
   }
@@ -85,12 +85,12 @@ export class LabComponent implements OnInit {
     this.notifService.getAllNotifications(this.currentUserId).subscribe({
       next: (data) => {
         this.notifications = data;
-        this.unreadCount   = data.filter(n => !n.read).length;
+        this.unreadCount = data.filter(n => !n.read).length;
       },
       error: () => {
         // Non-critical — silently ignore
         this.notifications = [];
-        this.unreadCount   = 0;
+        this.unreadCount = 0;
       }
     });
   }
@@ -156,20 +156,20 @@ export class LabComponent implements OnInit {
   // ── Modal ────────────────────────────────────
   openPatientModal(test: any) {
     this.showNotifPanel = false;
-    this.selectedTest   = test;
+    this.selectedTest = test;
     this.showResultForm = false;
     this.resultForm = {
-      resultValue:    '',
-      unit:           '',
+      resultValue: '',
+      unit: '',
       referenceRange: '',
-      recordedBy:     this.currentUser,
-      notes:          '',
-      isAbnormal:     false
+      recordedBy: this.currentUser,
+      notes: '',
+      isAbnormal: false
     };
   }
 
   closeModal() {
-    this.selectedTest   = null;
+    this.selectedTest = null;
     this.showResultForm = false;
   }
 
@@ -181,10 +181,8 @@ export class LabComponent implements OnInit {
     const q = this.searchQuery.trim().toLowerCase();
     if (q) {
       list = list.filter(t =>
-        t.testName?.toLowerCase().includes(q)    ||
-        t.patientId?.toString().includes(q)       ||
-        t.id?.toString().includes(q)              ||
-        t.assignedTo?.toLowerCase().includes(q)
+        t.testName?.toLowerCase().includes(q) ||
+        t.patientId?.toString().includes(q)
       );
     }
     return list;
@@ -195,13 +193,13 @@ export class LabComponent implements OnInit {
     if (!q) return this.tests.slice(0, 6);
     return this.tests.filter(t =>
       t.testName?.toLowerCase().includes(q) ||
-      t.patientId?.toString().includes(q)   ||
+      t.patientId?.toString().includes(q) ||
       t.id?.toString().includes(q)
     ).slice(0, 6);
   }
 
   getByStatus(s: string) { return this.tests.filter(t => t.status === s); }
-  pendingCount()          { return this.getByStatus('PENDING').length; }
+  pendingCount() { return this.getByStatus('PENDING').length; }
 
   // ── Actions ─────────────────────────────────
   collectSample(test: any) {
@@ -218,7 +216,7 @@ export class LabComponent implements OnInit {
     const username = this.authService.getUsername() || 'Unknown Tech';
     this.labService.startTest(test.id, username).subscribe({
       next: (updated) => {
-        test.status     = updated?.status     ?? 'IN_PROGRESS';
+        test.status = updated?.status ?? 'IN_PROGRESS';
         test.assignedTo = updated?.assignedTo ?? username;
         this.loadNotifications();
       },
@@ -229,12 +227,12 @@ export class LabComponent implements OnInit {
   uploadResult(test: any) {
     if (!this.resultForm.resultValue.trim()) { alert('Result value is required'); return; }
     const payload = {
-      resultValue:    this.resultForm.resultValue,
-      unit:           this.resultForm.unit           || null,
+      resultValue: this.resultForm.resultValue,
+      unit: this.resultForm.unit || null,
       referenceRange: this.resultForm.referenceRange || null,
-      recordedBy:     this.resultForm.recordedBy     || this.currentUser,
-      notes:          this.resultForm.notes          || null,
-      isAbnormal:     this.resultForm.isAbnormal
+      recordedBy: this.resultForm.recordedBy || this.currentUser,
+      notes: this.resultForm.notes || null,
+      isAbnormal: this.resultForm.isAbnormal
     };
     this.labService.uploadResult(test.id, payload).subscribe({
       next: () => {

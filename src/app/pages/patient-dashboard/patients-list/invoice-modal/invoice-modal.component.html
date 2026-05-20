@@ -285,7 +285,7 @@
                 @if (canPay) {
                 <button (click)="proceedToPayment()"
                     class="flex-1 px-4 py-2.5 rounded-xl bg-light hover:bg-[#0276C9] text-white text-sm font-semibold transition-colors">
-                    Pay Now — ₹{{ formatAmount(invoice.totalAmount) }}
+                    Pay Now - ₹{{ formatAmount(invoice.totalAmount) }}
                 </button>
                 }
                 @if (isAlreadyPaid) {

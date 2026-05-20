@@ -1,133 +1,173 @@
-<div (click)="onClose()"
-    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 font-poppins overflow-y-auto"
-    [attr.data-print-target]="true">
+<div (click)="onClose()" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] overflow-y-auto font-poppins">
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div (click)="$event.stopPropagation()" class="bg-white w-full max-w-2xl my-8 shadow-2xl overflow-hidden">
 
-    <div (click)="$event.stopPropagation()"
-        class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto print:shadow-none print:max-w-none print:max-h-none print:rounded-none">
-        <div
-            class="bg-gradient-to-r from-[#1a7fd4] to-[#0276C9] px-6 py-5 flex items-center justify-between print:bg-white print:border-b-2 print:border-gray-300">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center print:bg-blue-100">
-                    <lucide-icon [img]="CheckIcon" class="w-5 h-5 text-white print:text-[#1a7fd4]"></lucide-icon>
-                </div>
-                <div>
-                    <h3 class="text-white font-bold text-lg print:text-gray-900">Lab Test Report</h3>
-                    <p class="text-white/80 text-xs print:text-gray-500">Test ID: #{{ result.id }}</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2 print:hidden">
-                <button (click)="printReport()"
-                    class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white transition-colors"
-                    title="Print report">
-                    <lucide-icon [img]="PrinterIcon" class="w-4 h-4"></lucide-icon>
-                </button>
-                <button (click)="onClose()"
-                    class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white transition-colors">
-                    <lucide-icon [img]="XIcon" class="w-4 h-4"></lucide-icon>
-                </button>
-            </div>
-        </div>
-
-        <div class="p-6 space-y-5">
-            <div>
-                <div class="flex items-center gap-2 mb-3">
-                    <img src="./logo.png" alt="logo" draggable="false" class="w-40 h-10" />
-                </div>
-                <div class="text-xs text-gray-500 space-y-0.5 ml-1">
-                    <p>123 Medical Center Road, Mumbai</p>
-                    <p>Maharashtra, India - 400001</p>
-                    <p class="text-[#1a7fd4]">billing&#64;pulsepoint.in</p>
-                    <p>+91 98765 43210</p>
+            <!-- Action Bar -->
+            <div class="flex items-center justify-between px-6 py-3 border-b border-gray-100 bg-gray-50 print:hidden">
+                <p class="text-xs text-gray-500 font-medium">Lab Report</p>
+                <div class="flex items-center gap-2">
+                    <button (click)="printReport()"
+                        class="flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-light transition-colors">
+                        <lucide-icon [img]="PrinterIcon" class="w-3.5 h-3.5"></lucide-icon>
+                        Print / PDF
+                    </button>
+                    <button (click)="onClose()"
+                        class="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition-colors">
+                        <lucide-icon [img]="XIcon" class="w-3.5 h-3.5 text-gray-600"></lucide-icon>
+                    </button>
                 </div>
             </div>
 
-            @if (patient) {
-            <div class="p-4">
-                <p class="text-[10px] uppercase tracking-wider font-semibold text-[#1a7fd4] mb-2">Patient Information
-                </p>
-                <div class="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                        <p class="text-xs text-gray-500">Name</p>
-                        <p class="font-semibold text-gray-900">{{ patient.fullName }}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-500">MRN</p>
-                        <p class="font-semibold text-gray-900">{{ patient.mrn }}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-500">Age / Gender</p>
-                        <p class="font-semibold text-gray-900">{{ patient.age }}y / {{ patient.gender }}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-500">Blood Group</p>
-                        <p class="font-semibold text-gray-900">{{ patient.bloodGroup }}</p>
-                    </div>
-                </div>
-            </div>
-            }
+            <!-- Report Content -->
+            <div class="p-8 sm:p-10" id="lab-report-print-area">
 
-            <div>
-                <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-3">Test Result</p>
+                <!-- Header -->
+                <div
+                    class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 mb-10 pb-8 border-b-2 border-gray-100">
 
-
-
-                <div class="px-5 py-4 flex items-center justify-between">
+                    <!-- Left: Branding -->
                     <div>
-                        <p class="text-xs text-gray-600 mb-1">Test #{{ result.labTestId }}</p>
-                        <div class="flex items-baseline gap-1.5">
-                            <span class="text-3xl font-bold"
-                                [class]="result.isAbnormal ? 'text-red-700' : 'text-green-700'">
-                                {{ result.resultValue }}
-                            </span>
-                            <span class="text-sm text-gray-600 font-medium">{{ result.unit }}</span>
+                        <div class="flex items-center gap-2 mb-3">
+                            <img src="./logo.png" alt="logo" draggable="false" class="w-40 h-10" />
                         </div>
-                        <p class="text-xs text-gray-500 mt-1">Reference range: {{ result.referenceRange }}</p>
+                        <div class="text-xs text-gray-500 space-y-0.5 ml-1">
+                            <p>123 Medical Center Road, Mumbai</p>
+                            <p>Maharashtra, India - 400001</p>
+                            <p class="text-[#1a7fd4]">lab&#64;pulsepoint.in</p>
+                            <p>+91 98765 43210</p>
+                        </div>
                     </div>
 
-                    <div class="text-right">
-                        @if (result.isAbnormal) {
-                        <span
-                            class="inline-flex items-center gap-1.5 bg-red-100 text-red-700 text-xs font-bold px-3 py-1.5 rounded-full">
-                            <lucide-icon [img]="AlertIcon" class="w-3.5 h-3.5"></lucide-icon>
-                            Abnormal
-                        </span>
-                        } @else {
-                        <span
-                            class="inline-flex items-center gap-1.5 bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full">
-                            <lucide-icon [img]="CheckIcon" class="w-3.5 h-3.5"></lucide-icon>
-                            Normal
-                        </span>
-                        }
+                    <!-- Right: Report Details -->
+                    <div class="text-left sm:text-right">
+                        <h1 class="text-3xl font-semibold text-gray-900 mb-3">LAB REPORT</h1>
+                        <div class="space-y-1 text-sm">
+                            <div class="flex sm:flex-row-reverse items-center gap-3">
+                                <span class="font-bold text-gray-900 w-32 text-left sm:text-right">
+                                    #{{ result.id }}
+                                </span>
+                                <span class="text-gray-500 text-xs uppercase tracking-wider">Report ID</span>
+                            </div>
+                            <div class="flex sm:flex-row-reverse items-center gap-3">
+                                <span class="font-bold text-gray-900 w-32 text-left sm:text-right">
+                                    #{{ result.labTestId }}
+                                </span>
+                                <span class="text-gray-500 text-xs uppercase tracking-wider">Test ID</span>
+                            </div>
+                            <div class="flex sm:flex-row-reverse items-center gap-3">
+                                <span class="font-semibold text-gray-700 w-32 text-left sm:text-right text-xs">
+                                    {{ formatDate(result.recordedAt) }}
+                                </span>
+                                <span class="text-gray-500 text-xs uppercase tracking-wider">Recorded</span>
+                            </div>
+                            <div class="mt-2 flex sm:justify-end">
+                                @if (result.isAbnormal) {
+                                <span
+                                    class="inline-flex items-center gap-1.5 bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full border border-red-200">
+                                    <lucide-icon [img]="AlertIcon" class="w-3 h-3"></lucide-icon>
+                                    ABNORMAL
+                                </span>
+                                } @else {
+                                <span
+                                    class="inline-flex items-center gap-1.5 bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full border border-green-200">
+                                    <lucide-icon [img]="CheckIcon" class="w-3 h-3"></lucide-icon>
+                                    NORMAL
+                                </span>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-            </div>
+                <!-- Patient Info -->
+                @if (patient) {
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Patient</p>
+                        <div class="space-y-0.5">
+                            <p class="font-semibold text-gray-900 text-base">{{ patient.fullName }}</p>
+                            <p class="text-xs text-gray-500">MRN: {{ patient.mrn }}</p>
+                            <p class="text-xs text-gray-500">{{ patient.age }} years • {{ patient.gender }} • {{
+                                patient.bloodGroup }}</p>
+                            <p class="text-xs text-gray-500">{{ patient.phoneNo }}</p>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">Recorded By</p>
+                        <div class="space-y-0.5">
+                            <p class="font-semibold text-gray-900 text-base">{{ result.recordedBy || '—' }}</p>
+                            <p class="text-xs text-gray-500">Lab Technician</p>
+                            <p class="text-xs text-gray-500 mt-1">Fee: <span class="font-semibold text-gray-700">₹{{
+                                    result.fee }}</span></p>
+                        </div>
+                    </div>
+                </div>
+                }
 
-            @if (result.notes) {
-            <div>
-                <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-2">Notes</p>
-                <div class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
+                <!-- Result Section -->
+                <div class="mb-8">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b-2 border-gray-200">
+                                <th
+                                    class="text-left text-[10px] font-bold uppercase tracking-widest text-gray-400 pb-3">
+                                    Test Details</th>
+                                <th
+                                    class="text-right text-[10px] font-bold uppercase tracking-widest text-gray-400 pb-3">
+                                    Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-100">
+                                <td class="py-4">
+                                    <p class="font-semibold text-gray-900">
+                                        {{ result.testName ?? 'Test #' + result.labTestId }}
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-0.5">Reference Range: {{ result.referenceRange }}
+                                    </p>
+                                </td>
+                                <td class="py-4 text-right">
+                                    <p class="text-2xl font-bold"
+                                        [class]="result.isAbnormal ? 'text-red-600' : 'text-green-600'">
+                                        {{ result.resultValue }}
+                                        <span class="text-sm font-normal text-gray-500">{{ result.unit }}</span>
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="border-t-2 border-gray-900">
+                                <td class="pt-4 pb-2 font-bold text-gray-900">Status</td>
+                                <td class="pt-4 pb-2 text-right font-bold text-lg"
+                                    [class]="result.isAbnormal ? 'text-red-600' : 'text-green-600'">
+                                    {{ result.isAbnormal ? 'Abnormal — Requires Attention' : 'Normal - Within Range' }}
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Notes -->
+                @if (result.notes) {
+                <div class="border-t border-gray-100 pt-5 mb-6">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Clinical Notes</p>
                     <p class="text-sm text-gray-700 leading-relaxed">{{ result.notes }}</p>
                 </div>
-            </div>
-            }
+                }
 
-            <div class="grid grid-cols-2 gap-3 pt-2 border-t border-gray-100">
-                <div>
-                    <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-1">Recorded By</p>
-                    <p class="text-sm font-semibold text-gray-900">{{ result.recordedBy || '—' }}</p>
+                <!-- Footer -->
+                <div class="border-t border-gray-100 pt-6 mt-4">
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        This is a computer-generated lab report and does not require a physical signature.
+                        Please retain this document for your records. For queries, contact
+                        <span class="text-[#1a7fd4]">lab&#64;pulsepoint.in</span> or call +91 98765 43210.
+                    </p>
                 </div>
-                <div>
-                    <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-1">Recorded At</p>
-                    <p class="text-sm font-semibold text-gray-900">{{ formatDate(result.recordedAt) }}</p>
-                </div>
-                <div class="col-span-2">
-                    <p class="text-[10px] uppercase tracking-wider font-semibold text-gray-500 mb-1">Test Fee</p>
-                    <p class="text-sm font-semibold text-gray-900">₹{{ result.fee }}</p>
-                </div>
+
             </div>
 
-            <div class="flex gap-3 pt-3 print:hidden">
+            <!-- Action Footer -->
+            <div class="px-8 pb-6 flex gap-3 print:hidden border-t border-gray-100 pt-4">
                 <button (click)="onClose()"
                     class="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition-colors">
                     Close
@@ -138,6 +178,7 @@
                     Print / Save as PDF
                 </button>
             </div>
+
         </div>
     </div>
 </div>
