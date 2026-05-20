@@ -23,7 +23,8 @@
 .modal-bg.show { opacity: 1; pointer-events: all; }
 
 .modal {
-  background: rgba(255,255,255,.88);
+  /* background: rgba(255,255,255,.88); */
+  background: #ffffff;
   border: 1px solid rgba(255,255,255,.95);
   border-radius: 22px;
   backdrop-filter: blur(28px);
@@ -40,8 +41,10 @@
 .modal::-webkit-scrollbar-thumb { background: rgba(37,99,200,.15); border-radius: 3px; }
 
 .modal-input {
-  background: rgba(255,255,255,.80);
-  border: 1px solid rgba(255,255,255,.92);
+  /* background: rgba(255,255,255,.80); */
+  background: #ffffff;
+  /* border: 1px solid rgba(33, 18, 190, 0.92); */
+  border: 1px solid #2563c8;
   transition: border-color .2s, box-shadow .2s;
 }
 .modal-input:focus {
@@ -53,7 +56,8 @@
 
 .glass-btn {
   display: inline-flex; align-items: center; justify-content: center;
-  background: rgba(255,255,255,.65);
+  /* background: rgba(255,255,255,.65); */
+  background: #ffffff;
   border: 1px solid rgba(255,255,255,.88);
   color: #2d4a7a;
   backdrop-filter: blur(8px);
@@ -63,7 +67,8 @@
 .glass-btn:hover { background: rgba(255,255,255,.90); }
 
 .glass-input {
-  background: rgba(255,255,255,.72);
+  /* background: rgba(255,255,255,.72); */
+  background: #ffffff;
   border: 1px solid rgba(255,255,255,.88);
   backdrop-filter: blur(8px);
   transition: border-color .22s, box-shadow .22s;

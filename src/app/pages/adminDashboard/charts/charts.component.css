@@ -12,7 +12,8 @@
 }
 
 .chart-card {
-  background: rgba(255,255,255,.58);
+  /* background: rgba(255,255,255,.58); */
+  background: #ffffff;
   border: 1px solid rgba(255,255,255,.85);
   backdrop-filter: blur(20px);
   box-shadow: 0 4px 16px rgba(37,99,200,.07);
@@ -25,10 +26,7 @@
   width: 100%;
 }
 
-/* .chart-card-header {
-  margin-bottom: 4px;
-} */
- .chart-card-header {
+.chart-card-header {
   margin-bottom: 12px;
   padding: 0 4px;
 }

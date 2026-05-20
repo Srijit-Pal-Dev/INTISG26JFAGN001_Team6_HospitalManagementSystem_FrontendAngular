@@ -2,7 +2,8 @@
   padding: 5px 13px;
   border-radius: 100px;
   border: 1px solid rgba(255,255,255,.80);
-  background: rgba(255,255,255,.55);
+  /* background: rgba(255,255,255,.55); */
+  background: #ffffff;
   backdrop-filter: blur(8px);
   font-size: 12px;
   font-weight: 500;
@@ -18,7 +19,8 @@
 }
 
 .table-wrap {
-  background: rgba(255,255,255,.58);
+  /* background: rgba(255,255,255,.58); */
+  background: #ffffff;
   border: 1px solid rgba(255,255,255,.85);
   backdrop-filter: blur(22px);
   box-shadow: 0 6px 24px rgba(37,99,200,.09),
