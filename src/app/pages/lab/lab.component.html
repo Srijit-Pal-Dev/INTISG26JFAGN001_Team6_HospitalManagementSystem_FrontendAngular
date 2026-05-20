@@ -1,8 +1,8 @@
 <!-- Background -->
 <div class="bg-base"></div>
-<!-- <div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-1"></div>
 <div class="bg-orb bg-orb-2"></div>
-<div class="bg-grid"></div> -->
+<div class="bg-grid"></div>
 
 <div class="app">
 
@@ -220,15 +220,15 @@
     <div class="notif-list">
       <div class="notif-item" *ngFor="let n of notifications"
            [class.unread]="!n.read"
-           (click)="n.read = true; recalcUnread()">
+           (click)="markNotifRead(n)">
         <div class="notif-dot"
-             [class.notif-dot-warn]="n.type === 'warning'"
-             [class.notif-dot-ok]="n.type === 'success'"
+             [class.notif-dot-warn]="n.type === NotificationType.BILLING || n.type === NotificationType.GENERAL"
+             [class.notif-dot-ok]="n.type === NotificationType.LAB"
              [class.notif-dot-read]="n.read"></div>
         <div class="notif-body">
           <div class="notif-title" [class.notif-title-read]="n.read">{{n.title}}</div>
           <div class="notif-msg">{{n.message}}</div>
-          <div class="notif-time">{{n.time | date:'h:mm a'}}</div>
+          <div class="notif-time">{{n.createdAt | date:'d MMM, h:mm a'}}</div>
         </div>
         <div class="notif-read-tick" *ngIf="n.read">✓</div>
       </div>

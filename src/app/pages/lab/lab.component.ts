@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LabService } from '../../core/services/lab.service';
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
+import { NotificationResponse, NotificationType } from '../../core/models/index';
 import { SidebarComponent } from '../../components/sidebar/sidebar';
 
 @Component({
@@ -22,11 +24,9 @@ export class LabComponent implements OnInit {
   currentView: 'dashboard' | 'queue' = 'dashboard';
   activeFilter = 'all';
 
-  // Modal (replaces drawer)
+  // Modal
   selectedTest: any = null;
   showResultForm = false;
-
-  // Full result form — maps to every DB column
   resultForm = {
     resultValue: '',
     unit: '',
@@ -39,25 +39,33 @@ export class LabComponent implements OnInit {
   // Notifications
   showNotifPanel = false;
   unreadCount = 0;
-  notifications: { id: number; title: string; message: string; type: string; read: boolean; time: Date }[] = [];
+  notifications: NotificationResponse[] = [];
 
   currentUser = '';
+  currentUserId = 0;
   today = new Date();
 
-  // Donut chart circumference for r=48
-  private readonly CIRCUMFERENCE = 2 * Math.PI * 48; // ≈ 301.6
+  // Expose enum to template
+  readonly NotificationType = NotificationType;
+
+  private readonly CIRCUMFERENCE = 2 * Math.PI * 48;
+  private readonly STATUS_ORDER = ['PENDING', 'SAMPLE_COLLECTED', 'IN_PROGRESS', 'COMPLETED'];
 
   constructor(
     private labService: LabService,
     private authService: AuthService,
+    private notifService: NotificationService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.currentUser = this.authService.getUsername() || 'Lab Tech';
+    this.currentUser   = this.authService.getUsername() || 'Lab Tech';
+    this.currentUserId = this.authService.getUserId()   || 0;
     this.loadTests();
+    this.loadNotifications();
   }
 
+  // ── Tests ────────────────────────────────────
   loadTests() {
     this.isLoading = true;
     this.labService.getAllTests().subscribe({
@@ -69,6 +77,65 @@ export class LabComponent implements OnInit {
         });
       }
     });
+  }
+
+  // ── Notifications ────────────────────────────
+  loadNotifications() {
+    if (!this.currentUserId) return;
+    this.notifService.getAllNotifications(this.currentUserId).subscribe({
+      next: (data) => {
+        this.notifications = data;
+        this.unreadCount   = data.filter(n => !n.read).length;
+      },
+      error: () => {
+        // Non-critical — silently ignore
+        this.notifications = [];
+        this.unreadCount   = 0;
+      }
+    });
+  }
+
+  openNotifications() {
+    this.selectedTest = null;
+    this.showNotifPanel = true;
+    this.loadNotifications(); // refresh from backend every time panel opens
+  }
+
+  closeNotifPanel() { this.showNotifPanel = false; }
+
+  // Mark single notification read via backend
+  markNotifRead(n: NotificationResponse) {
+    if (n.read) return;
+    this.notifService.markAsRead(n.id).subscribe({
+      next: (updated) => {
+        n.read = updated.read;
+        this.unreadCount = this.notifications.filter(x => !x.read).length;
+      },
+      error: () => {
+        // Optimistic update even on failure
+        n.read = true;
+        this.unreadCount = Math.max(0, this.unreadCount - 1);
+      }
+    });
+  }
+
+  // Mark all read via backend
+  markAllRead() {
+    if (!this.currentUserId) return;
+    this.notifService.markAllAsRead(this.currentUserId).subscribe({
+      next: () => {
+        this.notifications.forEach(n => n.read = true);
+        this.unreadCount = 0;
+      },
+      error: () => {
+        this.notifications.forEach(n => n.read = true);
+        this.unreadCount = 0;
+      }
+    });
+  }
+
+  recalcUnread() {
+    this.unreadCount = this.notifications.filter(n => !n.read).length;
   }
 
   // ── Navigation ──────────────────────────────
@@ -86,30 +153,23 @@ export class LabComponent implements OnInit {
     this.activeFilter = status;
   }
 
-  openNotifications() {
-    this.selectedTest = null;
-    this.showNotifPanel = true;
-  }
-
-  closeNotifPanel() { this.showNotifPanel = false; }
-
   // ── Modal ────────────────────────────────────
   openPatientModal(test: any) {
     this.showNotifPanel = false;
-    this.selectedTest = test;
+    this.selectedTest   = test;
     this.showResultForm = false;
     this.resultForm = {
-      resultValue: '',
-      unit: '',
+      resultValue:    '',
+      unit:           '',
       referenceRange: '',
-      recordedBy: this.currentUser,   // pre-fill with logged-in user
-      notes: '',
-      isAbnormal: false
+      recordedBy:     this.currentUser,
+      notes:          '',
+      isAbnormal:     false
     };
   }
 
   closeModal() {
-    this.selectedTest = null;
+    this.selectedTest   = null;
     this.showResultForm = false;
   }
 
@@ -121,9 +181,9 @@ export class LabComponent implements OnInit {
     const q = this.searchQuery.trim().toLowerCase();
     if (q) {
       list = list.filter(t =>
-        t.testName?.toLowerCase().includes(q) ||
-        t.patientId?.toString().includes(q) ||
-        t.id?.toString().includes(q) ||
+        t.testName?.toLowerCase().includes(q)    ||
+        t.patientId?.toString().includes(q)       ||
+        t.id?.toString().includes(q)              ||
         t.assignedTo?.toLowerCase().includes(q)
       );
     }
@@ -135,20 +195,20 @@ export class LabComponent implements OnInit {
     if (!q) return this.tests.slice(0, 6);
     return this.tests.filter(t =>
       t.testName?.toLowerCase().includes(q) ||
-      t.patientId?.toString().includes(q) ||
+      t.patientId?.toString().includes(q)   ||
       t.id?.toString().includes(q)
     ).slice(0, 6);
   }
 
   getByStatus(s: string) { return this.tests.filter(t => t.status === s); }
-  pendingCount() { return this.getByStatus('PENDING').length; }
+  pendingCount()          { return this.getByStatus('PENDING').length; }
 
   // ── Actions ─────────────────────────────────
   collectSample(test: any) {
     this.labService.collectSample(test.id).subscribe({
       next: (updated) => {
         test.status = updated?.status ?? 'SAMPLE_COLLECTED';
-        this.pushNotif('Sample Collected', `Sample for Patient #${test.patientId} — ${test.testName}`, 'info');
+        this.loadNotifications(); // backend may have created a notification
       },
       error: () => { test.status = 'SAMPLE_COLLECTED'; }
     });
@@ -158,71 +218,54 @@ export class LabComponent implements OnInit {
     const username = this.authService.getUsername() || 'Unknown Tech';
     this.labService.startTest(test.id, username).subscribe({
       next: (updated) => {
-        test.status = updated?.status ?? 'IN_PROGRESS';
+        test.status     = updated?.status     ?? 'IN_PROGRESS';
         test.assignedTo = updated?.assignedTo ?? username;
-        this.pushNotif('Test Started', `${test.testName} assigned to ${test.assignedTo}`, 'info');
+        this.loadNotifications();
       },
       error: () => { test.status = 'IN_PROGRESS'; test.assignedTo = username; }
     });
   }
 
   uploadResult(test: any) {
-    if (!this.resultForm.resultValue.trim()) {
-      alert('Result value is required');
-      return;
-    }
-    // Send ALL fields so nothing is null in the DB
+    if (!this.resultForm.resultValue.trim()) { alert('Result value is required'); return; }
     const payload = {
       resultValue:    this.resultForm.resultValue,
-      unit:           this.resultForm.unit || null,
+      unit:           this.resultForm.unit           || null,
       referenceRange: this.resultForm.referenceRange || null,
-      recordedBy:     this.resultForm.recordedBy || this.currentUser,
-      notes:          this.resultForm.notes || null,
+      recordedBy:     this.resultForm.recordedBy     || this.currentUser,
+      notes:          this.resultForm.notes          || null,
       isAbnormal:     this.resultForm.isAbnormal
     };
-
     this.labService.uploadResult(test.id, payload).subscribe({
       next: () => {
         test.status = 'COMPLETED';
-        // Store result fields on the test object so they display in modal
         Object.assign(test, payload);
-        const label = this.resultForm.isAbnormal ? '⚠ Abnormal result' : 'Result uploaded';
-        this.pushNotif(label, `${test.testName} — Patient #${test.patientId}`, this.resultForm.isAbnormal ? 'warning' : 'success');
         this.showResultForm = false;
+        // Backend sends a notification on upload — reload after short delay
+        setTimeout(() => this.loadNotifications(), 800);
       }
     });
   }
 
   // ── Charts ───────────────────────────────────
-  private statusColors: Record<string, string> = {
-    PENDING: '#f59e0b',
-    SAMPLE_COLLECTED: '#2563c8',
-    IN_PROGRESS: '#8b5cf6',
-    COMPLETED: '#10b981'
-  };
-
-  private statusOrder = ['PENDING', 'SAMPLE_COLLECTED', 'IN_PROGRESS', 'COMPLETED'];
-
-  // Returns stroke-dasharray for a donut segment
   getDonutDash(status: string): string {
     if (!this.tests.length) return `0 ${this.CIRCUMFERENCE}`;
     const pct = this.getByStatus(status).length / this.tests.length;
-    const seg = pct * this.CIRCUMFERENCE;
-    return `${seg} ${this.CIRCUMFERENCE - seg}`;
+    return `${pct * this.CIRCUMFERENCE} ${this.CIRCUMFERENCE - pct * this.CIRCUMFERENCE}`;
   }
 
-  // Returns stroke-dashoffset so segments stack around the circle
   getDonutOffset(status: string): string {
-    const idx = this.statusOrder.indexOf(status);
+    const idx = this.STATUS_ORDER.indexOf(status);
     let offset = 0;
     for (let i = 0; i < idx; i++) {
-      const pct = this.tests.length ? this.getByStatus(this.statusOrder[i]).length / this.tests.length : 0;
+      const pct = this.tests.length
+        ? this.getByStatus(this.STATUS_ORDER[i]).length / this.tests.length
+        : 0;
       offset += pct * this.CIRCUMFERENCE;
     }
     return String(-offset);
   }
 
-  // Top 5 test types by count
   testTypeCounts(): { name: string; count: number }[] {
     const map: Record<string, number> = {};
     this.tests.forEach(t => { map[t.testName] = (map[t.testName] || 0) + 1; });
@@ -237,26 +280,16 @@ export class LabComponent implements OnInit {
     return (count / max) * 100;
   }
 
-  // ── Status pipeline helpers ──────────────────
+  // ── Status helpers ───────────────────────────
   isStepDone(step: string): boolean {
     if (!this.selectedTest) return false;
-    return this.statusOrder.indexOf(this.selectedTest.status) > this.statusOrder.indexOf(step);
+    return this.STATUS_ORDER.indexOf(this.selectedTest.status) > this.STATUS_ORDER.indexOf(step);
   }
 
   formatStatus(s: string): string {
     return s?.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase()) ?? '';
   }
 
-  // ── Notifications ────────────────────────────
-  pushNotif(title: string, message: string, type: string) {
-    this.notifications.unshift({ id: Date.now(), title, message, type, read: false, time: new Date() });
-    this.unreadCount++;
-  }
-
-  markAllRead() { this.notifications.forEach(n => n.read = true); this.unreadCount = 0; }
-  recalcUnread() { this.unreadCount = this.notifications.filter(n => !n.read).length; }
-
-  // ── Misc ────────────────────────────────────
   userInitials(): string {
     return this.currentUser.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
   }
