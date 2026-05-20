@@ -1,5 +1,24 @@
 <div class="dd-layout">
-  <app-sidebar [activeRoute]="'overview'" (logoutClicked)="logout()" (navClicked)="onNavClicked($event)" (notifClicked)="onNotifClicked()"></app-sidebar>
+  <!-- <app-sidebar 
+    [activeRoute]="'overview'" 
+    (logoutClicked)="logout()" 
+    (navClicked)="onNavClicked($event)" 
+    (notifClicked)="onNotifClicked()">
+  </app-sidebar> -->
+  <app-sidebar
+    [activeRoute]="'overview'"
+    [unreadCount]="notifications().filter(n => !n.read).length"
+    (logoutClicked)="logout()"
+    (navClicked)="onNavClicked($event)"
+    (notifClicked)="onNotifClicked()">
+  </app-sidebar>
+
+  <app-notif-modal
+    [show]="showNotifModal()"
+    [notifications]="notifications()"
+    (closed)="showNotifModal.set(false)"
+    (markRead)="markAsRead($event)"
+    (markAllRead)="markAllRead()" />
 
   <main class="dd-main">
 

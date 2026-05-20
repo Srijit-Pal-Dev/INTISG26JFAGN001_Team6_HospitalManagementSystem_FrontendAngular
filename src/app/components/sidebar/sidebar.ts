@@ -32,7 +32,6 @@ export class SidebarComponent implements OnInit {
     DOCTOR: [
       { label: 'Dashboard',     route: 'overview',      icon: 'dashboard' },
       { label: 'Notifications', route: 'notifications', icon: 'bell'      },
-      { label: 'Settings',      route: 'settings',      icon: 'settings'  },
     ],
     PHARMACIST: [
       { label: 'Medicines',     route: 'medicines',     icon: 'medicines'  },

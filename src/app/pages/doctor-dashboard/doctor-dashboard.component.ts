@@ -10,12 +10,14 @@ import {
 import { SidebarComponent } from '../../components/sidebar/sidebar';
 import { DoctorService } from '../../core/services/doctor.service';
 import { AuthService } from '../../core/services/auth.service';
-import { DoctorDTO, CreateDoctorProfileRequest } from '../../core/models/index';
+import { NotificationService } from '../../core/services/notification.service';
+import { DoctorDTO, CreateDoctorProfileRequest, NotificationResponse } from '../../core/models/index';
+import { NotifModalComponent } from '../adminDashboard/modals/notif-modal/notif-modal.component';
 
 @Component({
   selector: 'app-doctor-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, LucideAngularModule, SidebarComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, LucideAngularModule, SidebarComponent, NotifModalComponent],
   templateUrl: './doctor-dashboard.component.html',
   styleUrl: './doctor-dashboard.component.css'
 })
@@ -35,13 +37,15 @@ export class DoctorDashboardComponent implements OnInit {
   submitError  = signal('');
   submitSuccess = signal('');
   profile = signal<DoctorDTO | null>(null);
-
+  showNotifModal = signal(false);
+  notifications = signal<NotificationResponse[]>([]);
   createForm!: FormGroup;
 
   private doctorService = inject(DoctorService);
   private authService   = inject(AuthService);
   private router        = inject(Router);
   private fb            = inject(FormBuilder);
+  private notificationService = inject(NotificationService);
 
   get currentUserId(): number { return this.authService.getUserId() ?? 0; }
   get username(): string { return this.authService.getUsername() ?? 'Doctor'; }
@@ -56,6 +60,37 @@ export class DoctorDashboardComponent implements OnInit {
       consultationFee: [0, [Validators.required, Validators.min(1)]]
     });
     this.checkProfile();
+    this.loadNotifications();
+  }
+
+  loadNotifications(): void {
+      this.notificationService.getAllNotifications(this.currentUserId).subscribe({
+          next: (data) => this.notifications.set(data),
+          error: () => {}
+      });
+  }
+
+  markAsRead(notif: NotificationResponse): void {
+    if (notif.read) return;
+    this.notificationService.markAsRead(notif.id).subscribe({
+        next: (updated) => {
+            this.notifications.set(
+                this.notifications().map(n => n.id === updated.id ? updated : n)
+            );
+        },
+        error: () => {}
+    });
+}
+
+  markAllRead(): void {
+      this.notificationService.markAllAsRead(this.currentUserId).subscribe({
+          next: () => this.notifications.set(this.notifications().map(n => ({ ...n, read: true }))),
+          error: () => {}
+      });
+  }
+
+  onNotifClicked(): void {
+      this.showNotifModal.set(true);
   }
 
   private checkProfile(): void {
@@ -130,10 +165,6 @@ export class DoctorDashboardComponent implements OnInit {
     } else if (route === 'appointments' && p) {
       this.router.navigate(['/doctor-dashboard', p.id, 'appointments']);
     }
-  }
-
-  onNotifClicked(): void {
-    // Notifications page not yet implemented for doctors
   }
 
   logout(): void { this.authService.logout(); }
