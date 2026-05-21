@@ -85,7 +85,7 @@
     <a class="font-bold underline cursor-pointer text-blue-900" (click)="switchToLogin.emit()">Login</a>
   </div>
 
-  <button (click)="registerSubmit.emit()" [disabled]="isLoading"
+  <button (click)="registerSubmit.emit()" [disabled]="isLoading || signupForm.invalid"
     class="btn-cta w-full py-3 border-none rounded-xl cursor-pointer font-display text-[14.5px] font-semibold text-white tracking-[.02em] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed">
     @if (!isLoading) { Create My Account }
     @else {

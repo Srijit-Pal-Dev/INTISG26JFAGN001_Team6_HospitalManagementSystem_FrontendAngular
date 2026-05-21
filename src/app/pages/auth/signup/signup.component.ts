@@ -30,6 +30,7 @@ export class SignupComponent {
     const c = this.signupForm.get(field);
     if (!c || !c.touched || !c.errors) return '';
     if (c.errors['required'])  return 'This field is required.';
+    if (c.errors['email'])     return 'Please enter a valid email address.';
     if (c.errors['minlength']) return `Minimum ${c.errors['minlength'].requiredLength} characters required.`;
     return '';
   }

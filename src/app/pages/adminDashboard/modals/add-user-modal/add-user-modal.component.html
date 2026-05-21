@@ -92,7 +92,7 @@
       <button class="glass-btn flex-1 justify-center py-3 rounded-[10px] text-[13px] font-semibold"
         (click)="!isSubmitting && close()">Cancel</button>
       <button class="primary-btn flex-1 justify-center py-3 rounded-[10px] text-[13px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
-        (click)="submit()" [disabled]="isSubmitting">
+        (click)="submit()" [disabled]="isSubmitting || addUserForm.invalid">
         @if (!isSubmitting) { Create User } @else { Creating… }
       </button>
     </div>

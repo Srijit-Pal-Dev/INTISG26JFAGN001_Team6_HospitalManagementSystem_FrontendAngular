@@ -34,7 +34,7 @@ export class AddUserModalComponent implements OnInit {
 
   ngOnInit() {
     this.addUserForm = this.fb.group({
-      fullName:        ['', [Validators.required, Validators.minLength(2)]],
+      fullName:        ['', [Validators.required, Validators.minLength(4)]],
       username:        ['', [Validators.required, Validators.email]],
       password:        ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['',  Validators.required]
@@ -52,6 +52,7 @@ export class AddUserModalComponent implements OnInit {
     const c = this.addUserForm.get(field);
     if (!c || !c.touched || !c.errors) return '';
     if (c.errors['required'])  return 'This field is required.';
+    if (c.errors['email'])     return 'Please enter a valid email address.';
     if (c.errors['minlength']) return `Minimum ${c.errors['minlength'].requiredLength} characters required.`;
     return '';
   }

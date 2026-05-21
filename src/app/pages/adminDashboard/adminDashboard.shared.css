@@ -129,6 +129,13 @@
   padding-left: 2px;
 }
 
+.primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear { display: none; }
 input[type="password"]::-webkit-credentials-auto-fill-button,
